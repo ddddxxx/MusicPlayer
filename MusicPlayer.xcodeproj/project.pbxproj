@@ -11,6 +11,10 @@
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
+		BB4C3A241F56509100F1DDAA /* iTunes.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = iTunes.h; sourceTree = "<group>"; };
+		BB4C3A251F56509100F1DDAA /* module.modulemap */ = {isa = PBXFileReference; lastKnownFileType = "sourcecode.module-map"; path = module.modulemap; sourceTree = "<group>"; };
+		BB4C3A261F56509100F1DDAA /* Spotify.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = Spotify.h; sourceTree = "<group>"; };
+		BB4C3A271F56509100F1DDAA /* Vox.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = Vox.h; sourceTree = "<group>"; };
 		"MusicPlayer::MusicPlayer::Product" /* MusicPlayer.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = MusicPlayer.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		OBJ_6 /* Package.swift */ = {isa = PBXFileReference; explicitFileType = sourcecode.swift; path = Package.swift; sourceTree = "<group>"; };
 		OBJ_8 /* MusicPlayer.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MusicPlayer.swift; sourceTree = "<group>"; };
@@ -27,6 +31,17 @@
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
+		BB4C3A231F56509100F1DDAA /* BridgeHeader */ = {
+			isa = PBXGroup;
+			children = (
+				BB4C3A251F56509100F1DDAA /* module.modulemap */,
+				BB4C3A241F56509100F1DDAA /* iTunes.h */,
+				BB4C3A261F56509100F1DDAA /* Spotify.h */,
+				BB4C3A271F56509100F1DDAA /* Vox.h */,
+			);
+			path = BridgeHeader;
+			sourceTree = "<group>";
+		};
 		OBJ_10 /* Products */ = {
 			isa = PBXGroup;
 			children = (
@@ -48,6 +63,7 @@
 		OBJ_7 /* Sources */ = {
 			isa = PBXGroup;
 			children = (
+				BB4C3A231F56509100F1DDAA /* BridgeHeader */,
 				OBJ_8 /* MusicPlayer.swift */,
 			);
 			path = Sources;
@@ -141,7 +157,10 @@
 					"$(inherited)",
 					"$(PLATFORM_DIR)/Developer/Library/Frameworks",
 				);
-				HEADER_SEARCH_PATHS = "$(inherited)";
+				HEADER_SEARCH_PATHS = (
+					"$(inherited)",
+					Sources/BridgeHeader,
+				);
 				INFOPLIST_FILE = MusicPlayer.xcodeproj/MusicPlayer_Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = "$(TOOLCHAIN_DIR)/usr/lib/swift/macosx";
 				OTHER_LDFLAGS = "$(inherited)";

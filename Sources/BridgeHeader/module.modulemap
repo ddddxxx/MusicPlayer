@@ -1,0 +1,4 @@
+module BridgeHeader {
+    header "iTunes.h"
+    export *
+}
