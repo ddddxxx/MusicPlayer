@@ -1,14 +1,19 @@
-module iTunesBridgeHeader {
-    header "iTunes.h"
-    export *
-}
-
-module SpotifyBridgeHeader {
-    header "Spotify.h"
-    export *
-}
-
-module VoxBridgeHeader {
-    header "Vox.h"
+module BridgeHeader {
+    
+    module iTunes {
+        header "iTunes.h"
+        export *
+    }
+    
+    module Spotify {
+        header "Spotify.h"
+        export *
+    }
+    
+    module Vox {
+        header "Vox.h"
+        export *
+    }
+    
     export *
 }
