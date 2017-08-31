@@ -41,7 +41,9 @@ public enum MusicShuffleMode {
     case albums
 }
 
-protocol MusicPlyer {
+// MARK: -
+
+public protocol MusicPlyer {
     
     init()
     
@@ -58,10 +60,11 @@ protocol MusicPlyer {
     func skipToNext()
     func skipToPrevious()
     
+    // To prevent property/method name conflict, player should not be extended directly.
     var originalPlayer: SBApplication { get }
 }
 
-protocol MusicTrack {
+public protocol MusicTrack {
     
     var id:     String { get }
     var title:  String { get }
@@ -72,5 +75,19 @@ protocol MusicTrack {
     var lyrics: String { get set }
     var url:    URL? { get }
     
+    // To prevent property/method name conflict, track should not be extended directly.
     var originalTrack: SBObject { get }
+}
+
+// MARK: -
+
+extension MusicPlyer {
+    
+    public var isRunning: Bool {
+        return originalPlayer.isRunning
+    }
+    
+    public func activate() {
+        originalPlayer.activate()
+    }
 }
