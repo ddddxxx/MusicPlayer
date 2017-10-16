@@ -76,7 +76,7 @@ public protocol MusicTrack {
     var url:    URL? { get }
     
     // To prevent property/method name conflict, track should not be extended directly.
-    var originalTrack: SBObject { get }
+    var originalTrack: SBObject? { get }
 }
 
 // MARK: -
