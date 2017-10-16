@@ -11,10 +11,9 @@
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
-		BB4C3A241F56509100F1DDAA /* iTunes.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = iTunes.h; sourceTree = "<group>"; };
-		BB4C3A251F56509100F1DDAA /* module.modulemap */ = {isa = PBXFileReference; lastKnownFileType = "sourcecode.module-map"; path = module.modulemap; sourceTree = "<group>"; };
-		BB4C3A261F56509100F1DDAA /* Spotify.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = Spotify.h; sourceTree = "<group>"; };
-		BB4C3A271F56509100F1DDAA /* Vox.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = Vox.h; sourceTree = "<group>"; };
+		BBAB96FD1F94DE5100E5E807 /* SpotifyBridge.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SpotifyBridge.swift; sourceTree = "<group>"; };
+		BBAB96FE1F94DE5100E5E807 /* iTunesBridge.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = iTunesBridge.swift; sourceTree = "<group>"; };
+		BBAB96FF1F94DE5100E5E807 /* VoxBridge.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = VoxBridge.swift; sourceTree = "<group>"; };
 		"MusicPlayer::MusicPlayer::Product" /* MusicPlayer.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = MusicPlayer.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		OBJ_6 /* Package.swift */ = {isa = PBXFileReference; explicitFileType = sourcecode.swift; path = Package.swift; sourceTree = "<group>"; };
 		OBJ_8 /* MusicPlayer.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MusicPlayer.swift; sourceTree = "<group>"; };
@@ -31,13 +30,12 @@
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
-		BB4C3A231F56509100F1DDAA /* BridgeHeader */ = {
+		BBAB96FC1F94DE5100E5E807 /* BridgeHeader */ = {
 			isa = PBXGroup;
 			children = (
-				BB4C3A251F56509100F1DDAA /* module.modulemap */,
-				BB4C3A241F56509100F1DDAA /* iTunes.h */,
-				BB4C3A261F56509100F1DDAA /* Spotify.h */,
-				BB4C3A271F56509100F1DDAA /* Vox.h */,
+				BBAB96FE1F94DE5100E5E807 /* iTunesBridge.swift */,
+				BBAB96FD1F94DE5100E5E807 /* SpotifyBridge.swift */,
+				BBAB96FF1F94DE5100E5E807 /* VoxBridge.swift */,
 			);
 			path = BridgeHeader;
 			sourceTree = "<group>";
@@ -62,7 +60,7 @@
 		OBJ_7 /* Sources */ = {
 			isa = PBXGroup;
 			children = (
-				BB4C3A231F56509100F1DDAA /* BridgeHeader */,
+				BBAB96FC1F94DE5100E5E807 /* BridgeHeader */,
 				OBJ_8 /* MusicPlayer.swift */,
 			);
 			path = Sources;
@@ -140,7 +138,6 @@
 				PRODUCT_MODULE_NAME = "$(TARGET_NAME:c99extidentifier)";
 				PRODUCT_NAME = "$(TARGET_NAME:c99extidentifier)";
 				SKIP_INSTALL = YES;
-				SWIFT_INCLUDE_PATHS = Sources/BridgeHeader;
 				TARGET_NAME = MusicPlayer;
 			};
 			name = Debug;
@@ -161,7 +158,6 @@
 				PRODUCT_MODULE_NAME = "$(TARGET_NAME:c99extidentifier)";
 				PRODUCT_NAME = "$(TARGET_NAME:c99extidentifier)";
 				SKIP_INSTALL = YES;
-				SWIFT_INCLUDE_PATHS = Sources/BridgeHeader;
 				TARGET_NAME = MusicPlayer;
 			};
 			name = Release;
