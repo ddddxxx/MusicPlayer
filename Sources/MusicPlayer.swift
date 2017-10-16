@@ -43,9 +43,18 @@ public enum MusicShuffleMode {
 
 // MARK: -
 
+public protocol MusicPlayerDelegate {
+    
+    func playbackStateChanged(state: MusicPlaybackState, from player: MusicPlyer)
+    func playerPositionMutated(position: TimeInterval, from player: MusicPlyer)
+    func currentTrackChanged(track: MusicTrack, from player: MusicPlyer)
+}
+
 public protocol MusicPlyer {
     
     init()
+    
+    var delegate: MusicPlayerDelegate? { get set }
     
     var playbackState: MusicPlaybackState { get }
     var repeatMode: MusicRepeatMode { get set }
