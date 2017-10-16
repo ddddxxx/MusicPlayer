@@ -30,7 +30,7 @@ public enum MusicPlaybackState {
 }
 
 public enum MusicRepeatMode {
-    case none
+    case off
     case one
     case all
 }
@@ -43,16 +43,16 @@ public enum MusicShuffleMode {
 
 // MARK: -
 
-public protocol MusicPlayerDelegate {
+public protocol MusicPlayerDelegate: class {
     
-    func playbackStateChanged(state: MusicPlaybackState, from player: MusicPlyer)
-    func playerPositionMutated(position: TimeInterval, from player: MusicPlyer)
-    func currentTrackChanged(track: MusicTrack, from player: MusicPlyer)
+    func playbackStateChanged(state: MusicPlaybackState, from player: MusicPlayer)
+    func playerPositionMutated(position: TimeInterval, from player: MusicPlayer)
+    func currentTrackChanged(track: MusicTrack, from player: MusicPlayer)
 }
 
-public protocol MusicPlyer {
+public protocol MusicPlayer {
     
-    init()
+    init?()
     
     var delegate: MusicPlayerDelegate? { get set }
     
@@ -63,8 +63,7 @@ public protocol MusicPlyer {
     var currentTrack: MusicTrack? { get }
     var playerPosition: TimeInterval { get set }
     
-    func play()
-    func pause()
+    func playpause()
     func stop()
     func skipToNext()
     func skipToPrevious()
@@ -76,12 +75,12 @@ public protocol MusicPlyer {
 public protocol MusicTrack {
     
     var id:     String { get }
-    var title:  String { get }
+    var title:  String? { get }
     var album:  String? { get }
     var artist: String? { get }
     var duration: TimeInterval? { get }
     var artwork:  NSImage? { get set }
-    var lyrics: String { get set }
+    var lyrics: String? { get set }
     var url:    URL? { get }
     
     // To prevent property/method name conflict, track should not be extended directly.
@@ -90,7 +89,7 @@ public protocol MusicTrack {
 
 // MARK: -
 
-extension MusicPlyer {
+extension MusicPlayer {
     
     public var isRunning: Bool {
         return originalPlayer.isRunning
