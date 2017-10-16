@@ -39,6 +39,7 @@ public enum MusicShuffleMode {
     case off
     case songs
     case albums
+    case groupings
 }
 
 // MARK: -
@@ -47,7 +48,7 @@ public protocol MusicPlayerDelegate: class {
     
     func playbackStateChanged(state: MusicPlaybackState, from player: MusicPlayer)
     func playerPositionMutated(position: TimeInterval, from player: MusicPlayer)
-    func currentTrackChanged(track: MusicTrack, from player: MusicPlayer)
+    func currentTrackChanged(track: MusicTrack?, from player: MusicPlayer)
 }
 
 public protocol MusicPlayer {
@@ -67,6 +68,8 @@ public protocol MusicPlayer {
     func stop()
     func skipToNext()
     func skipToPrevious()
+    
+    func updatePlayerState()
     
     // To prevent property/method name conflict, player should not be extended directly.
     var originalPlayer: SBApplication { get }

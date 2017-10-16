@@ -7,6 +7,11 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		BBAB97011F94E6C900E5E807 /* iTunes.swift in Sources */ = {isa = PBXBuildFile; fileRef = BBAB97001F94E6C900E5E807 /* iTunes.swift */; };
+		BBAB97021F94E7AC00E5E807 /* iTunesBridge.swift in Sources */ = {isa = PBXBuildFile; fileRef = BBAB96FE1F94DE5100E5E807 /* iTunesBridge.swift */; };
+		BBAB97031F94E7AC00E5E807 /* SpotifyBridge.swift in Sources */ = {isa = PBXBuildFile; fileRef = BBAB96FD1F94DE5100E5E807 /* SpotifyBridge.swift */; };
+		BBAB97041F94E7AC00E5E807 /* VoxBridge.swift in Sources */ = {isa = PBXBuildFile; fileRef = BBAB96FF1F94DE5100E5E807 /* VoxBridge.swift */; };
+		BBAB97061F94F62500E5E807 /* Global.swift in Sources */ = {isa = PBXBuildFile; fileRef = BBAB97051F94F62500E5E807 /* Global.swift */; };
 		OBJ_17 /* MusicPlayer.swift in Sources */ = {isa = PBXBuildFile; fileRef = OBJ_8 /* MusicPlayer.swift */; };
 /* End PBXBuildFile section */
 
@@ -14,6 +19,8 @@
 		BBAB96FD1F94DE5100E5E807 /* SpotifyBridge.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SpotifyBridge.swift; sourceTree = "<group>"; };
 		BBAB96FE1F94DE5100E5E807 /* iTunesBridge.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = iTunesBridge.swift; sourceTree = "<group>"; };
 		BBAB96FF1F94DE5100E5E807 /* VoxBridge.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = VoxBridge.swift; sourceTree = "<group>"; };
+		BBAB97001F94E6C900E5E807 /* iTunes.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = iTunes.swift; sourceTree = "<group>"; };
+		BBAB97051F94F62500E5E807 /* Global.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Global.swift; sourceTree = "<group>"; };
 		"MusicPlayer::MusicPlayer::Product" /* MusicPlayer.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = MusicPlayer.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		OBJ_6 /* Package.swift */ = {isa = PBXFileReference; explicitFileType = sourcecode.swift; path = Package.swift; sourceTree = "<group>"; };
 		OBJ_8 /* MusicPlayer.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MusicPlayer.swift; sourceTree = "<group>"; };
@@ -62,6 +69,8 @@
 			children = (
 				BBAB96FC1F94DE5100E5E807 /* BridgeHeader */,
 				OBJ_8 /* MusicPlayer.swift */,
+				BBAB97001F94E6C900E5E807 /* iTunes.swift */,
+				BBAB97051F94F62500E5E807 /* Global.swift */,
 			);
 			path = Sources;
 			sourceTree = SOURCE_ROOT;
@@ -116,6 +125,11 @@
 			buildActionMask = 0;
 			files = (
 				OBJ_17 /* MusicPlayer.swift in Sources */,
+				BBAB97031F94E7AC00E5E807 /* SpotifyBridge.swift in Sources */,
+				BBAB97061F94F62500E5E807 /* Global.swift in Sources */,
+				BBAB97011F94E6C900E5E807 /* iTunes.swift in Sources */,
+				BBAB97021F94E7AC00E5E807 /* iTunesBridge.swift in Sources */,
+				BBAB97041F94E7AC00E5E807 /* VoxBridge.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
