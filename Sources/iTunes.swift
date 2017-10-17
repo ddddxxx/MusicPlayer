@@ -47,35 +47,37 @@ public final class iTunes {
         }
         _iTunes = iTunes
         _playbackState = _iTunes.playerState?.state ?? .stopped
-        DistributedNotificationCenter.default.addObserver(forName: .iTunesPlayerInfo, object: nil, queue: notificationQueue, using: playerInfoNotification)
+        _currentTrack = _iTunes.currentTrack.map(Track.init)
+        _startTime = _iTunes.startTime
         
-        updatePlayerState()
+        DistributedNotificationCenter.default.addObserver(forName: .iTunesPlayerInfo, object: nil, queue: notificationQueue, using: playerInfoNotification)
     }
     
-    func playerInfoNotification(_ n: Notification? = nil) {
+    func playerInfoNotification(_ n: Notification) {
         var track = _iTunes.currentTrack.map(Track.init)
         let state = _iTunes.playerState?.state ?? .stopped
-        let startTime = _iTunes.playerPosition.map { pos in
-            Date().addingTimeInterval(-pos)
-        }
         guard track?._id != _currentTrack?._id else {
-            if let loc = n?.userInfo?["Location"] as? String {
+            if let loc = n.userInfo?["Location"] as? String {
                 track?.url = URL(string: loc)
             }
             _currentTrack = track
             _playbackState = state
-            _startTime = startTime
+            _startTime = _iTunes.startTime
             delegate?.currentTrackChanged(track: track, from: self)
             return
         }
         guard state != _playbackState else {
             _playbackState = state
-            _startTime = startTime
+            _startTime = _iTunes.startTime
             delegate?.playbackStateChanged(state: state, from: self)
             return
         }
-        if let startTime = startTime,
-            let _startTime = _startTime,
+        updatePlayerPosition()
+    }
+    
+    func updatePlayerPosition() {
+        if let _startTime = _startTime,
+            let startTime = _iTunes.startTime,
             abs(startTime.timeIntervalSince(_startTime)) > positionMutateThreshold {
             self._startTime = startTime
             delegate?.playerPositionMutated(position: playerPosition, from: self)
@@ -165,7 +167,7 @@ extension iTunes: MusicPlayer {
     }
     
     public func updatePlayerState() {
-        playerInfoNotification()
+        updatePlayerPosition()
     }
     
     public var originalPlayer: SBApplication {
@@ -251,5 +253,15 @@ extension iTunes.Track: MusicTrack {
     
     public var originalTrack: SBObject? {
         return (_iTunesTrack as! SBObject)
+    }
+}
+
+extension iTunesApplication {
+    
+    var startTime: Date? {
+        guard let playerPosition = playerPosition else {
+            return nil
+        }
+        return Date().addingTimeInterval(-playerPosition)
     }
 }
