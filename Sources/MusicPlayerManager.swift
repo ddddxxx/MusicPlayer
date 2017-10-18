@@ -23,8 +23,8 @@ import Foundation
 public protocol MusicPlayerManagerDelegate: class {
     
     func runningStateChanged(isRunning: Bool)
-    func currentPlayerChanged(player: MusicPlayer)
-    func currentTrackChanged(track: MusicTrack)
+    func currentPlayerChanged(player: MusicPlayer?)
+    func currentTrackChanged(track: MusicTrack?)
     func playbackStateChanged(state: MusicPlaybackState)
     func playerPositionMutated(position: TimeInterval)
 }
@@ -35,16 +35,33 @@ class MusicPlayerManager {
     
     public weak var delegate: MusicPlayerManagerDelegate?
     
-    public private(set) var player: MusicPlayer?
+    public private(set) var players: [MusicPlayer]
+    public private(set) weak var player: MusicPlayer?
+    
+    public var preferredPlayerName: MusicPlayerName? {
+        didSet {
+            guard let name = preferredPlayerName,
+                oldValue != name else {
+                    return
+            }
+            player = players.first { type(of: $0) == name.cls }
+            delegate?.currentPlayerChanged(player: player)
+        }
+    }
     
     private var _timer: Timer!
     
     private init() {
+        players = MusicPlayerName.all.flatMap { $0.cls.init() }
         _timer = Timer.scheduledTimer(timeInterval: 0.5, target: self, selector: #selector(update), userInfo: nil, repeats: true)
     }
     
     @objc func update() {
         player?.updatePlayerState()
+    }
+    
+    func updateSelectedPlayer() {
+        guard preferredPlayerName == nil else { return }
     }
 
 }
