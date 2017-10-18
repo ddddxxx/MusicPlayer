@@ -36,9 +36,11 @@ public final class iTunes {
     
     public weak var delegate: MusicPlayerDelegate?
     
+    public var autoLaunch = false
+    
     private var _iTunes: iTunesApplication
     private var _currentTrack: Track?
-    private var _playbackState: MusicPlaybackState
+    private var _playbackState: MusicPlaybackState = .stopped
     private var _startTime: Date?
     
     public init?() {
@@ -46,14 +48,17 @@ public final class iTunes {
             return nil
         }
         _iTunes = iTunes
-        _playbackState = _iTunes.playerState?.state ?? .stopped
-        _currentTrack = _iTunes.currentTrack.map(Track.init)
-        _startTime = _iTunes.startTime
+        if isRunning {
+            _playbackState = _iTunes.playerState?.state ?? .stopped
+            _currentTrack = _iTunes.currentTrack.map(Track.init)
+            _startTime = _iTunes.startTime
+        }
         
         DistributedNotificationCenter.default.addObserver(forName: .iTunesPlayerInfo, object: nil, queue: notificationQueue, using: playerInfoNotification)
     }
     
     func playerInfoNotification(_ n: Notification) {
+        guard autoLaunch || isRunning else { return }
         var track = _iTunes.currentTrack.map(Track.init)
         let state = _iTunes.playerState?.state ?? .stopped
         guard track?._id != _currentTrack?._id else {
@@ -76,6 +81,7 @@ public final class iTunes {
     }
     
     func updatePlayerPosition() {
+        guard autoLaunch || isRunning else { return }
         if let _startTime = _startTime,
             let startTime = _iTunes.startTime,
             abs(startTime.timeIntervalSince(_startTime)) > positionMutateThreshold {
@@ -88,14 +94,16 @@ public final class iTunes {
 extension iTunes: MusicPlayer {
     
     public var playbackState: MusicPlaybackState {
-        return _iTunes.playerState?.state ?? .stopped
+        return _playbackState
     }
     
     public var repeatMode: MusicRepeatMode {
         get {
+            guard autoLaunch || isRunning else { return .off }
             return _iTunes.songRepeat?.mode ?? .off
         }
         set {
+            guard autoLaunch || isRunning else { return }
             originalPlayer.setValue(iTunesERpt(newValue), forKey: "songRepeat")
 //            _iTunes.songRepeat = iTunesERpt(newValue)
         }
@@ -103,6 +111,7 @@ extension iTunes: MusicPlayer {
     
     public var shuffleMode: MusicShuffleMode {
         get {
+            guard autoLaunch || isRunning else { return .off }
             guard _iTunes.shuffleEnabled == true, let mode = _iTunes.shuffleMode else {
                 return .off
             }
@@ -113,6 +122,7 @@ extension iTunes: MusicPlayer {
             }
         }
         set {
+            guard autoLaunch || isRunning else { return }
             originalPlayer.setValue(newValue != .off, forKey: "shuffleEnabled")
 //            _iTunes.shuffleEnabled = newValue != .off
             switch newValue {
@@ -144,6 +154,7 @@ extension iTunes: MusicPlayer {
             return -_startTime.timeIntervalSinceNow
         }
         set {
+            guard autoLaunch || isRunning else { return }
             originalPlayer.setValue(newValue, forKey: "playerPosition")
 //            _iTunes.playerPosition = newValue
             _startTime = Date().addingTimeInterval(-newValue)
@@ -151,18 +162,22 @@ extension iTunes: MusicPlayer {
     }
     
     public func playpause() {
+        guard autoLaunch || isRunning else { return }
         _iTunes.playpause?()
     }
     
     public func stop() {
+        guard autoLaunch || isRunning else { return }
         _iTunes.pause?()
     }
     
     public func skipToNext() {
+        guard autoLaunch || isRunning else { return }
         _iTunes.nextTrack?()
     }
     
     public func skipToPrevious() {
+        guard autoLaunch || isRunning else { return }
         _iTunes.previousTrack?()
     }
     
