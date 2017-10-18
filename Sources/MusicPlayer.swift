@@ -42,6 +42,29 @@ public enum MusicShuffleMode {
     case groupings
 }
 
+public enum MusicPlayerName: String {
+    
+    case itunes = "iTunes"
+//    case spotify
+//    case vox
+    
+    var bundleID: String {
+        switch self {
+        case .itunes:   return "com.apple.iTunes"
+//        case .spotify:  return "com.spotify.client"
+//        case .vox:      return "com.coppertino.Vox"
+        }
+    }
+    
+    var cls: MusicPlayer.Type {
+        switch self {
+        case .itunes:   return iTunes.self
+        }
+    }
+    
+    static let all: [MusicPlayerName] = [.itunes]
+}
+
 // MARK: -
 
 public protocol MusicPlayerDelegate: class {
@@ -51,7 +74,9 @@ public protocol MusicPlayerDelegate: class {
     func playerPositionMutated(position: TimeInterval, from player: MusicPlayer)
 }
 
-public protocol MusicPlayer {
+public protocol MusicPlayer: class {
+    
+    static var name: MusicPlayerName { get }
     
     init?()
     

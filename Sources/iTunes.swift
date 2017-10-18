@@ -44,7 +44,7 @@ public final class iTunes {
     private var _startTime: Date?
     
     public init?() {
-        guard let iTunes = SBApplication(bundleIdentifier: "com.apple.iTunes") else {
+        guard let iTunes = SBApplication(bundleIdentifier: iTunes.name.bundleID) else {
             return nil
         }
         _iTunes = iTunes
@@ -92,6 +92,8 @@ public final class iTunes {
 }
     
 extension iTunes: MusicPlayer {
+    
+    public static var name: MusicPlayerName = .itunes
     
     public var playbackState: MusicPlaybackState {
         return _playbackState
