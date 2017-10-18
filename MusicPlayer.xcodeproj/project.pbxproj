@@ -12,6 +12,7 @@
 		BBAB97031F94E7AC00E5E807 /* SpotifyBridge.swift in Sources */ = {isa = PBXBuildFile; fileRef = BBAB96FD1F94DE5100E5E807 /* SpotifyBridge.swift */; };
 		BBAB97041F94E7AC00E5E807 /* VoxBridge.swift in Sources */ = {isa = PBXBuildFile; fileRef = BBAB96FF1F94DE5100E5E807 /* VoxBridge.swift */; };
 		BBAB97061F94F62500E5E807 /* Global.swift in Sources */ = {isa = PBXBuildFile; fileRef = BBAB97051F94F62500E5E807 /* Global.swift */; };
+		BBAB97081F97026B00E5E807 /* MusicPlayerManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = BBAB97071F97026B00E5E807 /* MusicPlayerManager.swift */; };
 		OBJ_17 /* MusicPlayer.swift in Sources */ = {isa = PBXBuildFile; fileRef = OBJ_8 /* MusicPlayer.swift */; };
 /* End PBXBuildFile section */
 
@@ -21,6 +22,7 @@
 		BBAB96FF1F94DE5100E5E807 /* VoxBridge.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = VoxBridge.swift; sourceTree = "<group>"; };
 		BBAB97001F94E6C900E5E807 /* iTunes.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = iTunes.swift; sourceTree = "<group>"; };
 		BBAB97051F94F62500E5E807 /* Global.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Global.swift; sourceTree = "<group>"; };
+		BBAB97071F97026B00E5E807 /* MusicPlayerManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MusicPlayerManager.swift; sourceTree = "<group>"; };
 		"MusicPlayer::MusicPlayer::Product" /* MusicPlayer.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = MusicPlayer.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		OBJ_6 /* Package.swift */ = {isa = PBXFileReference; explicitFileType = sourcecode.swift; path = Package.swift; sourceTree = "<group>"; };
 		OBJ_8 /* MusicPlayer.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MusicPlayer.swift; sourceTree = "<group>"; };
@@ -69,6 +71,7 @@
 			children = (
 				BBAB96FC1F94DE5100E5E807 /* BridgeHeader */,
 				OBJ_8 /* MusicPlayer.swift */,
+				BBAB97071F97026B00E5E807 /* MusicPlayerManager.swift */,
 				BBAB97001F94E6C900E5E807 /* iTunes.swift */,
 				BBAB97051F94F62500E5E807 /* Global.swift */,
 			);
@@ -125,6 +128,7 @@
 			buildActionMask = 0;
 			files = (
 				OBJ_17 /* MusicPlayer.swift in Sources */,
+				BBAB97081F97026B00E5E807 /* MusicPlayerManager.swift in Sources */,
 				BBAB97031F94E7AC00E5E807 /* SpotifyBridge.swift in Sources */,
 				BBAB97061F94F62500E5E807 /* Global.swift in Sources */,
 				BBAB97011F94E6C900E5E807 /* iTunes.swift in Sources */,

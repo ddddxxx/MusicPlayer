@@ -46,9 +46,9 @@ public enum MusicShuffleMode {
 
 public protocol MusicPlayerDelegate: class {
     
+    func currentTrackChanged(track: MusicTrack?, from player: MusicPlayer)
     func playbackStateChanged(state: MusicPlaybackState, from player: MusicPlayer)
     func playerPositionMutated(position: TimeInterval, from player: MusicPlayer)
-    func currentTrackChanged(track: MusicTrack?, from player: MusicPlayer)
 }
 
 public protocol MusicPlayer {
