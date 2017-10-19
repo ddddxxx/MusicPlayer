@@ -44,14 +44,14 @@ public enum MusicShuffleMode {
 
 public enum MusicPlayerName: String {
     
-    case itunes = "iTunes"
-//    case spotify
+    case itunes     = "iTunes"
+    case spotify    = "Spotify"
 //    case vox
     
     var bundleID: String {
         switch self {
         case .itunes:   return "com.apple.iTunes"
-//        case .spotify:  return "com.spotify.client"
+        case .spotify:  return "com.spotify.client"
 //        case .vox:      return "com.coppertino.Vox"
         }
     }
@@ -59,10 +59,11 @@ public enum MusicPlayerName: String {
     var cls: MusicPlayer.Type {
         switch self {
         case .itunes:   return iTunes.self
+        case .spotify:  return Spotify.self
         }
     }
     
-    static let all: [MusicPlayerName] = [.itunes]
+    static let all: [MusicPlayerName] = [.itunes, .spotify]
 }
 
 // MARK: -
