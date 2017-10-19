@@ -29,7 +29,7 @@ public protocol MusicPlayerManagerDelegate: class {
     func playerPositionMutated(position: TimeInterval)
 }
 
-class MusicPlayerManager {
+class MusicPlayerManager: MusicPlayerDelegate {
     
     public static let shared = MusicPlayerManager()
     
@@ -40,12 +40,17 @@ class MusicPlayerManager {
     
     public var preferredPlayerName: MusicPlayerName? {
         didSet {
-            guard let name = preferredPlayerName,
-                oldValue != name else {
-                    return
+            guard oldValue != preferredPlayerName else { return }
+            let newPlayer: MusicPlayer?
+            if let name = preferredPlayerName {
+                newPlayer = players.first { type(of: $0) == name.cls }
+            } else {
+                newPlayer = players.first { $0.playbackState == .playing }
             }
-            player = players.first { type(of: $0) == name.cls }
-            delegate?.currentPlayerChanged(player: player)
+            if newPlayer !== player {
+                player = newPlayer
+                delegate?.currentPlayerChanged(player: player)
+            }
         }
     }
     
@@ -57,11 +62,31 @@ class MusicPlayerManager {
     }
     
     @objc func update() {
+        // TODO: running state change delegate
         player?.updatePlayerState()
     }
     
-    func updateSelectedPlayer() {
-        guard preferredPlayerName == nil else { return }
+    // MARK: - MusicPlayerDelegate
+    
+    func currentTrackChanged(track: MusicTrack?, from player: MusicPlayer) {
+        if self.player === player {
+            delegate?.currentTrackChanged(track: track)
+        }
     }
-
+    
+    func playbackStateChanged(state: MusicPlaybackState, from player: MusicPlayer) {
+        if self.player == nil, state == .playing {
+            self.player = player
+            delegate?.currentPlayerChanged(player: player)
+        }
+        if self.player === player {
+            delegate?.playbackStateChanged(state: state)
+        }
+    }
+    
+    func playerPositionMutated(position: TimeInterval, from player: MusicPlayer) {
+        if self.player === player {
+            delegate?.playerPositionMutated(position: position)
+        }
+    }
 }

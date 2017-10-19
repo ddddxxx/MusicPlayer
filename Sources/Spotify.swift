@@ -142,8 +142,8 @@ extension Spotify: MusicPlayer {
     }
     
     func stop() {
-        // NOTE: Spotify cannot stop
         guard autoLaunch || isRunning else { return }
+        // NOTE: not support
         _spotify.pause?()
     }
     
@@ -208,7 +208,7 @@ extension Spotify.Track: MusicTrack {
         }
     }
     
-    // NOTE: Spotify doesn't support lyrics
+    // NOTE: not support
     public var lyrics: String? {
         get { return nil }
         set {}
