@@ -59,9 +59,10 @@ public final class iTunes {
     
     func playerInfoNotification(_ n: Notification) {
         guard autoLaunch || isRunning else { return }
-        var track = _iTunes.currentTrack.map(Track.init)
         let state = _iTunes.playerState?.state ?? .stopped
-        guard track?._id != _currentTrack?._id else {
+        let id = n.userInfo?["PersistentID"] as? Int64
+        guard id != _currentTrack?.persistentID else {
+            var track = _iTunes.currentTrack.map(Track.init)
             if let loc = n.userInfo?["Location"] as? String {
                 track?.url = URL(string: loc)
             }
@@ -228,6 +229,14 @@ extension iTunes.Track: MusicTrack {
     
     var _id: Int {
         return _iTunesTrack.id?() ?? 0
+    }
+    
+    var persistentID: Int64? {
+        guard let idStr = _iTunesTrack.persistentID ?? nil,
+            let uid = UInt64(idStr, radix: 16) else {
+            return nil
+        }
+        return Int64.init(bitPattern: uid)
     }
     
     public var id: String {
