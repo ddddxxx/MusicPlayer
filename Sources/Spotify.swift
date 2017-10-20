@@ -21,7 +21,7 @@
 import Cocoa
 import ScriptingBridge
 
-final class Spotify {
+final public class Spotify {
     
     public struct Track {
         
@@ -41,7 +41,7 @@ final class Spotify {
     private var _playbackState: MusicPlaybackState = .stopped
     private var _startTime: Date?
     
-    init?() {
+    public init?() {
         guard let spotify = SBApplication(bundleIdentifier: Spotify.name.bundleID) else {
             return nil
         }
@@ -88,13 +88,13 @@ final class Spotify {
 
 extension Spotify: MusicPlayer {
     
-    static var name: MusicPlayerName = .spotify
+    public static var name: MusicPlayerName = .spotify
     
-    var playbackState: MusicPlaybackState {
+    public var playbackState: MusicPlaybackState {
         return _playbackState
     }
     
-    var repeatMode: MusicRepeatMode {
+    public var repeatMode: MusicRepeatMode {
         get {
             guard autoLaunch || isRunning else { return .off }
             return _spotify.repeating == true ? .all : .off
@@ -106,7 +106,7 @@ extension Spotify: MusicPlayer {
         }
     }
     
-    var shuffleMode: MusicShuffleMode {
+    public var shuffleMode: MusicShuffleMode {
         get {
             guard autoLaunch || isRunning else { return .off }
             return _spotify.shuffling == true ? .groupings : .off
@@ -118,11 +118,11 @@ extension Spotify: MusicPlayer {
         }
     }
     
-    var currentTrack: MusicTrack? {
+    public var currentTrack: MusicTrack? {
         return _currentTrack
     }
     
-    var playerPosition: TimeInterval {
+    public var playerPosition: TimeInterval {
         get {
             guard autoLaunch || isRunning else { return 0 }
             guard let _startTime = _startTime else { return 0 }
@@ -136,32 +136,32 @@ extension Spotify: MusicPlayer {
         }
     }
     
-    func playpause() {
+    public func playpause() {
         guard autoLaunch || isRunning else { return }
         _spotify.playpause?()
     }
     
-    func stop() {
+    public func stop() {
         guard autoLaunch || isRunning else { return }
         // NOTE: not support
         _spotify.pause?()
     }
     
-    func skipToNext() {
+    public func skipToNext() {
         guard autoLaunch || isRunning else { return }
         _spotify.nextTrack?()
     }
     
-    func skipToPrevious() {
+    public func skipToPrevious() {
         guard autoLaunch || isRunning else { return }
         _spotify.previousTrack?()
     }
     
-    func updatePlayerState() {
+    public func updatePlayerState() {
         updatePlayerPosition()
     }
     
-    var originalPlayer: SBApplication {
+    public var originalPlayer: SBApplication {
         return _spotify as! SBApplication
     }
 }
