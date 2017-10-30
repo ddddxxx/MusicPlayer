@@ -6,9 +6,30 @@
 	objectVersion = 46;
 	objects = {
 
+/* Begin PBXBuildFile section */
+		BB4807FE1F97B6C20043A08F /* Spotify.swift in Sources */ = {isa = PBXBuildFile; fileRef = BB4807FD1F97B6C20043A08F /* Spotify.swift */; };
+		BB4808021F99AE030043A08F /* Vox.swift in Sources */ = {isa = PBXBuildFile; fileRef = BB4808011F99AE030043A08F /* Vox.swift */; };
+		BBAB97011F94E6C900E5E807 /* iTunes.swift in Sources */ = {isa = PBXBuildFile; fileRef = BBAB97001F94E6C900E5E807 /* iTunes.swift */; };
+		BBAB97021F94E7AC00E5E807 /* iTunesBridge.swift in Sources */ = {isa = PBXBuildFile; fileRef = BBAB96FE1F94DE5100E5E807 /* iTunesBridge.swift */; };
+		BBAB97031F94E7AC00E5E807 /* SpotifyBridge.swift in Sources */ = {isa = PBXBuildFile; fileRef = BBAB96FD1F94DE5100E5E807 /* SpotifyBridge.swift */; };
+		BBAB97041F94E7AC00E5E807 /* VoxBridge.swift in Sources */ = {isa = PBXBuildFile; fileRef = BBAB96FF1F94DE5100E5E807 /* VoxBridge.swift */; };
+		BBAB97061F94F62500E5E807 /* Global.swift in Sources */ = {isa = PBXBuildFile; fileRef = BBAB97051F94F62500E5E807 /* Global.swift */; };
+		BBAB97081F97026B00E5E807 /* MusicPlayerManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = BBAB97071F97026B00E5E807 /* MusicPlayerManager.swift */; };
+		OBJ_17 /* MusicPlayer.swift in Sources */ = {isa = PBXBuildFile; fileRef = OBJ_8 /* MusicPlayer.swift */; };
+/* End PBXBuildFile section */
+
 /* Begin PBXFileReference section */
-		OBJ_11 /* MusicPlayer.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = MusicPlayer.framework; sourceTree = BUILT_PRODUCTS_DIR; };
+		BB4807FD1F97B6C20043A08F /* Spotify.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Spotify.swift; sourceTree = "<group>"; };
+		BB4808011F99AE030043A08F /* Vox.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Vox.swift; sourceTree = "<group>"; };
+		BBAB96FD1F94DE5100E5E807 /* SpotifyBridge.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SpotifyBridge.swift; sourceTree = "<group>"; };
+		BBAB96FE1F94DE5100E5E807 /* iTunesBridge.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = iTunesBridge.swift; sourceTree = "<group>"; };
+		BBAB96FF1F94DE5100E5E807 /* VoxBridge.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = VoxBridge.swift; sourceTree = "<group>"; };
+		BBAB97001F94E6C900E5E807 /* iTunes.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = iTunes.swift; sourceTree = "<group>"; };
+		BBAB97051F94F62500E5E807 /* Global.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Global.swift; sourceTree = "<group>"; };
+		BBAB97071F97026B00E5E807 /* MusicPlayerManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MusicPlayerManager.swift; sourceTree = "<group>"; };
+		"MusicPlayer::MusicPlayer::Product" /* MusicPlayer.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = MusicPlayer.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		OBJ_6 /* Package.swift */ = {isa = PBXFileReference; explicitFileType = sourcecode.swift; path = Package.swift; sourceTree = "<group>"; };
+		OBJ_8 /* MusicPlayer.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MusicPlayer.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -22,27 +43,43 @@
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
+		BBAB96FC1F94DE5100E5E807 /* BridgeHeader */ = {
+			isa = PBXGroup;
+			children = (
+				BBAB96FE1F94DE5100E5E807 /* iTunesBridge.swift */,
+				BBAB96FD1F94DE5100E5E807 /* SpotifyBridge.swift */,
+				BBAB96FF1F94DE5100E5E807 /* VoxBridge.swift */,
+			);
+			path = BridgeHeader;
+			sourceTree = "<group>";
+		};
 		OBJ_10 /* Products */ = {
 			isa = PBXGroup;
 			children = (
-				OBJ_11 /* MusicPlayer.framework */,
+				"MusicPlayer::MusicPlayer::Product" /* MusicPlayer.framework */,
 			);
 			name = Products;
 			sourceTree = BUILT_PRODUCTS_DIR;
 		};
-		OBJ_5 /*  */ = {
+		OBJ_5 = {
 			isa = PBXGroup;
 			children = (
 				OBJ_6 /* Package.swift */,
 				OBJ_7 /* Sources */,
 				OBJ_10 /* Products */,
 			);
-			name = "";
 			sourceTree = "<group>";
 		};
 		OBJ_7 /* Sources */ = {
 			isa = PBXGroup;
 			children = (
+				BBAB96FC1F94DE5100E5E807 /* BridgeHeader */,
+				OBJ_8 /* MusicPlayer.swift */,
+				BBAB97071F97026B00E5E807 /* MusicPlayerManager.swift */,
+				BBAB97001F94E6C900E5E807 /* iTunes.swift */,
+				BB4807FD1F97B6C20043A08F /* Spotify.swift */,
+				BB4808011F99AE030043A08F /* Vox.swift */,
+				BBAB97051F94F62500E5E807 /* Global.swift */,
 			);
 			path = Sources;
 			sourceTree = SOURCE_ROOT;
@@ -50,7 +87,7 @@
 /* End PBXGroup section */
 
 /* Begin PBXNativeTarget section */
-		OBJ_12 /* MusicPlayer */ = {
+		"MusicPlayer::MusicPlayer" /* MusicPlayer */ = {
 			isa = PBXNativeTarget;
 			buildConfigurationList = OBJ_13 /* Build configuration list for PBXNativeTarget "MusicPlayer" */;
 			buildPhases = (
@@ -63,7 +100,7 @@
 			);
 			name = MusicPlayer;
 			productName = MusicPlayer;
-			productReference = OBJ_11 /* MusicPlayer.framework */;
+			productReference = "MusicPlayer::MusicPlayer::Product" /* MusicPlayer.framework */;
 			productType = "com.apple.product-type.framework";
 		};
 /* End PBXNativeTarget section */
@@ -81,12 +118,12 @@
 			knownRegions = (
 				en,
 			);
-			mainGroup = OBJ_5 /*  */;
+			mainGroup = OBJ_5;
 			productRefGroup = OBJ_10 /* Products */;
 			projectDirPath = "";
 			projectRoot = "";
 			targets = (
-				OBJ_12 /* MusicPlayer */,
+				"MusicPlayer::MusicPlayer" /* MusicPlayer */,
 			);
 		};
 /* End PBXProject section */
@@ -96,6 +133,15 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 0;
 			files = (
+				OBJ_17 /* MusicPlayer.swift in Sources */,
+				BBAB97081F97026B00E5E807 /* MusicPlayerManager.swift in Sources */,
+				BB4808021F99AE030043A08F /* Vox.swift in Sources */,
+				BBAB97031F94E7AC00E5E807 /* SpotifyBridge.swift in Sources */,
+				BBAB97061F94F62500E5E807 /* Global.swift in Sources */,
+				BBAB97011F94E6C900E5E807 /* iTunes.swift in Sources */,
+				BBAB97021F94E7AC00E5E807 /* iTunesBridge.swift in Sources */,
+				BB4807FE1F97B6C20043A08F /* Spotify.swift in Sources */,
+				BBAB97041F94E7AC00E5E807 /* VoxBridge.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -110,13 +156,11 @@
 					"$(inherited)",
 					"$(PLATFORM_DIR)/Developer/Library/Frameworks",
 				);
-				HEADER_SEARCH_PATHS = "$(inherited)";
 				INFOPLIST_FILE = MusicPlayer.xcodeproj/MusicPlayer_Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = "$(TOOLCHAIN_DIR)/usr/lib/swift/macosx";
-				MACOSX_DEPLOYMENT_TARGET = 10.9;
 				OTHER_LDFLAGS = "$(inherited)";
 				OTHER_SWIFT_FLAGS = "$(inherited)";
-				PRODUCT_BUNDLE_IDENTIFIER = MusicPlayer;
+				PRODUCT_BUNDLE_IDENTIFIER = ddddxxx.LyricsX.MusicPlayer;
 				PRODUCT_MODULE_NAME = "$(TARGET_NAME:c99extidentifier)";
 				PRODUCT_NAME = "$(TARGET_NAME:c99extidentifier)";
 				SKIP_INSTALL = YES;
@@ -132,13 +176,11 @@
 					"$(inherited)",
 					"$(PLATFORM_DIR)/Developer/Library/Frameworks",
 				);
-				HEADER_SEARCH_PATHS = "$(inherited)";
 				INFOPLIST_FILE = MusicPlayer.xcodeproj/MusicPlayer_Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = "$(TOOLCHAIN_DIR)/usr/lib/swift/macosx";
-				MACOSX_DEPLOYMENT_TARGET = 10.9;
 				OTHER_LDFLAGS = "$(inherited)";
 				OTHER_SWIFT_FLAGS = "$(inherited)";
-				PRODUCT_BUNDLE_IDENTIFIER = MusicPlayer;
+				PRODUCT_BUNDLE_IDENTIFIER = ddddxxx.LyricsX.MusicPlayer;
 				PRODUCT_MODULE_NAME = "$(TARGET_NAME:c99extidentifier)";
 				PRODUCT_NAME = "$(TARGET_NAME:c99extidentifier)";
 				SKIP_INSTALL = YES;
@@ -156,7 +198,7 @@
 				DYLIB_INSTALL_NAME_BASE = "@rpath";
 				ENABLE_NS_ASSERTIONS = YES;
 				GCC_OPTIMIZATION_LEVEL = 0;
-				MACOSX_DEPLOYMENT_TARGET = 10.10;
+				MACOSX_DEPLOYMENT_TARGET = 10.9;
 				ONLY_ACTIVE_ARCH = YES;
 				OTHER_SWIFT_FLAGS = "-DXcode";
 				PRODUCT_NAME = "$(TARGET_NAME)";
@@ -164,7 +206,7 @@
 				SUPPORTED_PLATFORMS = "macosx iphoneos iphonesimulator appletvos appletvsimulator watchos watchsimulator";
 				SWIFT_ACTIVE_COMPILATION_CONDITIONS = SWIFT_PACKAGE;
 				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
-				SWIFT_VERSION = 3.0;
+				SWIFT_VERSION = 4.0;
 				USE_HEADERMAP = NO;
 			};
 			name = Debug;
@@ -178,14 +220,14 @@
 				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
 				DYLIB_INSTALL_NAME_BASE = "@rpath";
 				GCC_OPTIMIZATION_LEVEL = s;
-				MACOSX_DEPLOYMENT_TARGET = 10.10;
+				MACOSX_DEPLOYMENT_TARGET = 10.9;
 				OTHER_SWIFT_FLAGS = "-DXcode";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SDKROOT = macosx;
 				SUPPORTED_PLATFORMS = "macosx iphoneos iphonesimulator appletvos appletvsimulator watchos watchsimulator";
 				SWIFT_ACTIVE_COMPILATION_CONDITIONS = SWIFT_PACKAGE;
 				SWIFT_OPTIMIZATION_LEVEL = "-Owholemodule";
-				SWIFT_VERSION = 3.0;
+				SWIFT_VERSION = 4.0;
 				USE_HEADERMAP = NO;
 			};
 			name = Release;
