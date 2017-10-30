@@ -22,7 +22,9 @@ import Foundation
 
 let notificationQueue = OperationQueue()
 
-let positionMutateThreshold: TimeInterval = 1
+let positionMutateThreshold = 1.0
+
+let manualUpdateInterval = 0.5
 
 extension Notification.Name {
     static let iTunesPlayerInfo = Notification.Name("com.apple.iTunes.playerInfo")
