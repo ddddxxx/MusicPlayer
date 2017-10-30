@@ -29,11 +29,11 @@ public protocol MusicPlayerManagerDelegate: class {
     func playerPositionMutated(position: TimeInterval)
 }
 
-class MusicPlayerManager: MusicPlayerDelegate {
+public class MusicPlayerManager: MusicPlayerDelegate {
     
     public static let shared = MusicPlayerManager()
     
-    public weak var delegate: MusicPlayerManagerDelegate?
+    public var delegate: MusicPlayerManagerDelegate?
     
     public private(set) var players: [MusicPlayer]
     public private(set) weak var player: MusicPlayer?
@@ -58,33 +58,40 @@ class MusicPlayerManager: MusicPlayerDelegate {
     
     private init() {
         players = MusicPlayerName.all.flatMap { $0.cls.init() }
+        players.forEach { $0.delegate = self }
+        player = players.first { $0.playbackState == .playing }
         _timer = Timer.scheduledTimer(timeInterval: 0.5, target: self, selector: #selector(update), userInfo: nil, repeats: true)
     }
     
     @objc func update() {
         // TODO: running state change delegate
-        player?.updatePlayerState()
+        if player?.playbackState.isPlaying == true {
+            player?.updatePlayerState()
+        } else {
+            players.filter { type(of: $0).needsUpdate }.forEach { $0.updatePlayerState() }
+        }
     }
     
     // MARK: - MusicPlayerDelegate
     
-    func currentTrackChanged(track: MusicTrack?, from player: MusicPlayer) {
+    public func currentTrackChanged(track: MusicTrack?, from player: MusicPlayer) {
         if self.player === player {
             delegate?.currentTrackChanged(track: track)
         }
     }
     
-    func playbackStateChanged(state: MusicPlaybackState, from player: MusicPlayer) {
-        if self.player == nil, state == .playing {
+    public func playbackStateChanged(state: MusicPlaybackState, from player: MusicPlayer) {
+        if self.player === player {
+            delegate?.playbackStateChanged(state: state)
+            return
+        }
+        if self.player?.playbackState.isPlaying != true, state == .playing {
             self.player = player
             delegate?.currentPlayerChanged(player: player)
         }
-        if self.player === player {
-            delegate?.playbackStateChanged(state: state)
-        }
     }
     
-    func playerPositionMutated(position: TimeInterval, from player: MusicPlayer) {
+    public func playerPositionMutated(position: TimeInterval, from player: MusicPlayer) {
         if self.player === player {
             delegate?.playerPositionMutated(position: position)
         }

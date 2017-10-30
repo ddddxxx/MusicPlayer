@@ -40,6 +40,7 @@ final public class Spotify {
     private var _currentTrack: Track?
     private var _playbackState: MusicPlaybackState = .stopped
     private var _startTime: Date?
+    private var _pausePosition: Double?
     
     public init?() {
         guard let spotify = SBApplication(bundleIdentifier: Spotify.name.bundleID) else {
@@ -59,16 +60,17 @@ final public class Spotify {
         guard autoLaunch || isRunning else { return }
         let track = _spotify.currentTrack.map(Track.init)
         let state = _spotify.playerState?.state ?? .stopped
-        guard track?.id != _currentTrack?.id else {
+        guard track?.id == _currentTrack?.id else {
             _currentTrack = track
             _playbackState = state
             _startTime = _spotify.startTime
             delegate?.currentTrackChanged(track: track, from: self)
             return
         }
-        guard state != _playbackState else {
+        guard state == _playbackState else {
             _playbackState = state
             _startTime = _spotify.startTime
+            _pausePosition = playerPosition
             delegate?.playbackStateChanged(state: state, from: self)
             return
         }
@@ -77,11 +79,21 @@ final public class Spotify {
     
     func updatePlayerPosition() {
         guard autoLaunch || isRunning else { return }
-        if let _startTime = _startTime,
-            let startTime = _spotify.startTime,
-            abs(startTime.timeIntervalSince(_startTime)) > positionMutateThreshold {
-            self._startTime = startTime
-            delegate?.playerPositionMutated(position: playerPosition, from: self)
+        if _playbackState.isPlaying {
+            if let _startTime = _startTime,
+                let startTime = _spotify.startTime,
+                abs(startTime.timeIntervalSince(_startTime)) > positionMutateThreshold {
+                self._startTime = startTime
+                delegate?.playerPositionMutated(position: playerPosition, from: self)
+            }
+        } else {
+            if let _pausePosition = _pausePosition,
+                let pausePosition = _spotify.playerPosition,
+                abs(_pausePosition - pausePosition) > positionMutateThreshold {
+                self._pausePosition = pausePosition
+                self.playerPosition = pausePosition
+                delegate?.playerPositionMutated(position: playerPosition, from: self)
+            }
         }
     }
 }
@@ -89,6 +101,8 @@ final public class Spotify {
 extension Spotify: MusicPlayer {
     
     public static var name: MusicPlayerName = .spotify
+    
+    public static var needsUpdate = false
     
     public var playbackState: MusicPlaybackState {
         return _playbackState

@@ -46,13 +46,13 @@ public enum MusicPlayerName: String {
     
     case itunes     = "iTunes"
     case spotify    = "Spotify"
-//    case vox
+    case vox        = "Vox"
     
     var bundleID: String {
         switch self {
         case .itunes:   return "com.apple.iTunes"
         case .spotify:  return "com.spotify.client"
-//        case .vox:      return "com.coppertino.Vox"
+        case .vox:      return "com.coppertino.Vox"
         }
     }
     
@@ -60,10 +60,11 @@ public enum MusicPlayerName: String {
         switch self {
         case .itunes:   return iTunes.self
         case .spotify:  return Spotify.self
+        case .vox:      return Vox.self
         }
     }
     
-    static let all: [MusicPlayerName] = [.itunes, .spotify]
+    static let all: [MusicPlayerName] = [.itunes, .spotify, .vox]
 }
 
 // MARK: -
@@ -78,6 +79,7 @@ public protocol MusicPlayerDelegate: class {
 public protocol MusicPlayer: class {
     
     static var name: MusicPlayerName { get }
+    static var needsUpdate: Bool { get }
     
     init?()
     
@@ -117,6 +119,18 @@ public protocol MusicTrack {
 }
 
 // MARK: -
+
+extension MusicPlaybackState {
+    
+    var isPlaying: Bool {
+        switch self {
+        case .playing, .fastForwarding, .rewinding:
+            return true
+        case .paused, .stopped:
+            return false
+        }
+    }
+}
 
 extension MusicPlayer {
     

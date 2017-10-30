@@ -42,6 +42,7 @@ public final class iTunes {
     private var _currentTrack: Track?
     private var _playbackState: MusicPlaybackState = .stopped
     private var _startTime: Date?
+    private var _pausePosition: Double?
     
     public init?() {
         guard let iTunes = SBApplication(bundleIdentifier: iTunes.name.bundleID) else {
@@ -61,7 +62,7 @@ public final class iTunes {
         guard autoLaunch || isRunning else { return }
         let state = _iTunes.playerState?.state ?? .stopped
         let id = n.userInfo?["PersistentID"] as? Int64
-        guard id != _currentTrack?.persistentID else {
+        guard id == _currentTrack?.persistentID else {
             var track = _iTunes.currentTrack.map(Track.init)
             if let loc = n.userInfo?["Location"] as? String {
                 track?.url = URL(string: loc)
@@ -72,9 +73,10 @@ public final class iTunes {
             delegate?.currentTrackChanged(track: track, from: self)
             return
         }
-        guard state != _playbackState else {
+        guard state == _playbackState else {
             _playbackState = state
             _startTime = _iTunes.startTime
+            _pausePosition = playerPosition
             delegate?.playbackStateChanged(state: state, from: self)
             return
         }
@@ -83,11 +85,21 @@ public final class iTunes {
     
     func updatePlayerPosition() {
         guard autoLaunch || isRunning else { return }
-        if let _startTime = _startTime,
-            let startTime = _iTunes.startTime,
-            abs(startTime.timeIntervalSince(_startTime)) > positionMutateThreshold {
-            self._startTime = startTime
-            delegate?.playerPositionMutated(position: playerPosition, from: self)
+        if _playbackState.isPlaying {
+            if let _startTime = _startTime,
+                let startTime = _iTunes.startTime,
+                abs(startTime.timeIntervalSince(_startTime)) > positionMutateThreshold {
+                self._startTime = startTime
+                delegate?.playerPositionMutated(position: playerPosition, from: self)
+            }
+        } else {
+            if let _pausePosition = _pausePosition,
+                let pausePosition = _iTunes.playerPosition,
+                abs(_pausePosition - pausePosition) > positionMutateThreshold {
+                self._pausePosition = pausePosition
+                self.playerPosition = pausePosition
+                delegate?.playerPositionMutated(position: playerPosition, from: self)
+            }
         }
     }
 }
@@ -95,6 +107,8 @@ public final class iTunes {
 extension iTunes: MusicPlayer {
     
     public static var name: MusicPlayerName = .itunes
+    
+    public static var needsUpdate = false
     
     public var playbackState: MusicPlaybackState {
         return _playbackState

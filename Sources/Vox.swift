@@ -46,6 +46,7 @@ final public class Vox {
     private var _currentTrack: Track?
     private var _playbackState: MusicPlaybackState = .stopped
     private var _startTime: Date?
+    private var _pausePosition: Double?
     
     public init?() {
         guard let vox = SBApplication(bundleIdentifier: Vox.name.bundleID) else {
@@ -64,7 +65,7 @@ final public class Vox {
     func trackChangeNotification(_ n: Notification) {
         guard autoLaunch || isRunning else { return }
         let id = _vox.uniqueID ?? nil
-        guard id != _currentTrack?.id else {
+        guard id == _currentTrack?.id else {
             _currentTrack = _vox.currentTrack
             _playbackState = _vox.playerState == 1 ? .playing : .paused
             _startTime = _vox.startTime
@@ -77,24 +78,37 @@ final public class Vox {
     public func updatePlayerState() {
         guard autoLaunch || isRunning else { return }
         let state: MusicPlaybackState = _vox.playerState == 1 ? .playing : .paused
-        guard state != _playbackState else {
+        guard state == _playbackState else {
             _playbackState = state
             _startTime = _vox.startTime
+            _pausePosition = playerPosition
             delegate?.playbackStateChanged(state: state, from: self)
             return
         }
-        if let _startTime = _startTime,
-            let startTime = _vox.startTime,
-            abs(startTime.timeIntervalSince(_startTime)) > positionMutateThreshold {
-            self._startTime = startTime
-            delegate?.playerPositionMutated(position: playerPosition, from: self)
+        if _playbackState.isPlaying {
+            if let _startTime = _startTime,
+                let startTime = _vox.startTime,
+                abs(startTime.timeIntervalSince(_startTime)) > positionMutateThreshold {
+                self._startTime = startTime
+                delegate?.playerPositionMutated(position: playerPosition, from: self)
+            }
+        } else {
+            if let _pausePosition = _pausePosition,
+                let pausePosition = _vox.currentTime,
+                abs(_pausePosition - pausePosition) > positionMutateThreshold {
+                self._pausePosition = pausePosition
+                self.playerPosition = pausePosition
+                delegate?.playerPositionMutated(position: playerPosition, from: self)
+            }
         }
     }
 }
 
 extension Vox: MusicPlayer {
     
-    public static var name: MusicPlayerName = .spotify
+    public static var name: MusicPlayerName = .vox
+    
+    public static var needsUpdate = true
     
     public var playbackState: MusicPlaybackState {
         guard autoLaunch || isRunning else { return .stopped }
