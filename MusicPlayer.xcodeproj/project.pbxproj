@@ -8,6 +8,7 @@
 
 /* Begin PBXBuildFile section */
 		BB4807FE1F97B6C20043A08F /* Spotify.swift in Sources */ = {isa = PBXBuildFile; fileRef = BB4807FD1F97B6C20043A08F /* Spotify.swift */; };
+		BB4808021F99AE030043A08F /* Vox.swift in Sources */ = {isa = PBXBuildFile; fileRef = BB4808011F99AE030043A08F /* Vox.swift */; };
 		BBAB97011F94E6C900E5E807 /* iTunes.swift in Sources */ = {isa = PBXBuildFile; fileRef = BBAB97001F94E6C900E5E807 /* iTunes.swift */; };
 		BBAB97021F94E7AC00E5E807 /* iTunesBridge.swift in Sources */ = {isa = PBXBuildFile; fileRef = BBAB96FE1F94DE5100E5E807 /* iTunesBridge.swift */; };
 		BBAB97031F94E7AC00E5E807 /* SpotifyBridge.swift in Sources */ = {isa = PBXBuildFile; fileRef = BBAB96FD1F94DE5100E5E807 /* SpotifyBridge.swift */; };
@@ -19,6 +20,7 @@
 
 /* Begin PBXFileReference section */
 		BB4807FD1F97B6C20043A08F /* Spotify.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Spotify.swift; sourceTree = "<group>"; };
+		BB4808011F99AE030043A08F /* Vox.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Vox.swift; sourceTree = "<group>"; };
 		BBAB96FD1F94DE5100E5E807 /* SpotifyBridge.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SpotifyBridge.swift; sourceTree = "<group>"; };
 		BBAB96FE1F94DE5100E5E807 /* iTunesBridge.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = iTunesBridge.swift; sourceTree = "<group>"; };
 		BBAB96FF1F94DE5100E5E807 /* VoxBridge.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = VoxBridge.swift; sourceTree = "<group>"; };
@@ -76,6 +78,7 @@
 				BBAB97071F97026B00E5E807 /* MusicPlayerManager.swift */,
 				BBAB97001F94E6C900E5E807 /* iTunes.swift */,
 				BB4807FD1F97B6C20043A08F /* Spotify.swift */,
+				BB4808011F99AE030043A08F /* Vox.swift */,
 				BBAB97051F94F62500E5E807 /* Global.swift */,
 			);
 			path = Sources;
@@ -132,6 +135,7 @@
 			files = (
 				OBJ_17 /* MusicPlayer.swift in Sources */,
 				BBAB97081F97026B00E5E807 /* MusicPlayerManager.swift in Sources */,
+				BB4808021F99AE030043A08F /* Vox.swift in Sources */,
 				BBAB97031F94E7AC00E5E807 /* SpotifyBridge.swift in Sources */,
 				BBAB97061F94F62500E5E807 /* Global.swift in Sources */,
 				BBAB97011F94E6C900E5E807 /* iTunes.swift in Sources */,
