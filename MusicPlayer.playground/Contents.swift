@@ -34,8 +34,11 @@ class MusicPlayerManagerObserver: MusicPlayerManagerDelegate {
     }
 }
 
-MusicPlayerManager.shared.delegate = MusicPlayerManagerObserver()
-MusicPlayerManager.shared.player
+let manager = MusicPlayerManager()
+let observer = MusicPlayerManagerObserver()
+
+manager.delegate = observer
+manager.player
 
 //PlaygroundPage.current.finishExecution()
 

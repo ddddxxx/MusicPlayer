@@ -31,9 +31,7 @@ public protocol MusicPlayerManagerDelegate: class {
 
 public class MusicPlayerManager: MusicPlayerDelegate {
     
-    public static let shared = MusicPlayerManager()
-    
-    public var delegate: MusicPlayerManagerDelegate?
+    public weak var delegate: MusicPlayerManagerDelegate?
     
     public private(set) var players: [MusicPlayer]
     public private(set) weak var player: MusicPlayer?
@@ -56,7 +54,7 @@ public class MusicPlayerManager: MusicPlayerDelegate {
     
     private var _timer: Timer!
     
-    private init() {
+    public init() {
         players = MusicPlayerName.all.flatMap { $0.cls.init() }
         players.forEach { $0.delegate = self }
         player = players.first { $0.playbackState.isPlaying }

@@ -53,7 +53,7 @@ final public class Spotify {
             _startTime = _spotify.startTime
         }
         
-        DistributedNotificationCenter.default.addObserver(forName: .SpotifyPlayerInfo, object: nil, queue: notificationQueue, using: playerInfoNotification)
+        DistributedNotificationCenter.default.addObserver(forName: .SpotifyPlayerInfo, object: nil, queue: OperationQueue(), using: playerInfoNotification)
     }
     
     func playerInfoNotification(_ n: Notification) {

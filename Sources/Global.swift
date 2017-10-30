@@ -20,8 +20,6 @@
 
 import Foundation
 
-let notificationQueue = OperationQueue()
-
 let positionMutateThreshold = 1.0
 
 let manualUpdateInterval = 0.5

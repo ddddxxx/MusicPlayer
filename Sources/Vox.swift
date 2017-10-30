@@ -59,7 +59,7 @@ final public class Vox {
             _startTime = _vox.startTime
         }
         
-        DistributedNotificationCenter.default.addObserver(forName: .VoxTrackChanged, object: nil, queue: notificationQueue, using: trackChangeNotification)
+        DistributedNotificationCenter.default.addObserver(forName: .VoxTrackChanged, object: nil, queue: OperationQueue(), using: trackChangeNotification)
     }
     
     func trackChangeNotification(_ n: Notification) {
