@@ -59,7 +59,7 @@ public class MusicPlayerManager: MusicPlayerDelegate {
     private init() {
         players = MusicPlayerName.all.flatMap { $0.cls.init() }
         players.forEach { $0.delegate = self }
-        player = players.first { $0.playbackState == .playing }
+        player = players.first { $0.playbackState.isPlaying }
         _timer = Timer.scheduledTimer(timeInterval: 0.5, target: self, selector: #selector(update), userInfo: nil, repeats: true)
     }
     
@@ -75,25 +75,33 @@ public class MusicPlayerManager: MusicPlayerDelegate {
     // MARK: - MusicPlayerDelegate
     
     public func currentTrackChanged(track: MusicTrack?, from player: MusicPlayer) {
-        if self.player === player {
-            delegate?.currentTrackChanged(track: track)
+        guard self.player === player else {
+            return
         }
+        delegate?.currentTrackChanged(track: track)
     }
     
     public func playbackStateChanged(state: MusicPlaybackState, from player: MusicPlayer) {
-        if self.player === player {
-            delegate?.playbackStateChanged(state: state)
+        guard self.player === player else {
+            if self.player?.playbackState.isPlaying != true, state == .playing {
+                self.player = player
+                delegate?.currentPlayerChanged(player: player)
+            }
             return
         }
-        if self.player?.playbackState.isPlaying != true, state == .playing {
-            self.player = player
-            delegate?.currentPlayerChanged(player: player)
+        if !state.isPlaying,
+            let newPlayer = players.first(where: { $0.playbackState.isPlaying }) {
+            self.player = newPlayer
+            delegate?.currentPlayerChanged(player: newPlayer)
+        } else {
+            delegate?.playbackStateChanged(state: state)
         }
     }
     
     public func playerPositionMutated(position: TimeInterval, from player: MusicPlayer) {
-        if self.player === player {
-            delegate?.playerPositionMutated(position: position)
+        guard self.player === player else {
+            return
         }
+        delegate?.playerPositionMutated(position: position)
     }
 }
