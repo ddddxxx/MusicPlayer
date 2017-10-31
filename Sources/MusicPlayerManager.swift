@@ -39,16 +39,7 @@ public class MusicPlayerManager: MusicPlayerDelegate {
     public var preferredPlayerName: MusicPlayerName? {
         didSet {
             guard oldValue != preferredPlayerName else { return }
-            let newPlayer: MusicPlayer?
-            if let name = preferredPlayerName {
-                newPlayer = players.first { type(of: $0) == name.cls }
-            } else {
-                newPlayer = players.first { $0.playbackState == .playing }
-            }
-            if newPlayer !== player {
-                player = newPlayer
-                delegate?.currentPlayerChanged(player: player)
-            }
+            _ = selectNewPlayer()
         }
     }
     
@@ -57,16 +48,36 @@ public class MusicPlayerManager: MusicPlayerDelegate {
     public init() {
         players = MusicPlayerName.all.flatMap { $0.cls.init() }
         players.forEach { $0.delegate = self }
-        player = players.first { $0.playbackState.isPlaying }
+        _ = selectNewPlayer()
         _timer = Timer.scheduledTimer(timeInterval: manualUpdateInterval, target: self, selector: #selector(update), userInfo: nil, repeats: true)
     }
     
     @objc func update() {
         // TODO: running state change delegate
-        if player?.playbackState.isPlaying == true {
-            player?.updatePlayerState()
+        for p in players {
+            if type(of: p).needsUpdate || p === player {
+                p.updatePlayerState()
+            }
+        }
+    }
+    
+    func selectNewPlayer() -> Bool {
+        var newPlayer: MusicPlayer?
+        if let name = preferredPlayerName {
+            newPlayer = players.first { type(of: $0) == name.cls }
+        } else if let playing = players.first(where: { $0.playbackState == .playing }) {
+            newPlayer = playing
+        } else if player?.isRunning == true {
+            newPlayer = player
         } else {
-            players.filter { type(of: $0).needsUpdate }.forEach { $0.updatePlayerState() }
+            newPlayer = players.first { $0.isRunning }
+        }
+        if newPlayer !== player {
+            player = newPlayer
+            delegate?.currentPlayerChanged(player: player)
+            return true
+        } else {
+            return false
         }
     }
     
@@ -87,11 +98,7 @@ public class MusicPlayerManager: MusicPlayerDelegate {
             }
             return
         }
-        if !state.isPlaying,
-            let newPlayer = players.first(where: { $0.playbackState.isPlaying }) {
-            self.player = newPlayer
-            delegate?.currentPlayerChanged(player: newPlayer)
-        } else {
+        if !selectNewPlayer() {
             delegate?.playbackStateChanged(state: state)
         }
     }
