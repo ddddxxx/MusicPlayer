@@ -44,6 +44,8 @@ public final class iTunes {
     private var _startTime: Date?
     private var _pausePosition: Double?
     
+    private var observer: NSObjectProtocol?
+    
     public init?() {
         guard let iTunes = SBApplication(bundleIdentifier: iTunes.name.bundleID) else {
             return nil
@@ -55,7 +57,13 @@ public final class iTunes {
             _startTime = _iTunes.startTime
         }
         
-        DistributedNotificationCenter.default.addObserver(forName: .iTunesPlayerInfo, object: nil, queue: OperationQueue(), using: playerInfoNotification)
+        observer = DistributedNotificationCenter.default.addObserver(forName: .iTunesPlayerInfo, object: nil, queue: OperationQueue(), using: playerInfoNotification)
+    }
+    
+    deinit {
+        if let observer = observer {
+            DistributedNotificationCenter.default.removeObserver(observer)
+        }
     }
     
     func playerInfoNotification(_ n: Notification) {

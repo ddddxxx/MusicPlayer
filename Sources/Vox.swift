@@ -48,6 +48,8 @@ final public class Vox {
     private var _startTime: Date?
     private var _pausePosition: Double?
     
+    private var observer: NSObjectProtocol?
+    
     public init?() {
         guard let vox = SBApplication(bundleIdentifier: Vox.name.bundleID) else {
             return nil
@@ -59,7 +61,13 @@ final public class Vox {
             _startTime = _vox.startTime
         }
         
-        DistributedNotificationCenter.default.addObserver(forName: .VoxTrackChanged, object: nil, queue: OperationQueue(), using: trackChangeNotification)
+        observer = DistributedNotificationCenter.default.addObserver(forName: .VoxTrackChanged, object: nil, queue: OperationQueue(), using: trackChangeNotification)
+    }
+    
+    deinit {
+        if let observer = observer {
+            DistributedNotificationCenter.default.removeObserver(observer)
+        }
     }
     
     func trackChangeNotification(_ n: Notification) {

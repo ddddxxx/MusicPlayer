@@ -42,6 +42,8 @@ final public class Spotify {
     private var _startTime: Date?
     private var _pausePosition: Double?
     
+    private var observer: NSObjectProtocol?
+    
     public init?() {
         guard let spotify = SBApplication(bundleIdentifier: Spotify.name.bundleID) else {
             return nil
@@ -53,7 +55,13 @@ final public class Spotify {
             _startTime = _spotify.startTime
         }
         
-        DistributedNotificationCenter.default.addObserver(forName: .SpotifyPlayerInfo, object: nil, queue: OperationQueue(), using: playerInfoNotification)
+        observer = DistributedNotificationCenter.default.addObserver(forName: .SpotifyPlayerInfo, object: nil, queue: OperationQueue(), using: playerInfoNotification)
+    }
+    
+    deinit {
+        if let observer = observer {
+            DistributedNotificationCenter.default.removeObserver(observer)
+        }
     }
     
     func playerInfoNotification(_ n: Notification) {
