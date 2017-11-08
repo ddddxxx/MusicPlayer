@@ -65,6 +65,8 @@ public class MusicPlayerManager: MusicPlayerDelegate {
         var newPlayer: MusicPlayer?
         if let name = preferredPlayerName {
             newPlayer = players.first { type(of: $0) == name.cls }
+        } else if player?.playbackState == .playing {
+            newPlayer = player
         } else if let playing = players.first(where: { $0.playbackState == .playing }) {
             newPlayer = playing
         } else if player?.isRunning == true {

@@ -23,21 +23,12 @@ import ScriptingBridge
 
 final public class Spotify {
     
-    public struct Track {
-        
-        private var _spotifyTrack: SpotifyTrack
-        
-        init(_ track: SpotifyTrack) {
-            _spotifyTrack = track
-        }
-    }
-    
     public weak var delegate: MusicPlayerDelegate?
     
     public var autoLaunch = false
     
     private var _spotify: SpotifyApplication
-    private var _currentTrack: Track?
+    private var _currentTrack: MusicTrack?
     private var _playbackState: MusicPlaybackState = .stopped
     private var _startTime: Date?
     private var _pausePosition: Double?
@@ -51,11 +42,11 @@ final public class Spotify {
         _spotify = spotify
         if isRunning {
             _playbackState = _spotify.playerState?.state ?? .stopped
-            _currentTrack = _spotify.currentTrack.map(Track.init)
+            _currentTrack = _spotify.currentTrack.map(MusicTrack.init)
             _startTime = _spotify.startTime
         }
         
-        observer = DistributedNotificationCenter.default.addObserver(forName: .SpotifyPlayerInfo, object: nil, queue: OperationQueue(), using: playerInfoNotification)
+        observer = DistributedNotificationCenter.default.addObserver(forName: .SpotifyPlayerInfo, object: nil, queue: nil, using: playerInfoNotification)
     }
     
     deinit {
@@ -66,7 +57,7 @@ final public class Spotify {
     
     func playerInfoNotification(_ n: Notification) {
         guard autoLaunch || isRunning else { return }
-        let track = _spotify.currentTrack.map(Track.init)
+        let track = _spotify.currentTrack.map(MusicTrack.init)
         let state = _spotify.playerState?.state ?? .stopped
         guard track?.id == _currentTrack?.id else {
             _currentTrack = track
@@ -199,49 +190,15 @@ extension SpotifyEPlS {
     }
 }
 
-extension Spotify.Track: MusicTrack {
+extension MusicTrack {
     
-    public var id: String {
-        return _spotifyTrack.id?() ?? ""
-    }
-    
-    public var title: String? {
-        return _spotifyTrack.name ?? nil
-    }
-    
-    public var album: String? {
-        return _spotifyTrack.album ?? nil
-    }
-    
-    public var artist: String? {
-        return _spotifyTrack.artist ?? nil
-    }
-    
-    public var duration: TimeInterval? {
-        return _spotifyTrack.duration.map(TimeInterval.init)
-    }
-    
-    public var artwork: NSImage? {
-        get {
-            return _spotifyTrack.artwork
-        }
-        set {
-            // NOTE: not support
-        }
-    }
-    
-    // NOTE: not support
-    public var lyrics: String? {
-        get { return nil }
-        set {}
-    }
-    
-    public var url: URL? {
-        return nil
-    }
-    
-    public var originalTrack: SBObject? {
-        return (_spotifyTrack as! SBObject)
+    init(_ spotifyTrack: SpotifyTrack) {
+        id = spotifyTrack.id?() ?? ""
+        title = spotifyTrack.name ?? nil
+        artist = spotifyTrack.artist ?? nil
+        album = spotifyTrack.album ?? nil
+        duration = spotifyTrack.duration.map(TimeInterval.init)
+        url = nil
     }
 }
 

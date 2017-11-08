@@ -103,19 +103,14 @@ public protocol MusicPlayer: class {
     var originalPlayer: SBApplication { get }
 }
 
-public protocol MusicTrack {
+public struct MusicTrack {
     
-    var id:     String { get }
-    var title:  String? { get }
-    var album:  String? { get }
-    var artist: String? { get }
-    var duration: TimeInterval? { get }
-    var artwork:  NSImage? { get set }
-    var lyrics: String? { get set }
-    var url:    URL? { get }
-    
-    // To prevent property/method name conflict, track should not be extended directly.
-    var originalTrack: SBObject? { get }
+    public var id:     String
+    public var title:   String?
+    public var album:  String?
+    public var artist: String?
+    public var duration: TimeInterval?
+    public var url:    URL?
 }
 
 // MARK: -

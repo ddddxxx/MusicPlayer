@@ -23,23 +23,12 @@ import ScriptingBridge
 
 public final class iTunes {
     
-    public struct Track {
-        
-        public var url: URL?
-        
-        private var _iTunesTrack: iTunesTrack
-        
-        init(_ track: iTunesTrack) {
-            _iTunesTrack = track
-        }
-    }
-    
     public weak var delegate: MusicPlayerDelegate?
     
     public var autoLaunch = false
     
     private var _iTunes: iTunesApplication
-    private var _currentTrack: Track?
+    private var _currentTrack: MusicTrack?
     private var _playbackState: MusicPlaybackState = .stopped
     private var _startTime: Date?
     private var _pausePosition: Double?
@@ -53,11 +42,11 @@ public final class iTunes {
         _iTunes = iTunes
         if isRunning {
             _playbackState = _iTunes.playerState?.state ?? .stopped
-            _currentTrack = _iTunes.currentTrack.map(Track.init)
+            _currentTrack = _iTunes.currentTrack.map(MusicTrack.init)
             _startTime = _iTunes.startTime
         }
         
-        observer = DistributedNotificationCenter.default.addObserver(forName: .iTunesPlayerInfo, object: nil, queue: OperationQueue(), using: playerInfoNotification)
+        observer = DistributedNotificationCenter.default.addObserver(forName: .iTunesPlayerInfo, object: nil, queue: nil, using: playerInfoNotification)
     }
     
     deinit {
@@ -68,10 +57,9 @@ public final class iTunes {
     
     func playerInfoNotification(_ n: Notification) {
         guard autoLaunch || isRunning else { return }
+        var track = _iTunes.currentTrack.map(MusicTrack.init)
         let state = _iTunes.playerState?.state ?? .stopped
-        let id = n.userInfo?["PersistentID"] as? Int64
-        guard id == _currentTrack?.persistentID else {
-            var track = _iTunes.currentTrack.map(Track.init)
+        guard track?.id == _currentTrack?.id else {
             if let loc = n.userInfo?["Location"] as? String {
                 track?.url = URL(string: loc)
             }
@@ -226,6 +214,15 @@ extension iTunesEPlS {
         case .rewinding:        return .playing
         }
     }
+    
+    init?(notificationString: String) {
+        switch notificationString {
+        case "Playing": self = .playing
+        case "Paused":  self = .paused
+        case "Stopped": self = .stopped
+        default:        return nil
+        }
+    }
 }
 
 extension iTunesERpt {
@@ -247,60 +244,15 @@ extension iTunesERpt {
     }
 }
 
-extension iTunes.Track: MusicTrack {
+extension MusicTrack {
     
-    var _id: Int {
-        return _iTunesTrack.id?() ?? 0
-    }
-    
-    var persistentID: Int64? {
-        guard let idStr = _iTunesTrack.persistentID ?? nil,
-            let uid = UInt64(idStr, radix: 16) else {
-            return nil
-        }
-        return Int64.init(bitPattern: uid)
-    }
-    
-    public var id: String {
-        return "\(_id)"
-    }
-    
-    public var title: String? {
-        return _iTunesTrack.name ?? nil
-    }
-    
-    public var album: String? {
-        return _iTunesTrack.album ?? nil
-    }
-    
-    public var artist: String? {
-        return _iTunesTrack.artist ?? nil
-    }
-    
-    public var duration: TimeInterval? {
-        return _iTunesTrack.duration
-    }
-    
-    public var artwork: NSImage? {
-        get {
-            return _iTunesTrack.artworks?().first?.data
-        }
-        set {
-            (_iTunesTrack.artworks?().first as! SBObject?)?.setValue(newValue, forKey: "data")
-        }
-    }
-    
-    public var lyrics: String? {
-        get {
-            return _iTunesTrack.lyrics ?? nil
-        }
-        set {
-            originalTrack?.setValue(newValue, forKey: "lyrics")
-        }
-    }
-    
-    public var originalTrack: SBObject? {
-        return (_iTunesTrack as! SBObject)
+    init(_ iTunesTrack: iTunesTrack) {
+        id = iTunesTrack.id?().description ?? ""
+        title = iTunesTrack.name ?? nil
+        album = iTunesTrack.album ?? nil
+        artist = iTunesTrack.artist ?? nil
+        duration = iTunesTrack.duration
+        url = nil
     }
 }
 

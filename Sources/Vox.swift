@@ -23,27 +23,12 @@ import ScriptingBridge
 
 final public class Vox {
     
-    public struct Track: MusicTrack {
-        
-        public var id: String
-        public var title: String?
-        public var album: String?
-        public var artist: String?
-        public var duration: TimeInterval?
-        public var artwork: NSImage?
-        public var lyrics: String?
-        public var url: URL?
-        public var originalTrack: SBObject? {
-            return nil
-        }
-    }
-    
     public weak var delegate: MusicPlayerDelegate?
     
     public var autoLaunch = false
     
     private var _vox: VoxApplication
-    private var _currentTrack: Track?
+    private var _currentTrack: MusicTrack?
     private var _playbackState: MusicPlaybackState = .stopped
     private var _startTime: Date?
     private var _pausePosition: Double?
@@ -61,7 +46,7 @@ final public class Vox {
             _startTime = _vox.startTime
         }
         
-        observer = DistributedNotificationCenter.default.addObserver(forName: .VoxTrackChanged, object: nil, queue: OperationQueue(), using: trackChangeNotification)
+        observer = DistributedNotificationCenter.default.addObserver(forName: .VoxTrackChanged, object: nil, queue: nil, using: trackChangeNotification)
     }
     
     deinit {
@@ -204,17 +189,15 @@ extension Vox: MusicPlayer {
 
 extension VoxApplication {
     
-    var currentTrack: Vox.Track {
+    var currentTrack: MusicTrack {
         let id = (uniqueID ?? "") ?? ""
         let url = trackUrl?.flatMap(URL.init(string:))
-        return Vox.Track(id: id,
-                         title: track ?? nil,
-                         album: album ?? nil,
-                         artist: artist ?? nil,
-                         duration: totalTime,
-                         artwork: artworkImage,
-                         lyrics: nil,
-                         url: url)
+        return MusicTrack(id: id,
+                          title: track ?? nil,
+                          album: album ?? nil,
+                          artist: artist ?? nil,
+                          duration: totalTime,
+                          url: url)
     }
         
     var startTime: Date? {
