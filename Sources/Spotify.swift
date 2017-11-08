@@ -107,30 +107,6 @@ extension Spotify: MusicPlayer {
         return _playbackState
     }
     
-    public var repeatMode: MusicRepeatMode {
-        get {
-            guard autoLaunch || isRunning else { return .off }
-            return _spotify.repeating == true ? .all : .off
-        }
-        set {
-            guard autoLaunch || isRunning else { return }
-            originalPlayer.setValue(newValue != .off, forKey: "repeating")
-//            _spotify.repeating = newValue != .off
-        }
-    }
-    
-    public var shuffleMode: MusicShuffleMode {
-        get {
-            guard autoLaunch || isRunning else { return .off }
-            return _spotify.shuffling == true ? .groupings : .off
-        }
-        set {
-            guard autoLaunch || isRunning else { return }
-            originalPlayer.setValue(newValue != .off, forKey: "shuffling")
-//            _spotify.shuffling = newValue != .off
-        }
-    }
-    
     public var currentTrack: MusicTrack? {
         return _currentTrack
     }
@@ -147,27 +123,6 @@ extension Spotify: MusicPlayer {
 //            _spotify.playerPosition = newValue
             _startTime = Date().addingTimeInterval(-newValue)
         }
-    }
-    
-    public func playpause() {
-        guard autoLaunch || isRunning else { return }
-        _spotify.playpause?()
-    }
-    
-    public func stop() {
-        guard autoLaunch || isRunning else { return }
-        // NOTE: not support
-        _spotify.pause?()
-    }
-    
-    public func skipToNext() {
-        guard autoLaunch || isRunning else { return }
-        _spotify.nextTrack?()
-    }
-    
-    public func skipToPrevious() {
-        guard autoLaunch || isRunning else { return }
-        _spotify.previousTrack?()
     }
     
     public func updatePlayerState() {

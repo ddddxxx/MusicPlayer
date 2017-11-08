@@ -86,16 +86,9 @@ public protocol MusicPlayer: class {
     var delegate: MusicPlayerDelegate? { get set }
     
     var playbackState: MusicPlaybackState { get }
-    var repeatMode: MusicRepeatMode { get set }
-    var shuffleMode: MusicShuffleMode { get set }
     
     var currentTrack: MusicTrack? { get }
     var playerPosition: TimeInterval { get set }
-    
-    func playpause()
-    func stop()
-    func skipToNext()
-    func skipToPrevious()
     
     func updatePlayerState()
     

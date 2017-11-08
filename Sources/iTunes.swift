@@ -110,53 +110,6 @@ extension iTunes: MusicPlayer {
         return _playbackState
     }
     
-    public var repeatMode: MusicRepeatMode {
-        get {
-            guard autoLaunch || isRunning else { return .off }
-            return _iTunes.songRepeat?.mode ?? .off
-        }
-        set {
-            guard autoLaunch || isRunning else { return }
-            originalPlayer.setValue(iTunesERpt(newValue), forKey: "songRepeat")
-//            _iTunes.songRepeat = iTunesERpt(newValue)
-        }
-    }
-    
-    public var shuffleMode: MusicShuffleMode {
-        get {
-            guard autoLaunch || isRunning else { return .off }
-            guard _iTunes.shuffleEnabled == true, let mode = _iTunes.shuffleMode else {
-                return .off
-            }
-            switch mode {
-            case .songs:        return .songs
-            case .albums:       return .albums
-            case .groupings:    return .groupings
-            }
-        }
-        set {
-            guard autoLaunch || isRunning else { return }
-            originalPlayer.setValue(newValue != .off, forKey: "shuffleEnabled")
-//            _iTunes.shuffleEnabled = newValue != .off
-            switch newValue {
-            case .off:
-                originalPlayer.setValue(false, forKey: "shuffleEnabled")
-            case .songs:
-                originalPlayer.setValue(true, forKey: "shuffleEnabled")
-                originalPlayer.setValue(MusicShuffleMode.songs, forKey: "shuffleMode")
-//                _iTunes.shuffleMode = .songs
-            case .albums:
-                originalPlayer.setValue(true, forKey: "shuffleEnabled")
-                originalPlayer.setValue(MusicShuffleMode.albums, forKey: "shuffleMode")
-//                _iTunes.shuffleMode = .albums
-            case .groupings:
-                originalPlayer.setValue(true, forKey: "shuffleEnabled")
-                originalPlayer.setValue(MusicShuffleMode.groupings, forKey: "shuffleMode")
-//                _iTunes.shuffleMode = .groupings
-            }
-        }
-    }
-    
     public var currentTrack: MusicTrack? {
         return _currentTrack
     }
@@ -172,26 +125,6 @@ extension iTunes: MusicPlayer {
 //            _iTunes.playerPosition = newValue
             _startTime = Date().addingTimeInterval(-newValue)
         }
-    }
-    
-    public func playpause() {
-        guard autoLaunch || isRunning else { return }
-        _iTunes.playpause?()
-    }
-    
-    public func stop() {
-        guard autoLaunch || isRunning else { return }
-        _iTunes.pause?()
-    }
-    
-    public func skipToNext() {
-        guard autoLaunch || isRunning else { return }
-        _iTunes.nextTrack?()
-    }
-    
-    public func skipToPrevious() {
-        guard autoLaunch || isRunning else { return }
-        _iTunes.previousTrack?()
     }
     
     public func updatePlayerState() {

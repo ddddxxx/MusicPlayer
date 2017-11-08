@@ -108,40 +108,6 @@ extension Vox: MusicPlayer {
         return _playbackState
     }
     
-    public var repeatMode: MusicRepeatMode {
-        get {
-            guard autoLaunch || isRunning else { return .off }
-            switch _vox.repeatState {
-            case 1?: return .one
-            case 2?: return .all
-            case _:  return .off
-            }
-        }
-        set {
-            guard autoLaunch || isRunning else { return }
-            switch newValue {
-            case .off:
-                originalPlayer.setValue(0, forKey: "repeatState")
-//                _vox.repeatState = 0
-            case .one:
-                originalPlayer.setValue(1, forKey: "repeatState")
-//                _vox.repeatState = 1
-            case .all:
-                originalPlayer.setValue(2, forKey: "repeatState")
-//                _vox.repeatState = 2
-            }
-        }
-    }
-    
-    public var shuffleMode: MusicShuffleMode {
-        get {
-            return .off
-        }
-        set {
-            // NOTE: not support
-        }
-    }
-    
     public var currentTrack: MusicTrack? {
         guard autoLaunch || isRunning else { return nil }
         return _currentTrack
@@ -159,22 +125,6 @@ extension Vox: MusicPlayer {
 //            _vox.currentTime = newValue
             _startTime = Date().addingTimeInterval(-newValue)
         }
-    }
-    
-    public func playpause() {
-        guard autoLaunch || isRunning else { return }
-        _vox.playpause?()
-    }
-    
-    public func stop() {
-        guard autoLaunch || isRunning else { return }
-        // NOTE: not support
-        _vox.pause?()
-    }
-    
-    public func skipToNext() {
-        guard autoLaunch || isRunning else { return }
-        _vox.next?()
     }
     
     public func skipToPrevious() {
