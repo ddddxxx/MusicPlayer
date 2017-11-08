@@ -41,9 +41,9 @@ public final class iTunes {
         }
         _iTunes = iTunes
         if isRunning {
-            _playbackState = _iTunes.playerState?.state ?? .stopped
-            _currentTrack = _iTunes.currentTrack.map(MusicTrack.init)
-            _startTime = _iTunes.startTime
+            _playbackState = _iTunes._playbackState
+            _currentTrack = _iTunes._currentTrack
+            _startTime = _iTunes._startTime
         }
         
         observer = DistributedNotificationCenter.default.addObserver(forName: .iTunesPlayerInfo, object: nil, queue: nil, using: playerInfoNotification)
@@ -57,21 +57,21 @@ public final class iTunes {
     
     func playerInfoNotification(_ n: Notification) {
         guard autoLaunch || isRunning else { return }
-        var track = _iTunes.currentTrack.map(MusicTrack.init)
-        let state = _iTunes.playerState?.state ?? .stopped
+        var track = _iTunes._currentTrack
+        let state = _iTunes._playbackState
         guard track?.id == _currentTrack?.id else {
             if let loc = n.userInfo?["Location"] as? String {
                 track?.url = URL(string: loc)
             }
             _currentTrack = track
             _playbackState = state
-            _startTime = _iTunes.startTime
+            _startTime = _iTunes._startTime
             delegate?.currentTrackChanged(track: track, from: self)
             return
         }
         guard state == _playbackState else {
             _playbackState = state
-            _startTime = _iTunes.startTime
+            _startTime = _iTunes._startTime
             _pausePosition = playerPosition
             delegate?.playbackStateChanged(state: state, from: self)
             return
@@ -83,7 +83,7 @@ public final class iTunes {
         guard autoLaunch || isRunning else { return }
         if _playbackState.isPlaying {
             if let _startTime = _startTime,
-                let startTime = _iTunes.startTime,
+                let startTime = _iTunes._startTime,
                 abs(startTime.timeIntervalSince(_startTime)) > positionMutateThreshold {
                 self._startTime = startTime
                 delegate?.playerPositionMutated(position: playerPosition, from: self)
@@ -203,28 +203,6 @@ extension iTunes: MusicPlayer {
     }
 }
 
-extension iTunesEPlS {
-    
-    var state: MusicPlaybackState {
-        switch self {
-        case .playing:          return .playing
-        case .paused:           return .paused
-        case .stopped:          return .stopped
-        case .fastForwarding:   return .fastForwarding
-        case .rewinding:        return .playing
-        }
-    }
-    
-    init?(notificationString: String) {
-        switch notificationString {
-        case "Playing": self = .playing
-        case "Paused":  self = .paused
-        case "Stopped": self = .stopped
-        default:        return nil
-        }
-    }
-}
-
 extension iTunesERpt {
     
     var mode: MusicRepeatMode {
@@ -244,24 +222,33 @@ extension iTunesERpt {
     }
 }
 
-extension MusicTrack {
-    
-    init(_ iTunesTrack: iTunesTrack) {
-        id = iTunesTrack.id?().description ?? ""
-        title = iTunesTrack.name ?? nil
-        album = iTunesTrack.album ?? nil
-        artist = iTunesTrack.artist ?? nil
-        duration = iTunesTrack.duration
-        url = nil
-    }
-}
-
 extension iTunesApplication {
     
-    var startTime: Date? {
+    var _currentTrack: MusicTrack? {
+        guard let t = currentTrack, t.mediaKind == .song else { return nil }
+        guard currentStreamURL ?? nil == nil else { return nil }
+        return MusicTrack(id: t.id?().description ?? "",
+                          title: t.name ?? nil,
+                          album: t.album ?? nil,
+                          artist: t.artist ?? nil,
+                          duration: t.duration,
+                          url: nil)
+    }
+    
+    var _startTime: Date? {
         guard let playerPosition = playerPosition else {
             return nil
         }
         return Date().addingTimeInterval(-playerPosition)
+    }
+    
+    var _playbackState: MusicPlaybackState {
+        switch playerState {
+        case .stopped?, nil:    return .stopped
+        case .playing?:         return .playing
+        case .paused?:          return .paused
+        case .fastForwarding?:  return .fastForwarding
+        case .rewinding?:       return .playing
+        }
     }
 }
