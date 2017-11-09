@@ -25,8 +25,6 @@ final public class Vox {
     
     public weak var delegate: MusicPlayerDelegate?
     
-    public var autoLaunch = false
-    
     private var _vox: VoxApplication
     private var _currentTrack: MusicTrack?
     private var _playbackState: MusicPlaybackState = .stopped
@@ -56,7 +54,7 @@ final public class Vox {
     }
     
     func trackChangeNotification(_ n: Notification) {
-        guard autoLaunch || isRunning else { return }
+        guard isRunning else { return }
         let id = _vox.uniqueID ?? nil
         guard id == _currentTrack?.id else {
             _currentTrack = _vox.currentTrack
@@ -69,7 +67,7 @@ final public class Vox {
     }
     
     public func updatePlayerState() {
-        guard autoLaunch || isRunning else { return }
+        guard isRunning else { return }
         let state: MusicPlaybackState = _vox.playerState == 1 ? .playing : .paused
         guard state == _playbackState else {
             _playbackState = state
@@ -104,23 +102,23 @@ extension Vox: MusicPlayer {
     public static var needsUpdate = true
     
     public var playbackState: MusicPlaybackState {
-        guard autoLaunch || isRunning else { return .stopped }
+        guard isRunning else { return .stopped }
         return _playbackState
     }
     
     public var currentTrack: MusicTrack? {
-        guard autoLaunch || isRunning else { return nil }
+        guard isRunning else { return nil }
         return _currentTrack
     }
     
     public var playerPosition: TimeInterval {
         get {
-            guard autoLaunch || isRunning else { return 0 }
+            guard isRunning else { return 0 }
             guard let _startTime = _startTime else { return 0 }
             return -_startTime.timeIntervalSinceNow
         }
         set {
-            guard autoLaunch || isRunning else { return }
+            guard isRunning else { return }
             originalPlayer.setValue(newValue, forKey: "currentTime")
 //            _vox.currentTime = newValue
             _startTime = Date().addingTimeInterval(-newValue)
@@ -128,7 +126,7 @@ extension Vox: MusicPlayer {
     }
     
     public func skipToPrevious() {
-        guard autoLaunch || isRunning else { return }
+        guard isRunning else { return }
         _vox.previous?()
     }
     

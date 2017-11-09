@@ -25,8 +25,6 @@ final public class Spotify {
     
     public weak var delegate: MusicPlayerDelegate?
     
-    public var autoLaunch = false
-    
     private var _spotify: SpotifyApplication
     private var _currentTrack: MusicTrack?
     private var _playbackState: MusicPlaybackState = .stopped
@@ -56,7 +54,7 @@ final public class Spotify {
     }
     
     func playerInfoNotification(_ n: Notification) {
-        guard autoLaunch || isRunning else { return }
+        guard isRunning else { return }
         let track = _spotify.currentTrack.map(MusicTrack.init)
         let state = _spotify.playerState?.state ?? .stopped
         guard track?.id == _currentTrack?.id else {
@@ -77,7 +75,7 @@ final public class Spotify {
     }
     
     func updatePlayerPosition() {
-        guard autoLaunch || isRunning else { return }
+        guard isRunning else { return }
         if _playbackState.isPlaying {
             if let _startTime = _startTime,
                 let startTime = _spotify.startTime,
@@ -113,12 +111,12 @@ extension Spotify: MusicPlayer {
     
     public var playerPosition: TimeInterval {
         get {
-            guard autoLaunch || isRunning else { return 0 }
+            guard isRunning else { return 0 }
             guard let _startTime = _startTime else { return 0 }
             return -_startTime.timeIntervalSinceNow
         }
         set {
-            guard autoLaunch || isRunning else { return }
+            guard isRunning else { return }
             originalPlayer.setValue(newValue, forKey: "playerPosition")
 //            _spotify.playerPosition = newValue
             _startTime = Date().addingTimeInterval(-newValue)

@@ -25,8 +25,6 @@ public final class iTunes {
     
     public weak var delegate: MusicPlayerDelegate?
     
-    public var autoLaunch = false
-    
     private var _iTunes: iTunesApplication
     private var _currentTrack: MusicTrack?
     private var _playbackState: MusicPlaybackState = .stopped
@@ -56,7 +54,7 @@ public final class iTunes {
     }
     
     func playerInfoNotification(_ n: Notification) {
-        guard autoLaunch || isRunning else { return }
+        guard isRunning else { return }
         // iTunes will send notification before quit. if we send
         // apple event here, iTunes will be restarted immediately
         let id = (n.userInfo?["PersistentID"] as? Int).map { String(format: "%08X", arguments: [UInt(bitPattern: $0)]) }
@@ -90,7 +88,7 @@ public final class iTunes {
     }
     
     func updatePlayerPosition() {
-        guard autoLaunch || isRunning else { return }
+        guard isRunning else { return }
         if _playbackState.isPlaying {
             if let _startTime = _startTime,
                 let startTime = _iTunes._startTime,
@@ -130,7 +128,7 @@ extension iTunes: MusicPlayer {
             return -_startTime.timeIntervalSinceNow
         }
         set {
-            guard autoLaunch || isRunning else { return }
+            guard isRunning else { return }
             originalPlayer.setValue(newValue, forKey: "playerPosition")
 //            _iTunes.playerPosition = newValue
             _startTime = Date().addingTimeInterval(-newValue)
