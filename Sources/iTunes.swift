@@ -144,25 +144,6 @@ extension iTunes: MusicPlayer {
     }
 }
 
-extension iTunesERpt {
-    
-    var mode: MusicRepeatMode {
-        switch self {
-        case .off:  return .off
-        case .one:  return .one
-        case .all:  return .all
-        }
-    }
-    
-    init(_ mode: MusicRepeatMode) {
-        switch mode {
-        case .off:  self = .off
-        case .one:  self = .one
-        case .all:  self = .all
-        }
-    }
-}
-
 extension iTunesApplication {
     
     var _currentTrack: MusicTrack? {

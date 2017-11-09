@@ -21,7 +21,7 @@
 import AppKit
 import ScriptingBridge
 
-final public class Vox {
+public final class Vox {
     
     public weak var delegate: MusicPlayerDelegate?
     
@@ -39,9 +39,9 @@ final public class Vox {
         }
         _vox = vox
         if isRunning {
-            _playbackState = _vox.playerState == 1 ? .playing : .paused
-            _currentTrack = _vox.currentTrack
-            _startTime = _vox.startTime
+            _playbackState = _vox._playbackState
+            _currentTrack = _vox._currentTrack
+            _startTime = _vox._startTime
         }
         
         observer = DistributedNotificationCenter.default.addObserver(forName: .VoxTrackChanged, object: nil, queue: nil, using: trackChangeNotification)
@@ -57,9 +57,9 @@ final public class Vox {
         guard isRunning else { return }
         let id = _vox.uniqueID ?? nil
         guard id == _currentTrack?.id else {
-            _currentTrack = _vox.currentTrack
+            _currentTrack = _vox._currentTrack
             _playbackState = _vox.playerState == 1 ? .playing : .paused
-            _startTime = _vox.startTime
+            _startTime = _vox._startTime
             delegate?.currentTrackChanged(track: _currentTrack, from: self)
             return
         }
@@ -68,17 +68,17 @@ final public class Vox {
     
     public func updatePlayerState() {
         guard isRunning else { return }
-        let state: MusicPlaybackState = _vox.playerState == 1 ? .playing : .paused
+        let state = _vox._playbackState
         guard state == _playbackState else {
             _playbackState = state
-            _startTime = _vox.startTime
+            _startTime = _vox._startTime
             _pausePosition = playerPosition
             delegate?.playbackStateChanged(state: state, from: self)
             return
         }
         if _playbackState.isPlaying {
             if let _startTime = _startTime,
-                let startTime = _vox.startTime,
+                let startTime = _vox._startTime,
                 abs(startTime.timeIntervalSince(_startTime)) > positionMutateThreshold {
                 self._startTime = startTime
                 delegate?.playerPositionMutated(position: playerPosition, from: self)
@@ -137,7 +137,7 @@ extension Vox: MusicPlayer {
 
 extension VoxApplication {
     
-    var currentTrack: MusicTrack {
+    var _currentTrack: MusicTrack {
         let id = (uniqueID ?? "") ?? ""
         let url = trackUrl?.flatMap(URL.init(string:))
         return MusicTrack(id: id,
@@ -148,10 +148,17 @@ extension VoxApplication {
                           url: url)
     }
         
-    var startTime: Date? {
+    var _startTime: Date? {
         guard let currentTime = currentTime else {
             return nil
         }
         return Date().addingTimeInterval(-currentTime)
+    }
+    
+    var _playbackState: MusicPlaybackState {
+        switch playerState {
+        case 1?: return     .playing
+        case 0?, _: return  .stopped
+        }
     }
 }

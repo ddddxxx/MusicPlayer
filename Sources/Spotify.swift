@@ -21,7 +21,7 @@
 import AppKit
 import ScriptingBridge
 
-final public class Spotify {
+public final class Spotify {
     
     public weak var delegate: MusicPlayerDelegate?
     
@@ -39,9 +39,9 @@ final public class Spotify {
         }
         _spotify = spotify
         if isRunning {
-            _playbackState = _spotify.playerState?.state ?? .stopped
-            _currentTrack = _spotify.currentTrack.map(MusicTrack.init)
-            _startTime = _spotify.startTime
+            _playbackState = _spotify._playbackState
+            _currentTrack = _spotify._currentTrack
+            _startTime = _spotify._startTime
         }
         
         observer = DistributedNotificationCenter.default.addObserver(forName: .SpotifyPlayerInfo, object: nil, queue: nil, using: playerInfoNotification)
@@ -55,18 +55,19 @@ final public class Spotify {
     
     func playerInfoNotification(_ n: Notification) {
         guard isRunning else { return }
-        let track = _spotify.currentTrack.map(MusicTrack.init)
-        let state = _spotify.playerState?.state ?? .stopped
+        // FIXME: will this restart Spotify?
+        let track = _spotify._currentTrack
+        let state = _spotify._playbackState
         guard track?.id == _currentTrack?.id else {
             _currentTrack = track
             _playbackState = state
-            _startTime = _spotify.startTime
+            _startTime = _spotify._startTime
             delegate?.currentTrackChanged(track: track, from: self)
             return
         }
         guard state == _playbackState else {
             _playbackState = state
-            _startTime = _spotify.startTime
+            _startTime = _spotify._startTime
             _pausePosition = playerPosition
             delegate?.playbackStateChanged(state: state, from: self)
             return
@@ -78,7 +79,7 @@ final public class Spotify {
         guard isRunning else { return }
         if _playbackState.isPlaying {
             if let _startTime = _startTime,
-                let startTime = _spotify.startTime,
+                let startTime = _spotify._startTime,
                 abs(startTime.timeIntervalSince(_startTime)) > positionMutateThreshold {
                 self._startTime = startTime
                 delegate?.playerPositionMutated(position: playerPosition, from: self)
@@ -132,35 +133,30 @@ extension Spotify: MusicPlayer {
     }
 }
 
-extension SpotifyEPlS {
-    
-    var state: MusicPlaybackState {
-        switch self {
-        case .stopped:  return .stopped
-        case .playing:  return .playing
-        case .paused:   return .paused
-        }
-    }
-}
-
-extension MusicTrack {
-    
-    init(_ spotifyTrack: SpotifyTrack) {
-        id = spotifyTrack.id?() ?? ""
-        title = spotifyTrack.name ?? nil
-        artist = spotifyTrack.artist ?? nil
-        album = spotifyTrack.album ?? nil
-        duration = spotifyTrack.duration.map(TimeInterval.init)
-        url = nil
-    }
-}
-
 extension SpotifyApplication {
     
-    var startTime: Date? {
+    var _currentTrack: MusicTrack? {
+        guard let t = currentTrack else { return nil }
+        return MusicTrack(id: t.id?() ?? "",
+                          title: t.name ?? nil,
+                          album: t.album ?? nil,
+                          artist: t.artist ?? nil,
+                          duration: t.duration.map(TimeInterval.init),
+                          url: nil)
+    }
+    
+    var _startTime: Date? {
         guard let playerPosition = playerPosition else {
             return nil
         }
         return Date().addingTimeInterval(-playerPosition)
+    }
+    
+    var _playbackState: MusicPlaybackState {
+        switch playerState {
+        case .stopped?, nil:    return .stopped
+        case .playing?:         return .playing
+        case .paused?:          return .paused
+        }
     }
 }
