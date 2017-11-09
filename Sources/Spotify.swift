@@ -55,20 +55,27 @@ public final class Spotify {
     
     func playerInfoNotification(_ n: Notification) {
         guard isRunning else { return }
-        // FIXME: will this restart Spotify?
-        let track = _spotify._currentTrack
-        let state = _spotify._playbackState
-        guard track?.id == _currentTrack?.id else {
+        let id = n.userInfo?["Track ID"] as? String
+        let state: MusicPlaybackState
+        switch n.userInfo?["Player State"] as? String {
+        case "Playing"?:    state = .playing
+        case "Paused"?:     state = .paused
+        case "Stopped"?, _:  state = .stopped
+        }
+        let position = n.userInfo?["Playback Position"] as? TimeInterval
+        let startTime = position.map { Date().addingTimeInterval(-$0) }
+        guard id == _currentTrack?.id else {
+            let track = id == nil ? nil : _spotify._currentTrack
             _currentTrack = track
             _playbackState = state
-            _startTime = _spotify._startTime
+            _startTime = startTime
             delegate?.currentTrackChanged(track: track, from: self)
             return
         }
         guard state == _playbackState else {
             _playbackState = state
-            _startTime = _spotify._startTime
-            _pausePosition = playerPosition
+            _startTime = startTime
+            _pausePosition = position
             delegate?.playbackStateChanged(state: state, from: self)
             return
         }
