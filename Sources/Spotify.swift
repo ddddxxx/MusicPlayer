@@ -18,29 +18,20 @@
 //  along with this program.  If not, see <http://www.gnu.org/licenses/>.
 //
 
-import Cocoa
+import AppKit
 import ScriptingBridge
 
-final public class Spotify {
-    
-    public struct Track {
-        
-        private var _spotifyTrack: SpotifyTrack
-        
-        init(_ track: SpotifyTrack) {
-            _spotifyTrack = track
-        }
-    }
+public final class Spotify {
     
     public weak var delegate: MusicPlayerDelegate?
     
-    public var autoLaunch = false
-    
     private var _spotify: SpotifyApplication
-    private var _currentTrack: Track?
+    private var _currentTrack: MusicTrack?
     private var _playbackState: MusicPlaybackState = .stopped
     private var _startTime: Date?
     private var _pausePosition: Double?
+    
+    private var observer: NSObjectProtocol?
     
     public init?() {
         guard let spotify = SBApplication(bundleIdentifier: Spotify.name.bundleID) else {
@@ -48,29 +39,43 @@ final public class Spotify {
         }
         _spotify = spotify
         if isRunning {
-            _playbackState = _spotify.playerState?.state ?? .stopped
-            _currentTrack = _spotify.currentTrack.map(Track.init)
-            _startTime = _spotify.startTime
+            _playbackState = _spotify._playbackState
+            _currentTrack = _spotify._currentTrack
+            _startTime = _spotify._startTime
         }
         
-        DistributedNotificationCenter.default.addObserver(forName: .SpotifyPlayerInfo, object: nil, queue: OperationQueue(), using: playerInfoNotification)
+        observer = DistributedNotificationCenter.default.addObserver(forName: .SpotifyPlayerInfo, object: nil, queue: nil, using: playerInfoNotification)
+    }
+    
+    deinit {
+        if let observer = observer {
+            DistributedNotificationCenter.default.removeObserver(observer)
+        }
     }
     
     func playerInfoNotification(_ n: Notification) {
-        guard autoLaunch || isRunning else { return }
-        let track = _spotify.currentTrack.map(Track.init)
-        let state = _spotify.playerState?.state ?? .stopped
-        guard track?.id == _currentTrack?.id else {
+        guard isRunning else { return }
+        let id = n.userInfo?["Track ID"] as? String
+        let state: MusicPlaybackState
+        switch n.userInfo?["Player State"] as? String {
+        case "Playing"?:    state = .playing
+        case "Paused"?:     state = .paused
+        case "Stopped"?, _:  state = .stopped
+        }
+        let position = n.userInfo?["Playback Position"] as? TimeInterval
+        let startTime = position.map { Date().addingTimeInterval(-$0) }
+        guard id == _currentTrack?.id else {
+            let track = id == nil ? nil : _spotify._currentTrack
             _currentTrack = track
             _playbackState = state
-            _startTime = _spotify.startTime
+            _startTime = startTime
             delegate?.currentTrackChanged(track: track, from: self)
             return
         }
         guard state == _playbackState else {
             _playbackState = state
-            _startTime = _spotify.startTime
-            _pausePosition = playerPosition
+            _startTime = startTime
+            _pausePosition = position
             delegate?.playbackStateChanged(state: state, from: self)
             return
         }
@@ -78,10 +83,10 @@ final public class Spotify {
     }
     
     func updatePlayerPosition() {
-        guard autoLaunch || isRunning else { return }
+        guard isRunning else { return }
         if _playbackState.isPlaying {
             if let _startTime = _startTime,
-                let startTime = _spotify.startTime,
+                let startTime = _spotify._startTime,
                 abs(startTime.timeIntervalSince(_startTime)) > positionMutateThreshold {
                 self._startTime = startTime
                 delegate?.playerPositionMutated(position: playerPosition, from: self)
@@ -108,67 +113,22 @@ extension Spotify: MusicPlayer {
         return _playbackState
     }
     
-    public var repeatMode: MusicRepeatMode {
-        get {
-            guard autoLaunch || isRunning else { return .off }
-            return _spotify.repeating == true ? .all : .off
-        }
-        set {
-            guard autoLaunch || isRunning else { return }
-            originalPlayer.setValue(newValue != .off, forKey: "repeating")
-//            _spotify.repeating = newValue != .off
-        }
-    }
-    
-    public var shuffleMode: MusicShuffleMode {
-        get {
-            guard autoLaunch || isRunning else { return .off }
-            return _spotify.shuffling == true ? .groupings : .off
-        }
-        set {
-            guard autoLaunch || isRunning else { return }
-            originalPlayer.setValue(newValue != .off, forKey: "shuffling")
-//            _spotify.shuffling = newValue != .off
-        }
-    }
-    
     public var currentTrack: MusicTrack? {
         return _currentTrack
     }
     
     public var playerPosition: TimeInterval {
         get {
-            guard autoLaunch || isRunning else { return 0 }
+            guard isRunning else { return 0 }
             guard let _startTime = _startTime else { return 0 }
             return -_startTime.timeIntervalSinceNow
         }
         set {
-            guard autoLaunch || isRunning else { return }
+            guard isRunning else { return }
             originalPlayer.setValue(newValue, forKey: "playerPosition")
 //            _spotify.playerPosition = newValue
             _startTime = Date().addingTimeInterval(-newValue)
         }
-    }
-    
-    public func playpause() {
-        guard autoLaunch || isRunning else { return }
-        _spotify.playpause?()
-    }
-    
-    public func stop() {
-        guard autoLaunch || isRunning else { return }
-        // NOTE: not support
-        _spotify.pause?()
-    }
-    
-    public func skipToNext() {
-        guard autoLaunch || isRunning else { return }
-        _spotify.nextTrack?()
-    }
-    
-    public func skipToPrevious() {
-        guard autoLaunch || isRunning else { return }
-        _spotify.previousTrack?()
     }
     
     public func updatePlayerState() {
@@ -180,69 +140,30 @@ extension Spotify: MusicPlayer {
     }
 }
 
-extension SpotifyEPlS {
-    
-    var state: MusicPlaybackState {
-        switch self {
-        case .stopped:  return .stopped
-        case .playing:  return .playing
-        case .paused:   return .paused
-        }
-    }
-}
-
-extension Spotify.Track: MusicTrack {
-    
-    public var id: String {
-        return _spotifyTrack.id?() ?? ""
-    }
-    
-    public var title: String? {
-        return _spotifyTrack.name ?? nil
-    }
-    
-    public var album: String? {
-        return _spotifyTrack.album ?? nil
-    }
-    
-    public var artist: String? {
-        return _spotifyTrack.artist ?? nil
-    }
-    
-    public var duration: TimeInterval? {
-        return _spotifyTrack.duration.map(TimeInterval.init)
-    }
-    
-    public var artwork: NSImage? {
-        get {
-            return _spotifyTrack.artwork
-        }
-        set {
-            // NOTE: not support
-        }
-    }
-    
-    // NOTE: not support
-    public var lyrics: String? {
-        get { return nil }
-        set {}
-    }
-    
-    public var url: URL? {
-        return nil
-    }
-    
-    public var originalTrack: SBObject? {
-        return (_spotifyTrack as! SBObject)
-    }
-}
-
 extension SpotifyApplication {
     
-    var startTime: Date? {
+    var _currentTrack: MusicTrack? {
+        guard let t = currentTrack else { return nil }
+        return MusicTrack(id: t.id?() ?? "",
+                          title: t.name ?? nil,
+                          album: t.album ?? nil,
+                          artist: t.artist ?? nil,
+                          duration: t.duration.map(TimeInterval.init),
+                          url: nil)
+    }
+    
+    var _startTime: Date? {
         guard let playerPosition = playerPosition else {
             return nil
         }
         return Date().addingTimeInterval(-playerPosition)
+    }
+    
+    var _playbackState: MusicPlaybackState {
+        switch playerState {
+        case .stopped?, nil:    return .stopped
+        case .playing?:         return .playing
+        case .paused?:          return .paused
+        }
     }
 }

@@ -18,35 +18,20 @@
 //  along with this program.  If not, see <http://www.gnu.org/licenses/>.
 //
 
-import Cocoa
+import AppKit
 import ScriptingBridge
 
-final public class Vox {
-    
-    public struct Track: MusicTrack {
-        
-        public var id: String
-        public var title: String?
-        public var album: String?
-        public var artist: String?
-        public var duration: TimeInterval?
-        public var artwork: NSImage?
-        public var lyrics: String?
-        public var url: URL?
-        public var originalTrack: SBObject? {
-            return nil
-        }
-    }
+public final class Vox {
     
     public weak var delegate: MusicPlayerDelegate?
     
-    public var autoLaunch = false
-    
     private var _vox: VoxApplication
-    private var _currentTrack: Track?
+    private var _currentTrack: MusicTrack?
     private var _playbackState: MusicPlaybackState = .stopped
     private var _startTime: Date?
     private var _pausePosition: Double?
+    
+    private var observer: NSObjectProtocol?
     
     public init?() {
         guard let vox = SBApplication(bundleIdentifier: Vox.name.bundleID) else {
@@ -54,21 +39,27 @@ final public class Vox {
         }
         _vox = vox
         if isRunning {
-            _playbackState = _vox.playerState == 1 ? .playing : .paused
-            _currentTrack = _vox.currentTrack
-            _startTime = _vox.startTime
+            _playbackState = _vox._playbackState
+            _currentTrack = _vox._currentTrack
+            _startTime = _vox._startTime
         }
         
-        DistributedNotificationCenter.default.addObserver(forName: .VoxTrackChanged, object: nil, queue: OperationQueue(), using: trackChangeNotification)
+        observer = DistributedNotificationCenter.default.addObserver(forName: .VoxTrackChanged, object: nil, queue: nil, using: trackChangeNotification)
+    }
+    
+    deinit {
+        if let observer = observer {
+            DistributedNotificationCenter.default.removeObserver(observer)
+        }
     }
     
     func trackChangeNotification(_ n: Notification) {
-        guard autoLaunch || isRunning else { return }
+        guard isRunning else { return }
         let id = _vox.uniqueID ?? nil
         guard id == _currentTrack?.id else {
-            _currentTrack = _vox.currentTrack
+            _currentTrack = _vox._currentTrack
             _playbackState = _vox.playerState == 1 ? .playing : .paused
-            _startTime = _vox.startTime
+            _startTime = _vox._startTime
             delegate?.currentTrackChanged(track: _currentTrack, from: self)
             return
         }
@@ -76,18 +67,18 @@ final public class Vox {
     }
     
     public func updatePlayerState() {
-        guard autoLaunch || isRunning else { return }
-        let state: MusicPlaybackState = _vox.playerState == 1 ? .playing : .paused
+        guard isRunning else { return }
+        let state = _vox._playbackState
         guard state == _playbackState else {
             _playbackState = state
-            _startTime = _vox.startTime
+            _startTime = _vox._startTime
             _pausePosition = playerPosition
             delegate?.playbackStateChanged(state: state, from: self)
             return
         }
         if _playbackState.isPlaying {
             if let _startTime = _startTime,
-                let startTime = _vox.startTime,
+                let startTime = _vox._startTime,
                 abs(startTime.timeIntervalSince(_startTime)) > positionMutateThreshold {
                 self._startTime = startTime
                 delegate?.playerPositionMutated(position: playerPosition, from: self)
@@ -111,81 +102,31 @@ extension Vox: MusicPlayer {
     public static var needsUpdate = true
     
     public var playbackState: MusicPlaybackState {
-        guard autoLaunch || isRunning else { return .stopped }
+        guard isRunning else { return .stopped }
         return _playbackState
     }
     
-    public var repeatMode: MusicRepeatMode {
-        get {
-            guard autoLaunch || isRunning else { return .off }
-            switch _vox.repeatState {
-            case 1?: return .one
-            case 2?: return .all
-            case _:  return .off
-            }
-        }
-        set {
-            guard autoLaunch || isRunning else { return }
-            switch newValue {
-            case .off:
-                originalPlayer.setValue(0, forKey: "repeatState")
-//                _vox.repeatState = 0
-            case .one:
-                originalPlayer.setValue(1, forKey: "repeatState")
-//                _vox.repeatState = 1
-            case .all:
-                originalPlayer.setValue(2, forKey: "repeatState")
-//                _vox.repeatState = 2
-            }
-        }
-    }
-    
-    public var shuffleMode: MusicShuffleMode {
-        get {
-            return .off
-        }
-        set {
-            // NOTE: not support
-        }
-    }
-    
     public var currentTrack: MusicTrack? {
-        guard autoLaunch || isRunning else { return nil }
+        guard isRunning else { return nil }
         return _currentTrack
     }
     
     public var playerPosition: TimeInterval {
         get {
-            guard autoLaunch || isRunning else { return 0 }
+            guard isRunning else { return 0 }
             guard let _startTime = _startTime else { return 0 }
             return -_startTime.timeIntervalSinceNow
         }
         set {
-            guard autoLaunch || isRunning else { return }
+            guard isRunning else { return }
             originalPlayer.setValue(newValue, forKey: "currentTime")
 //            _vox.currentTime = newValue
             _startTime = Date().addingTimeInterval(-newValue)
         }
     }
     
-    public func playpause() {
-        guard autoLaunch || isRunning else { return }
-        _vox.playpause?()
-    }
-    
-    public func stop() {
-        guard autoLaunch || isRunning else { return }
-        // NOTE: not support
-        _vox.pause?()
-    }
-    
-    public func skipToNext() {
-        guard autoLaunch || isRunning else { return }
-        _vox.next?()
-    }
-    
     public func skipToPrevious() {
-        guard autoLaunch || isRunning else { return }
+        guard isRunning else { return }
         _vox.previous?()
     }
     
@@ -196,23 +137,28 @@ extension Vox: MusicPlayer {
 
 extension VoxApplication {
     
-    var currentTrack: Vox.Track {
+    var _currentTrack: MusicTrack {
         let id = (uniqueID ?? "") ?? ""
         let url = trackUrl?.flatMap(URL.init(string:))
-        return Vox.Track(id: id,
-                         title: track ?? nil,
-                         album: album ?? nil,
-                         artist: artist ?? nil,
-                         duration: totalTime,
-                         artwork: artworkImage,
-                         lyrics: nil,
-                         url: url)
+        return MusicTrack(id: id,
+                          title: track ?? nil,
+                          album: album ?? nil,
+                          artist: artist ?? nil,
+                          duration: totalTime,
+                          url: url)
     }
         
-    var startTime: Date? {
+    var _startTime: Date? {
         guard let currentTime = currentTime else {
             return nil
         }
         return Date().addingTimeInterval(-currentTime)
+    }
+    
+    var _playbackState: MusicPlaybackState {
+        switch playerState {
+        case 1?: return     .playing
+        case 0?, _: return  .stopped
+        }
     }
 }

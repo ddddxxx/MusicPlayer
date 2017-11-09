@@ -9,6 +9,9 @@
 /* Begin PBXBuildFile section */
 		BB4807FE1F97B6C20043A08F /* Spotify.swift in Sources */ = {isa = PBXBuildFile; fileRef = BB4807FD1F97B6C20043A08F /* Spotify.swift */; };
 		BB4808021F99AE030043A08F /* Vox.swift in Sources */ = {isa = PBXBuildFile; fileRef = BB4808011F99AE030043A08F /* Vox.swift */; };
+		BB832E731FA715A00014079B /* ScriptingBridge.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = BB832E721FA715A00014079B /* ScriptingBridge.framework */; };
+		BB832E751FA715B40014079B /* AppKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = BB832E741FA715B40014079B /* AppKit.framework */; };
+		BB832E771FA715CB0014079B /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = BB832E761FA715CB0014079B /* Foundation.framework */; };
 		BBAB97011F94E6C900E5E807 /* iTunes.swift in Sources */ = {isa = PBXBuildFile; fileRef = BBAB97001F94E6C900E5E807 /* iTunes.swift */; };
 		BBAB97021F94E7AC00E5E807 /* iTunesBridge.swift in Sources */ = {isa = PBXBuildFile; fileRef = BBAB96FE1F94DE5100E5E807 /* iTunesBridge.swift */; };
 		BBAB97031F94E7AC00E5E807 /* SpotifyBridge.swift in Sources */ = {isa = PBXBuildFile; fileRef = BBAB96FD1F94DE5100E5E807 /* SpotifyBridge.swift */; };
@@ -21,6 +24,9 @@
 /* Begin PBXFileReference section */
 		BB4807FD1F97B6C20043A08F /* Spotify.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Spotify.swift; sourceTree = "<group>"; };
 		BB4808011F99AE030043A08F /* Vox.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Vox.swift; sourceTree = "<group>"; };
+		BB832E721FA715A00014079B /* ScriptingBridge.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = ScriptingBridge.framework; path = System/Library/Frameworks/ScriptingBridge.framework; sourceTree = SDKROOT; };
+		BB832E741FA715B40014079B /* AppKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = AppKit.framework; path = System/Library/Frameworks/AppKit.framework; sourceTree = SDKROOT; };
+		BB832E761FA715CB0014079B /* Foundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Foundation.framework; path = System/Library/Frameworks/Foundation.framework; sourceTree = SDKROOT; };
 		BBAB96FD1F94DE5100E5E807 /* SpotifyBridge.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SpotifyBridge.swift; sourceTree = "<group>"; };
 		BBAB96FE1F94DE5100E5E807 /* iTunesBridge.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = iTunesBridge.swift; sourceTree = "<group>"; };
 		BBAB96FF1F94DE5100E5E807 /* VoxBridge.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = VoxBridge.swift; sourceTree = "<group>"; };
@@ -37,12 +43,25 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 0;
 			files = (
+				BB832E771FA715CB0014079B /* Foundation.framework in Frameworks */,
+				BB832E751FA715B40014079B /* AppKit.framework in Frameworks */,
+				BB832E731FA715A00014079B /* ScriptingBridge.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
+		BB832E711FA715A00014079B /* Frameworks */ = {
+			isa = PBXGroup;
+			children = (
+				BB832E741FA715B40014079B /* AppKit.framework */,
+				BB832E761FA715CB0014079B /* Foundation.framework */,
+				BB832E721FA715A00014079B /* ScriptingBridge.framework */,
+			);
+			name = Frameworks;
+			sourceTree = "<group>";
+		};
 		BBAB96FC1F94DE5100E5E807 /* BridgeHeader */ = {
 			isa = PBXGroup;
 			children = (
@@ -65,6 +84,7 @@
 			isa = PBXGroup;
 			children = (
 				OBJ_6 /* Package.swift */,
+				BB832E711FA715A00014079B /* Frameworks */,
 				OBJ_7 /* Sources */,
 				OBJ_10 /* Products */,
 			);
@@ -93,6 +113,7 @@
 			buildPhases = (
 				OBJ_16 /* Sources */,
 				OBJ_18 /* Frameworks */,
+				BB21D57A1FA75FB900E1FF6C /* Bump Build */,
 			);
 			buildRules = (
 			);
@@ -127,6 +148,23 @@
 			);
 		};
 /* End PBXProject section */
+
+/* Begin PBXShellScriptBuildPhase section */
+		BB21D57A1FA75FB900E1FF6C /* Bump Build */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputPaths = (
+			);
+			name = "Bump Build";
+			outputPaths = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "buildNumber=$(/usr/libexec/PlistBuddy -c \"Print CFBundleVersion\" \"${PROJECT_DIR}/${INFOPLIST_FILE}\")\nbuildNumber=$(($buildNumber + 1))\n/usr/libexec/PlistBuddy -c \"Set :CFBundleVersion $buildNumber\" \"${PROJECT_DIR}/${INFOPLIST_FILE}\"";
+		};
+/* End PBXShellScriptBuildPhase section */
 
 /* Begin PBXSourcesBuildPhase section */
 		OBJ_16 /* Sources */ = {

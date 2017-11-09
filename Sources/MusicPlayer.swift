@@ -18,7 +18,7 @@
 //  along with this program.  If not, see <http://www.gnu.org/licenses/>.
 //
 
-import Cocoa
+import AppKit
 import ScriptingBridge
 
 public enum MusicPlaybackState {
@@ -86,16 +86,9 @@ public protocol MusicPlayer: class {
     var delegate: MusicPlayerDelegate? { get set }
     
     var playbackState: MusicPlaybackState { get }
-    var repeatMode: MusicRepeatMode { get set }
-    var shuffleMode: MusicShuffleMode { get set }
     
     var currentTrack: MusicTrack? { get }
     var playerPosition: TimeInterval { get set }
-    
-    func playpause()
-    func stop()
-    func skipToNext()
-    func skipToPrevious()
     
     func updatePlayerState()
     
@@ -103,19 +96,14 @@ public protocol MusicPlayer: class {
     var originalPlayer: SBApplication { get }
 }
 
-public protocol MusicTrack {
+public struct MusicTrack {
     
-    var id:     String { get }
-    var title:  String? { get }
-    var album:  String? { get }
-    var artist: String? { get }
-    var duration: TimeInterval? { get }
-    var artwork:  NSImage? { get set }
-    var lyrics: String? { get set }
-    var url:    URL? { get }
-    
-    // To prevent property/method name conflict, track should not be extended directly.
-    var originalTrack: SBObject? { get }
+    public var id:     String
+    public var title:   String?
+    public var album:  String?
+    public var artist: String?
+    public var duration: TimeInterval?
+    public var url:    URL?
 }
 
 // MARK: -
