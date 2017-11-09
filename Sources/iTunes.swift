@@ -57,9 +57,19 @@ public final class iTunes {
     
     func playerInfoNotification(_ n: Notification) {
         guard autoLaunch || isRunning else { return }
-        var track = _iTunes._currentTrack
-        let state = _iTunes._playbackState
-        guard track?.id == _currentTrack?.id else {
+        // iTunes will send notification before quit. if we send
+        // apple event here, iTunes will be restarted immediately
+        let id = (n.userInfo?["PersistentID"] as? Int).map { String(format: "%08X", arguments: [UInt(bitPattern: $0)]) }
+        let state: MusicPlaybackState
+        switch n.userInfo?["Player State"] as? String {
+        case "Playing"?: state = .playing
+        case "Paused"?:  state = .paused
+        case "Stopped"?, _: state = .stopped
+        }
+        // Int64 hex uppercased persistent id from notification
+        // But iTunesTrack.persistentID is Int128. truncate first 8 characters
+        guard id == (_currentTrack?.id.dropFirst(8)).map(String.init) else {
+            var track = _iTunes._currentTrack
             if let loc = n.userInfo?["Location"] as? String {
                 track?.url = URL(string: loc)
             }
@@ -160,7 +170,7 @@ extension iTunesApplication {
     var _currentTrack: MusicTrack? {
         guard let t = currentTrack, t.mediaKind == .song else { return nil }
         guard currentStreamURL ?? nil == nil else { return nil }
-        return MusicTrack(id: t.id?().description ?? "",
+        return MusicTrack(id: (t.persistentID ?? "") ?? "",
                           title: t.name ?? nil,
                           album: t.album ?? nil,
                           artist: t.artist ?? nil,
