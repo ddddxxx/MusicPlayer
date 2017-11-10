@@ -144,7 +144,7 @@ extension iTunes: MusicPlayer {
 
 extension iTunes {
     
-    var currentLyrics: String? {
+    public var currentLyrics: String? {
         get {
             guard isRunning else { return nil }
             return _iTunes.currentTrack?.lyrics ?? nil
