@@ -44,13 +44,11 @@ public final class Vox {
             _startTime = _vox._startTime
         }
         
-        observer = DistributedNotificationCenter.default.addObserver(forName: .VoxTrackChanged, object: nil, queue: nil, using: trackChangeNotification)
+        observer = DistributedNotificationCenter.default.addObserver(forName: .VoxTrackChanged, object: nil, queue: nil) { [unowned self] n in self.trackChangeNotification(n) }
     }
     
     deinit {
-        if let observer = observer {
-            DistributedNotificationCenter.default.removeObserver(observer)
-        }
+        observer.map(DistributedNotificationCenter.default.removeObserver)
     }
     
     func trackChangeNotification(_ n: Notification) {

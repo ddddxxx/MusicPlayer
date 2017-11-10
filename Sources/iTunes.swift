@@ -44,13 +44,11 @@ public final class iTunes {
             _startTime = _iTunes._startTime
         }
         
-        observer = DistributedNotificationCenter.default.addObserver(forName: .iTunesPlayerInfo, object: nil, queue: nil, using: playerInfoNotification)
+        observer = DistributedNotificationCenter.default.addObserver(forName: .iTunesPlayerInfo, object: nil, queue: nil) { [unowned self] n in self.playerInfoNotification(n) }
     }
     
     deinit {
-        if let observer = observer {
-            DistributedNotificationCenter.default.removeObserver(observer)
-        }
+        observer.map(DistributedNotificationCenter.default.removeObserver)
     }
     
     func playerInfoNotification(_ n: Notification) {
@@ -141,6 +139,21 @@ extension iTunes: MusicPlayer {
     
     public var originalPlayer: SBApplication {
         return _iTunes as! SBApplication
+    }
+}
+
+extension iTunes {
+    
+    var currentLyrics: String? {
+        get {
+            guard isRunning else { return nil }
+            return _iTunes.currentTrack?.lyrics ?? nil
+        }
+        set {
+            guard isRunning else { return }
+            (_iTunes.currentTrack as? SBObject)?.setValue(newValue ?? "", forKey: "lyrics")
+//            _iTunes.currentTrack?.lyrics = newValue
+        }
     }
 }
 
