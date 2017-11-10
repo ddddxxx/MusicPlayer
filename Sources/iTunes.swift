@@ -144,6 +144,21 @@ extension iTunes: MusicPlayer {
     }
 }
 
+extension iTunes {
+    
+    var currentLyrics: String? {
+        get {
+            guard isRunning else { return nil }
+            return _iTunes.currentTrack?.lyrics ?? nil
+        }
+        set {
+            guard isRunning else { return }
+            (_iTunes.currentTrack as? SBObject)?.setValue(newValue ?? "", forKey: "lyrics")
+//            _iTunes.currentTrack?.lyrics = newValue
+        }
+    }
+}
+
 extension iTunesApplication {
     
     var _currentTrack: MusicTrack? {
