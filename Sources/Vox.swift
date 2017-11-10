@@ -48,9 +48,7 @@ public final class Vox {
     }
     
     deinit {
-        if let observer = observer {
-            DistributedNotificationCenter.default.removeObserver(observer)
-        }
+        observer.map(DistributedNotificationCenter.default.removeObserver)
     }
     
     func trackChangeNotification(_ n: Notification) {

@@ -48,9 +48,7 @@ public final class Spotify {
     }
     
     deinit {
-        if let observer = observer {
-            DistributedNotificationCenter.default.removeObserver(observer)
-        }
+        observer.map(DistributedNotificationCenter.default.removeObserver)
     }
     
     func playerInfoNotification(_ n: Notification) {

@@ -19,6 +19,7 @@
 //
 
 import Foundation
+import AppKit
 
 public protocol MusicPlayerManagerDelegate: class {
     
@@ -44,12 +45,33 @@ public class MusicPlayerManager: MusicPlayerDelegate {
     }
     
     private var _timer: Timer!
+    private var workspaceObservation: [NSObjectProtocol] = []
     
     public init() {
         players = MusicPlayerName.all.flatMap { $0.cls.init() }
         players.forEach { $0.delegate = self }
         _ = selectNewPlayer()
         _timer = Timer.scheduledTimer(timeInterval: manualUpdateInterval, target: self, selector: #selector(update), userInfo: nil, repeats: true)
+        
+        let workspaceNC = NSWorkspace.shared.notificationCenter
+        workspaceObservation += [
+            workspaceNC.addObserver(forName: NSWorkspace.didTerminateApplicationNotification, object: nil, queue: nil) {  [unowned self] n in
+                guard let userInfo = n.userInfo, let player = self.player else { return }
+                if userInfo["NSApplicationBundleIdentifier"] as? String == type(of: player).name.bundleID {
+                    self.delegate?.runningStateChanged(isRunning: false)
+                }
+            },
+            workspaceNC.addObserver(forName: NSWorkspace.didLaunchApplicationNotification, object: nil, queue: nil) {  [unowned self] n in
+                guard let userInfo = n.userInfo, let player = self.player else { return }
+                if userInfo["NSApplicationBundleIdentifier"] as? String == type(of: player).name.bundleID {
+                    self.delegate?.runningStateChanged(isRunning: true)
+                }
+            },
+        ]
+    }
+    
+    deinit {
+        workspaceObservation.forEach(NSWorkspace.shared.notificationCenter.removeObserver)
     }
     
     @objc func update() {
