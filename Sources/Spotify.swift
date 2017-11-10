@@ -44,7 +44,7 @@ public final class Spotify {
             _startTime = _spotify._startTime
         }
         
-        observer = DistributedNotificationCenter.default.addObserver(forName: .SpotifyPlayerInfo, object: nil, queue: nil, using: playerInfoNotification)
+        observer = DistributedNotificationCenter.default.addObserver(forName: .SpotifyPlayerInfo, object: nil, queue: nil) { [unowned self] n in self.playerInfoNotification(n) }
     }
     
     deinit {

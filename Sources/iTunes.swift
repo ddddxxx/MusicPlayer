@@ -44,7 +44,7 @@ public final class iTunes {
             _startTime = _iTunes._startTime
         }
         
-        observer = DistributedNotificationCenter.default.addObserver(forName: .iTunesPlayerInfo, object: nil, queue: nil, using: playerInfoNotification)
+        observer = DistributedNotificationCenter.default.addObserver(forName: .iTunesPlayerInfo, object: nil, queue: nil) { [unowned self] n in self.playerInfoNotification(n) }
     }
     
     deinit {
