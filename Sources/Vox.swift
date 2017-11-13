@@ -111,6 +111,7 @@ extension Vox: MusicPlayer {
     
     public var playerPosition: TimeInterval {
         get {
+            guard _playbackState.isPlaying else { return _pausePosition ?? 0 }
             guard isRunning else { return 0 }
             guard let _startTime = _startTime else { return 0 }
             return -_startTime.timeIntervalSinceNow

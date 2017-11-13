@@ -1,5 +1,5 @@
 //
-//  Spotify.swift
+//  SpotifyBridge.swift
 //
 //  This file is part of LyricsX
 //  Copyright (C) 2017 Xander Deng - https://github.com/ddddxxx/LyricsX

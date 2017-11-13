@@ -18,6 +18,7 @@
 		BBAB97041F94E7AC00E5E807 /* VoxBridge.swift in Sources */ = {isa = PBXBuildFile; fileRef = BBAB96FF1F94DE5100E5E807 /* VoxBridge.swift */; };
 		BBAB97061F94F62500E5E807 /* Global.swift in Sources */ = {isa = PBXBuildFile; fileRef = BBAB97051F94F62500E5E807 /* Global.swift */; };
 		BBAB97081F97026B00E5E807 /* MusicPlayerManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = BBAB97071F97026B00E5E807 /* MusicPlayerManager.swift */; };
+		BBF83E271FB7354B00D76E5B /* AudirvanaBridge.swift in Sources */ = {isa = PBXBuildFile; fileRef = BBF83E261FB7354B00D76E5B /* AudirvanaBridge.swift */; };
 		OBJ_17 /* MusicPlayer.swift in Sources */ = {isa = PBXBuildFile; fileRef = OBJ_8 /* MusicPlayer.swift */; };
 /* End PBXBuildFile section */
 
@@ -33,6 +34,7 @@
 		BBAB97001F94E6C900E5E807 /* iTunes.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = iTunes.swift; sourceTree = "<group>"; };
 		BBAB97051F94F62500E5E807 /* Global.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Global.swift; sourceTree = "<group>"; };
 		BBAB97071F97026B00E5E807 /* MusicPlayerManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MusicPlayerManager.swift; sourceTree = "<group>"; };
+		BBF83E261FB7354B00D76E5B /* AudirvanaBridge.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = AudirvanaBridge.swift; sourceTree = "<group>"; };
 		"MusicPlayer::MusicPlayer::Product" /* MusicPlayer.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = MusicPlayer.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		OBJ_6 /* Package.swift */ = {isa = PBXFileReference; explicitFileType = sourcecode.swift; path = Package.swift; sourceTree = "<group>"; };
 		OBJ_8 /* MusicPlayer.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MusicPlayer.swift; sourceTree = "<group>"; };
@@ -68,6 +70,7 @@
 				BBAB96FE1F94DE5100E5E807 /* iTunesBridge.swift */,
 				BBAB96FD1F94DE5100E5E807 /* SpotifyBridge.swift */,
 				BBAB96FF1F94DE5100E5E807 /* VoxBridge.swift */,
+				BBF83E261FB7354B00D76E5B /* AudirvanaBridge.swift */,
 			);
 			path = BridgeHeader;
 			sourceTree = "<group>";
@@ -172,6 +175,7 @@
 			buildActionMask = 0;
 			files = (
 				OBJ_17 /* MusicPlayer.swift in Sources */,
+				BBF83E271FB7354B00D76E5B /* AudirvanaBridge.swift in Sources */,
 				BBAB97081F97026B00E5E807 /* MusicPlayerManager.swift in Sources */,
 				BB4808021F99AE030043A08F /* Vox.swift in Sources */,
 				BBAB97031F94E7AC00E5E807 /* SpotifyBridge.swift in Sources */,
