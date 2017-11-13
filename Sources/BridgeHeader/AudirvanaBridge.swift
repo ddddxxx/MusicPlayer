@@ -79,7 +79,7 @@ import ScriptingBridge
     // Album of currently playing track.
     @objc optional var playingTrackDuration: Int {get}
     // Duration of currently playing track.
-    @objc optional var playingTrackAirfoillogo: Data {get}
+    @objc optional var playingTrackAirfoillogo: Data? {get}
     // Logo for the currently playing track.
     @objc optional func playpause()
     // Start playback, toggle play pause mode
