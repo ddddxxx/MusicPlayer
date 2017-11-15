@@ -7,6 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		044F18871FBAE61A0022D25B /* Audirvana.swift in Sources */ = {isa = PBXBuildFile; fileRef = 044F18861FBAE61A0022D25B /* Audirvana.swift */; };
 		BB4807FE1F97B6C20043A08F /* Spotify.swift in Sources */ = {isa = PBXBuildFile; fileRef = BB4807FD1F97B6C20043A08F /* Spotify.swift */; };
 		BB4808021F99AE030043A08F /* Vox.swift in Sources */ = {isa = PBXBuildFile; fileRef = BB4808011F99AE030043A08F /* Vox.swift */; };
 		BB832E731FA715A00014079B /* ScriptingBridge.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = BB832E721FA715A00014079B /* ScriptingBridge.framework */; };
@@ -23,6 +24,7 @@
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
+		044F18861FBAE61A0022D25B /* Audirvana.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Audirvana.swift; sourceTree = "<group>"; };
 		BB4807FD1F97B6C20043A08F /* Spotify.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Spotify.swift; sourceTree = "<group>"; };
 		BB4808011F99AE030043A08F /* Vox.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Vox.swift; sourceTree = "<group>"; };
 		BB832E721FA715A00014079B /* ScriptingBridge.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = ScriptingBridge.framework; path = System/Library/Frameworks/ScriptingBridge.framework; sourceTree = SDKROOT; };
@@ -103,6 +105,7 @@
 				BB4807FD1F97B6C20043A08F /* Spotify.swift */,
 				BB4808011F99AE030043A08F /* Vox.swift */,
 				BBAB97051F94F62500E5E807 /* Global.swift */,
+				044F18861FBAE61A0022D25B /* Audirvana.swift */,
 			);
 			path = Sources;
 			sourceTree = SOURCE_ROOT;
@@ -174,6 +177,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 0;
 			files = (
+				044F18871FBAE61A0022D25B /* Audirvana.swift in Sources */,
 				OBJ_17 /* MusicPlayer.swift in Sources */,
 				BBF83E271FB7354B00D76E5B /* AudirvanaBridge.swift in Sources */,
 				BBAB97081F97026B00E5E807 /* MusicPlayerManager.swift in Sources */,

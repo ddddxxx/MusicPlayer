@@ -62,7 +62,12 @@ public class MusicPlayerManager: MusicPlayerDelegate {
                 }
             },
             workspaceNC.addObserver(forName: NSWorkspace.didLaunchApplicationNotification, object: nil, queue: nil) {  [unowned self] n in
-                guard let userInfo = n.userInfo, let player = self.player else { return }
+                guard let userInfo = n.userInfo else { return }
+                if userInfo["NSApplicationBundleIdentifier"] as? String == MusicPlayerName.audirvana.bundleID {
+                    reportAudirvanaTrackChange()
+                }
+                
+                guard let player = self.player else { return }
                 if userInfo["NSApplicationBundleIdentifier"] as? String == type(of: player).name.bundleID {
                     self.delegate?.runningStateChanged(isRunning: true)
                 }
