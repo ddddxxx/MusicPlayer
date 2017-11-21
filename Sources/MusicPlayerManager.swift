@@ -44,6 +44,16 @@ public class MusicPlayerManager: MusicPlayerDelegate {
         }
     }
     
+    public var manualUpdateInterval = 1.0 {
+        didSet {
+            let d = _timer.fireDate
+            _timer.invalidate()
+            _timer = Timer.scheduledTimer(timeInterval: manualUpdateInterval, target: self, selector: #selector(update), userInfo: nil, repeats: true)
+            _timer.fireDate = d
+            _timer.tolerance = manualUpdateInterval / 10
+        }
+    }
+    
     private var _timer: Timer!
     private var workspaceObservation: [NSObjectProtocol] = []
     
@@ -52,6 +62,7 @@ public class MusicPlayerManager: MusicPlayerDelegate {
         players.forEach { $0.delegate = self }
         _ = selectNewPlayer()
         _timer = Timer.scheduledTimer(timeInterval: manualUpdateInterval, target: self, selector: #selector(update), userInfo: nil, repeats: true)
+        _timer.tolerance = 0.1
         
         let workspaceNC = NSWorkspace.shared.notificationCenter
         workspaceObservation += [
