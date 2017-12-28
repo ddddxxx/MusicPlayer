@@ -31,7 +31,7 @@ public final class Audirvana {
     private var _startTime: Date?
     private var _pausePosition: Double?
     
-    private var observer: NSObjectProtocol?
+    private var observer: [NSObjectProtocol] = []
     
     public init?() {
         guard let audirvana = SBApplication(bundleIdentifier: Audirvana.name.bundleID) else {
@@ -39,17 +39,27 @@ public final class Audirvana {
         }
         _audirvana = audirvana
         if isRunning {
-            reportAudirvanaTrackChange()
             _playbackState = _audirvana._playbackState
             _currentTrack = _audirvana._currentTrack
             _startTime = _audirvana._startTime
+            
+            observer += [
+                NSWorkspace.shared.notificationCenter.addObserver(forName: NSWorkspace.didLaunchApplicationNotification, object: nil, queue: nil) { [unowned self] n in
+                    guard let userInfo = n.userInfo else { return }
+                    if userInfo["NSApplicationBundleIdentifier"] as? String == MusicPlayerName.audirvana.bundleID {
+                        self._audirvana.setEventTypesReported?(.trackChanged)
+                    }
+                }
+            ]
         }
         
-        observer = DistributedNotificationCenter.default.addObserver(forName: .AudirvanaPlayerInfo, object: nil, queue: nil) { [unowned self] n in self.playerInfoNotification(n) }
+        observer += [
+            DistributedNotificationCenter.default.addObserver(forName: .AudirvanaPlayerInfo, object: nil, queue: nil) { [unowned self] n in self.playerInfoNotification(n) }
+        ]
     }
     
     deinit {
-        observer.map(DistributedNotificationCenter.default.removeObserver)
+        observer.forEach(DistributedNotificationCenter.default.removeObserver)
     }
     
     func playerInfoNotification(_ n: Notification) {
@@ -171,11 +181,4 @@ extension AudirvanaApplication {
         case .paused?:          return .paused
         }
     }
-}
-
-public func reportAudirvanaTrackChange() {
-    guard let audirvana: AudirvanaApplication = SBApplication(bundleIdentifier: Audirvana.name.bundleID) else {
-        return
-    }
-    audirvana.setEventTypesReported?(.trackChanged)
 }
