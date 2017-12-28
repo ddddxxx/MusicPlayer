@@ -1,7 +1,28 @@
+//
+//  Audirvana.swift
+//
+//  This file is part of LyricsX
+//  Copyright (C) 2017  Xander Deng
+//
+//  This program is free software: you can redistribute it and/or modify
+//  it under the terms of the GNU General Public License as published by
+//  the Free Software Foundation, either version 3 of the License, or
+//  (at your option) any later version.
+//
+//  This program is distributed in the hope that it will be useful,
+//  but WITHOUT ANY WARRANTY; without even the implied warranty of
+//  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+//  GNU General Public License for more details.
+//
+//  You should have received a copy of the GNU General Public License
+//  along with this program.  If not, see <http://www.gnu.org/licenses/>.
+//
+
 import AppKit
 import ScriptingBridge
 
 public final class Audirvana {
+    
     public weak var delegate: MusicPlayerDelegate?
     
     private var _audirvana: AudirvanaApplication
@@ -19,7 +40,6 @@ public final class Audirvana {
         _audirvana = audirvana
         if isRunning {
             reportAudirvanaTrackChange()
-            
             _playbackState = _audirvana._playbackState
             _currentTrack = _audirvana._currentTrack
             _startTime = _audirvana._startTime
@@ -84,6 +104,7 @@ public final class Audirvana {
 }
 
 extension Audirvana: MusicPlayer {
+    
     public static var name: MusicPlayerName = .audirvana
     
     public static var needsUpdate = false
@@ -120,10 +141,12 @@ extension Audirvana: MusicPlayer {
 }
 
 extension AudirvanaApplication {
+    
     var _id: String? {
         guard let title = playingTrackTitle else { return nil }
         return [title, playingTrackAlbum ?? nil, playingTrackArtist ?? nil, (playingTrackDuration ?? nil).map(String.init)].flatMap{$0}.joined(separator: ":")
     }
+    
     var _currentTrack: MusicTrack? {
         guard let id = _id else { return nil }
         return MusicTrack(id: id,

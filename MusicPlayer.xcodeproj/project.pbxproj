@@ -104,8 +104,8 @@
 				BBAB97001F94E6C900E5E807 /* iTunes.swift */,
 				BB4807FD1F97B6C20043A08F /* Spotify.swift */,
 				BB4808011F99AE030043A08F /* Vox.swift */,
-				BBAB97051F94F62500E5E807 /* Global.swift */,
 				044F18861FBAE61A0022D25B /* Audirvana.swift */,
+				BBAB97051F94F62500E5E807 /* Global.swift */,
 			);
 			path = Sources;
 			sourceTree = SOURCE_ROOT;
