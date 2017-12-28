@@ -64,7 +64,7 @@ public final class Audirvana {
     
     func playerInfoNotification(_ n: Notification) {
         guard isRunning else { return }
-        let id = _audirvana._id ?? nil
+        let id = _audirvana._currentTrackID ?? nil
         let state: MusicPlaybackState
         switch n.userInfo?["PlayerStatus"] as? String {
         case "Playing"?:    state = .playing
@@ -152,13 +152,15 @@ extension Audirvana: MusicPlayer {
 
 extension AudirvanaApplication {
     
-    var _id: String? {
-        guard let title = playingTrackTitle else { return nil }
-        return [title, playingTrackAlbum ?? nil, playingTrackArtist ?? nil, (playingTrackDuration ?? nil).map(String.init)].flatMap{$0}.joined(separator: ":")
+    var _currentTrackID: String? {
+        guard let title = playingTrackTitle ?? nil else { return nil }
+        let album = (playingTrackAlbum ?? nil) ?? ""
+        let duration = playingTrackDuration?.description ?? ""
+        return "Audirvana-" + title + "-" + album + "-" + duration
     }
     
     var _currentTrack: MusicTrack? {
-        guard let id = _id else { return nil }
+        guard let id = _currentTrackID else { return nil }
         return MusicTrack(id: id,
                           title: playingTrackTitle ?? nil,
                           album: playingTrackAlbum ?? nil,
