@@ -65,19 +65,15 @@ public class MusicPlayerManager: MusicPlayerDelegate {
         _timer.tolerance = 0.1
         
         let workspaceNC = NSWorkspace.shared.notificationCenter
+        let callback: (Notification) -> Void = { [unowned self] n in
+            guard let userInfo = n.userInfo, let player = self.player else { return }
+            if userInfo["NSApplicationBundleIdentifier"] as? String == type(of: player).name.bundleID {
+                self.delegate?.runningStateChanged(isRunning: false)
+            }
+        }
         workspaceObservation += [
-            workspaceNC.addObserver(forName: NSWorkspace.didTerminateApplicationNotification, object: nil, queue: nil) {  [unowned self] n in
-                guard let userInfo = n.userInfo, let player = self.player else { return }
-                if userInfo["NSApplicationBundleIdentifier"] as? String == type(of: player).name.bundleID {
-                    self.delegate?.runningStateChanged(isRunning: false)
-                }
-            },
-            workspaceNC.addObserver(forName: NSWorkspace.didLaunchApplicationNotification, object: nil, queue: nil) {  [unowned self] n in
-                guard let userInfo = n.userInfo, let player = self.player else { return }
-                if userInfo["NSApplicationBundleIdentifier"] as? String == type(of: player).name.bundleID {
-                    self.delegate?.runningStateChanged(isRunning: true)
-                }
-            },
+            workspaceNC.addObserver(forName: NSWorkspace.didTerminateApplicationNotification, object: nil, queue: nil, using: callback),
+            workspaceNC.addObserver(forName: NSWorkspace.didLaunchApplicationNotification, object: nil, queue: nil, using: callback),
         ]
     }
     

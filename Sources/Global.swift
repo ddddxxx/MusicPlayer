@@ -26,4 +26,5 @@ extension Notification.Name {
     static let iTunesPlayerInfo = Notification.Name("com.apple.iTunes.playerInfo")
     static let SpotifyPlayerInfo = Notification.Name("com.spotify.client.PlaybackStateChanged")
     static let VoxTrackChanged = Notification.Name("com.coppertino.Vox.trackChanged")
+    static let AudirvanaPlayerInfo = Notification.Name("com.audirvana.audirvana-plus.playerStatus")
 }
