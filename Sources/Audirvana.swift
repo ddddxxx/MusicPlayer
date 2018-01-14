@@ -70,23 +70,23 @@ public final class Audirvana {
         case "Paused"?:     state = .paused
         case "Stopped"?, _: state = .stopped
         }
-        guard id == _currentTrack?.id else {
+        if id != _currentTrack?.id {
             var track = _audirvana._currentTrack
             if let loc = n.userInfo?["PlayingTrackURL"] as? String {
                 track?.url = URL(string: loc)
             }
             _currentTrack = track
-            _playbackState = state
+            //_playbackState = state
             _startTime = _audirvana._startTime
             delegate?.currentTrackChanged(track: track, from: self)
-            return
+            //return
         }
-        guard state == _playbackState else {
+        if state != _playbackState {
             _playbackState = state
             _startTime = _audirvana._startTime
             _pausePosition = playerPosition
             delegate?.playbackStateChanged(state: state, from: self)
-            return
+            //return
         }
         updatePlayerPosition()
     }
