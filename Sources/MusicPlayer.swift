@@ -107,6 +107,7 @@ public struct MusicTrack {
     public var artist: String?
     public var duration: TimeInterval?
     public var url:    URL?
+    public var artwork: NSImage?
 }
 
 // MARK: -
