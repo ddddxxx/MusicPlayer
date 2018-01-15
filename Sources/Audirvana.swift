@@ -43,18 +43,17 @@ public final class Audirvana {
             _currentTrack = _audirvana._currentTrack
             _startTime = _audirvana._startTime
             
-            observer += [
-                NSWorkspace.shared.notificationCenter.addObserver(forName: NSWorkspace.didLaunchApplicationNotification, object: nil, queue: nil) { [unowned self] n in
-                    guard let userInfo = n.userInfo else { return }
-                    if userInfo["NSApplicationBundleIdentifier"] as? String == MusicPlayerName.audirvana.bundleID {
-                        self._audirvana.setEventTypesReported?(.trackChanged)
-                    }
-                }
-            ]
+            _audirvana.setEventTypesReported?(.trackChanged)
         }
         
         observer += [
-            DistributedNotificationCenter.default.addObserver(forName: .AudirvanaPlayerInfo, object: nil, queue: nil) { [unowned self] n in self.playerInfoNotification(n) }
+            DistributedNotificationCenter.default.addObserver(forName: .AudirvanaPlayerInfo, object: nil, queue: nil) { [unowned self] n in self.playerInfoNotification(n) },
+            NSWorkspace.shared.notificationCenter.addObserver(forName: NSWorkspace.didLaunchApplicationNotification, object: nil, queue: nil) { [unowned self] n in
+                guard let userInfo = n.userInfo else { return }
+                if userInfo["NSApplicationBundleIdentifier"] as? String == MusicPlayerName.audirvana.bundleID {
+                    self._audirvana.setEventTypesReported?(.trackChanged)
+                }
+            }
         ]
     }
     
