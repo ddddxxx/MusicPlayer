@@ -47,24 +47,27 @@ public enum MusicPlayerName: String {
     case itunes     = "iTunes"
     case spotify    = "Spotify"
     case vox        = "Vox"
+    case audirvana  = "Audirvana Plus"
     
     var bundleID: String {
         switch self {
-        case .itunes:   return "com.apple.iTunes"
-        case .spotify:  return "com.spotify.client"
-        case .vox:      return "com.coppertino.Vox"
+        case .itunes:    return "com.apple.iTunes"
+        case .spotify:   return "com.spotify.client"
+        case .vox:       return "com.coppertino.Vox"
+        case .audirvana: return "com.audirvana.Audirvana-Plus"
         }
     }
     
     var cls: MusicPlayer.Type {
         switch self {
-        case .itunes:   return iTunes.self
-        case .spotify:  return Spotify.self
-        case .vox:      return Vox.self
+        case .itunes:    return iTunes.self
+        case .spotify:   return Spotify.self
+        case .vox:       return Vox.self
+        case .audirvana: return Audirvana.self
         }
     }
     
-    static let all: [MusicPlayerName] = [.itunes, .spotify, .vox]
+    static let all: [MusicPlayerName] = [.itunes, .spotify, .vox, .audirvana]
 }
 
 // MARK: -

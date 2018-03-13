@@ -99,5 +99,6 @@ import ScriptingBridge
     // set/change playing track (in slave mode). trackID is optional and needed only for Qobuz tracks
     @objc optional func setNextTrackType(type: AudirvanaTrackType, URL: String!, trackID: Int)
     // set/change track to be played after current one (in slave mode). trackID is optional and needed only for Qobuz tracks
+    @objc optional func setEventTypesReported(_ eventTypesReported: AudirvanaPlayerStatusEventTypesReported)
 }
 extension SBApplication: AudirvanaApplication{}

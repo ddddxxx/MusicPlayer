@@ -44,6 +44,16 @@ public class MusicPlayerManager: MusicPlayerDelegate {
         }
     }
     
+    public var manualUpdateInterval = 1.0 {
+        didSet {
+            let d = _timer.fireDate
+            _timer.invalidate()
+            _timer = Timer.scheduledTimer(timeInterval: manualUpdateInterval, target: self, selector: #selector(update), userInfo: nil, repeats: true)
+            _timer.fireDate = d
+            _timer.tolerance = manualUpdateInterval / 10
+        }
+    }
+    
     private var _timer: Timer!
     private var workspaceObservation: [NSObjectProtocol] = []
     
@@ -52,21 +62,24 @@ public class MusicPlayerManager: MusicPlayerDelegate {
         players.forEach { $0.delegate = self }
         _ = selectNewPlayer()
         _timer = Timer.scheduledTimer(timeInterval: manualUpdateInterval, target: self, selector: #selector(update), userInfo: nil, repeats: true)
+        _timer.tolerance = 0.1
         
         let workspaceNC = NSWorkspace.shared.notificationCenter
-        workspaceObservation += [
-            workspaceNC.addObserver(forName: NSWorkspace.didTerminateApplicationNotification, object: nil, queue: nil) {  [unowned self] n in
-                guard let userInfo = n.userInfo, let player = self.player else { return }
-                if userInfo["NSApplicationBundleIdentifier"] as? String == type(of: player).name.bundleID {
+        let callback: (Notification) -> Void = { [unowned self] n in
+            guard let userInfo = n.userInfo, let player = self.player else { return }
+            if userInfo["NSApplicationBundleIdentifier"] as? String == type(of: player).name.bundleID {
+                switch n.name {
+                case NSWorkspace.didTerminateApplicationNotification:
                     self.delegate?.runningStateChanged(isRunning: false)
-                }
-            },
-            workspaceNC.addObserver(forName: NSWorkspace.didLaunchApplicationNotification, object: nil, queue: nil) {  [unowned self] n in
-                guard let userInfo = n.userInfo, let player = self.player else { return }
-                if userInfo["NSApplicationBundleIdentifier"] as? String == type(of: player).name.bundleID {
+                case NSWorkspace.didLaunchApplicationNotification:
                     self.delegate?.runningStateChanged(isRunning: true)
+                default: break
                 }
-            },
+            }
+        }
+        workspaceObservation += [
+            workspaceNC.addObserver(forName: NSWorkspace.didTerminateApplicationNotification, object: nil, queue: nil, using: callback),
+            workspaceNC.addObserver(forName: NSWorkspace.didLaunchApplicationNotification, object: nil, queue: nil, using: callback),
         ]
     }
     
