@@ -168,7 +168,8 @@ extension iTunesApplication {
                           album: t.album ?? nil,
                           artist: t.artist ?? nil,
                           duration: t.duration,
-                          url: nil)
+                          url: nil,
+                          artwork: nil)
     }
     
     var _startTime: Date? {
