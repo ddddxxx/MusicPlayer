@@ -145,5 +145,6 @@ public class MusicPlayerManager: MusicPlayerDelegate {
             return
         }
         delegate?.playerPositionMutated(position: position)
+        _timer.fireDate = Date().addingTimeInterval(0.2)
     }
 }
