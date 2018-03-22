@@ -144,7 +144,8 @@ extension VoxApplication {
                           album: album ?? nil,
                           artist: artist ?? nil,
                           duration: totalTime,
-                          url: url)
+                          url: url,
+                          artwork: nil)
     }
         
     var _startTime: Date? {

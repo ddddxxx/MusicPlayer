@@ -148,7 +148,8 @@ extension SpotifyApplication {
                           album: t.album ?? nil,
                           artist: t.artist ?? nil,
                           duration: t.duration.map(TimeInterval.init),
-                          url: nil)
+                          url: nil,
+                          artwork: nil)
     }
     
     var _startTime: Date? {
