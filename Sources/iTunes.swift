@@ -161,8 +161,11 @@ extension iTunes {
 extension iTunesApplication {
     
     var _currentTrack: MusicTrack? {
-        guard let t = currentTrack, t.mediaKind == .song else { return nil }
-        guard currentStreamURL ?? nil == nil else { return nil }
+        guard let t = currentTrack,
+            t.mediaKind == .song || t.mediaKind == .musicVideo,
+            currentStreamURL ?? nil == nil else {
+                return nil
+        }
         return MusicTrack(id: (t.persistentID ?? "") ?? "",
                           title: t.name ?? nil,
                           album: t.album ?? nil,
