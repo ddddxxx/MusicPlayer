@@ -42,7 +42,7 @@ public enum MusicShuffleMode {
     case groupings
 }
 
-public enum MusicPlayerName: String {
+public enum MusicPlayerName: String, CaseIterable {
     
     case itunes     = "iTunes"
     case spotify    = "Spotify"
@@ -66,8 +66,6 @@ public enum MusicPlayerName: String {
         case .audirvana: return Audirvana.self
         }
     }
-    
-    static let all: [MusicPlayerName] = [.itunes, .spotify, .vox, .audirvana]
 }
 
 // MARK: -

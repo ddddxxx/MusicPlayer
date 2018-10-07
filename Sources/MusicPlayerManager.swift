@@ -58,7 +58,7 @@ public class MusicPlayerManager: MusicPlayerDelegate {
     private var workspaceObservation: [NSObjectProtocol] = []
     
     public init() {
-        players = MusicPlayerName.all.flatMap { $0.cls.init() }
+        players = MusicPlayerName.allCases.compactMap { $0.cls.init() }
         players.forEach { $0.delegate = self }
         _ = selectNewPlayer()
         _timer = Timer.scheduledTimer(timeInterval: manualUpdateInterval, target: self, selector: #selector(update), userInfo: nil, repeats: true)

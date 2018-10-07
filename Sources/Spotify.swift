@@ -161,9 +161,9 @@ extension SpotifyApplication {
     
     var _playbackState: MusicPlaybackState {
         switch playerState {
-        case .stopped?, nil:    return .stopped
         case .playing?:         return .playing
         case .paused?:          return .paused
+        case .stopped?, nil, _: return .stopped
         }
     }
 }
