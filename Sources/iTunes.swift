@@ -184,11 +184,11 @@ extension iTunesApplication {
     
     var _playbackState: MusicPlaybackState {
         switch playerState {
-        case .stopped?, nil:    return .stopped
         case .playing?:         return .playing
         case .paused?:          return .paused
         case .fastForwarding?:  return .fastForwarding
         case .rewinding?:       return .playing
+        case .stopped?, nil, _: return .stopped
         }
     }
 }
