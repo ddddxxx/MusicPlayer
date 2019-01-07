@@ -142,14 +142,16 @@ extension Spotify: MusicPlayer {
 extension SpotifyApplication {
     
     var _currentTrack: MusicTrack? {
-        guard let t = currentTrack else { return nil }
-        return MusicTrack(id: t.id?() ?? "",
-                          title: t.name ?? nil,
-                          album: t.album ?? nil,
-                          artist: t.artist ?? nil,
-                          duration: t.duration.map(TimeInterval.init),
+        guard let track = currentTrack else { return nil }
+        let originalTrack = (track as! SBObject).get()
+        return MusicTrack(id: track.id?() ?? "",
+                          title: track.name ?? nil,
+                          album: track.album ?? nil,
+                          artist: track.artist ?? nil,
+                          duration: track.duration.map(TimeInterval.init),
                           url: nil,
-                          artwork: nil)
+                          artwork: nil,
+                          originalTrack: (originalTrack as! SBObject))
     }
     
     var _startTime: Date? {

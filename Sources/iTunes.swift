@@ -65,10 +65,7 @@ public final class iTunes {
         // Int64 hex uppercased persistent id from notification
         // But iTunesTrack.persistentID is Int128. truncate first 8 characters
         guard id == (_currentTrack?.id.dropFirst(8)).map(String.init) else {
-            var track = _iTunes._currentTrack
-            if let loc = n.userInfo?["Location"] as? String {
-                track?.url = URL(string: loc)
-            }
+            let track = _iTunes._currentTrack
             _currentTrack = track
             _playbackState = state
             _startTime = _iTunes._startTime
@@ -143,36 +140,24 @@ extension iTunes: MusicPlayer {
     }
 }
 
-extension iTunes {
-    
-    public var currentLyrics: String? {
-        get {
-            guard isRunning else { return nil }
-            return _iTunes.currentTrack?.lyrics ?? nil
-        }
-        set {
-            guard isRunning else { return }
-            (_iTunes.currentTrack as? SBObject)?.setValue(newValue ?? "", forKey: "lyrics")
-//            _iTunes.currentTrack?.lyrics = newValue
-        }
-    }
-}
-
 extension iTunesApplication {
     
     var _currentTrack: MusicTrack? {
-        guard let t = currentTrack,
-            t.mediaKind == .song || t.mediaKind == .musicVideo,
+        guard let track = currentTrack,
+            track.mediaKind == .song || track.mediaKind == .musicVideo,
             currentStreamURL ?? nil == nil else {
                 return nil
         }
-        return MusicTrack(id: (t.persistentID ?? "") ?? "",
-                          title: t.name ?? nil,
-                          album: t.album ?? nil,
-                          artist: t.artist ?? nil,
-                          duration: t.duration,
-                          url: nil,
-                          artwork: nil)
+        let originalTrack = (track as! SBObject).get()
+        let url = (originalTrack as? iTunesFileTrack)?.location
+        return MusicTrack(id: (track.persistentID ?? "") ?? "",
+                          title: track.name ?? nil,
+                          album: track.album ?? nil,
+                          artist: track.artist ?? nil,
+                          duration: track.duration,
+                          url: url,
+                          artwork: nil,
+                          originalTrack: (originalTrack as! SBObject))
     }
     
     var _startTime: Date? {
