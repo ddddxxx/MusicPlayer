@@ -137,6 +137,11 @@
 			isa = PBXProject;
 			attributes = {
 				LastUpgradeCheck = 9999;
+				TargetAttributes = {
+					"MusicPlayer::MusicPlayer" = {
+						LastSwiftMigration = 1010;
+					};
+				};
 			};
 			buildConfigurationList = OBJ_2 /* Build configuration list for PBXProject "MusicPlayer" */;
 			compatibilityVersion = "Xcode 3.2";
@@ -207,6 +212,7 @@
 				PRODUCT_MODULE_NAME = "$(TARGET_NAME:c99extidentifier)";
 				PRODUCT_NAME = "$(TARGET_NAME:c99extidentifier)";
 				SKIP_INSTALL = YES;
+				SWIFT_VERSION = 4.2;
 				TARGET_NAME = MusicPlayer;
 			};
 			name = Debug;
@@ -224,6 +230,7 @@
 				PRODUCT_MODULE_NAME = "$(TARGET_NAME:c99extidentifier)";
 				PRODUCT_NAME = "$(TARGET_NAME:c99extidentifier)";
 				SKIP_INSTALL = YES;
+				SWIFT_VERSION = 4.2;
 				TARGET_NAME = MusicPlayer;
 			};
 			name = Release;
