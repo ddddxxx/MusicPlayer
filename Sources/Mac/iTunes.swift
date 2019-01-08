@@ -109,12 +109,12 @@ extension iTunes: MusicPlayer {
     
     public static var needsUpdate = false
     
-    public var playbackState: MusicPlaybackState {
-        return _playbackState
-    }
-    
     public var currentTrack: MusicTrack? {
         return _currentTrack
+    }
+    
+    public var playbackState: MusicPlaybackState {
+        return _playbackState
     }
     
     public var playerPosition: TimeInterval {

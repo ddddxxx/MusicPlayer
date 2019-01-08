@@ -48,10 +48,19 @@ public enum MusicShuffleMode {
 
 public enum MusicPlayerName: String, CaseIterable {
     
+    #if os(macOS)
+    
     case itunes     = "iTunes"
     case spotify    = "Spotify"
     case vox        = "Vox"
     case audirvana  = "Audirvana Plus"
+    
+    #elseif os(iOS)
+    
+    case appleMusic = "Apple Music"
+    case spotify    = "Spotify"
+    
+    #endif
 }
 
 // MARK: -
@@ -72,12 +81,15 @@ public protocol MusicPlayer: class {
     
     var delegate: MusicPlayerDelegate? { get set }
     
-    var playbackState: MusicPlaybackState { get }
-    
     var currentTrack: MusicTrack? { get }
+    var playbackState: MusicPlaybackState { get }
     var playerPosition: TimeInterval { get set }
     
     func updatePlayerState()
+    
+    #if os(iOS)
+    var isAuthorized: Bool { get }
+    #endif
     
     #if os(macOS)
     // To prevent property/method name conflict, player should not be extended directly.

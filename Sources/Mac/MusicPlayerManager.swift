@@ -21,15 +21,6 @@
 import Foundation
 import AppKit
 
-public protocol MusicPlayerManagerDelegate: class {
-    
-    func runningStateChanged(isRunning: Bool)
-    func currentPlayerChanged(player: MusicPlayer?)
-    func currentTrackChanged(track: MusicTrack?)
-    func playbackStateChanged(state: MusicPlaybackState)
-    func playerPositionMutated(position: TimeInterval)
-}
-
 public class MusicPlayerManager: MusicPlayerDelegate {
     
     public weak var delegate: MusicPlayerManagerDelegate?

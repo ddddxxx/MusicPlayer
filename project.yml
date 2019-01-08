@@ -2,7 +2,7 @@ name: MusicPlayer
 options:
   deploymentTarget:
     macOS: "10.9"
-    iOS: "8.0"
+    iOS: "9.3"
 settingGroups:
   general:
     INFOPLIST_FILE: MusicPlayer.xcodeproj/MusicPlayer_Info.plist
@@ -15,6 +15,7 @@ targets:
   MusicPlayer-macOS:
     type: framework
     platform: macOS
+    scheme: {}
     sources:
       - path: Sources
         excludes:
@@ -29,6 +30,7 @@ targets:
   MusicPlayer-iOS:
     type: framework
     platform: iOS
+    scheme: {}
     sources:
       - path: Sources
         excludes:
