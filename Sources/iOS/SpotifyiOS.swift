@@ -1,5 +1,5 @@
 //
-//  MusicPlayerManager.swift
+//  SpotifyiOS.swift
 //
 //  This file is part of LyricsX
 //  Copyright (C) 2017  Xander Deng
@@ -18,4 +18,8 @@
 //  along with this program.  If not, see <http://www.gnu.org/licenses/>.
 //
 
-import Foundation
+import UIKit
+
+public final class SpotifyiOS {
+    
+}

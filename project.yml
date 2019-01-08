@@ -21,7 +21,6 @@ targets:
         excludes:
           - iOS/*
     settings:
-      configs:
       groups:
         - general
     dependencies:
@@ -36,12 +35,14 @@ targets:
         excludes:
           - Mac/*
     settings:
-      configs:
+      base:
+        SWIFT_OBJC_BRIDGING_HEADER: Sources/iOS/Supporting Files/MusicPlayer-Bridging-Header.h
       groups:
         - general
     dependencies:
       - sdk: UIKit.framework
       - sdk: MediaPlayer.framework
+      - framework: ThirdParty/SpotifyiOS.framework
 
 
 
