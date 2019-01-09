@@ -7,6 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		BBBB6FB621E5AB7B007C2D92 /* MusicPlayerManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = FR_45A439C5C32FF62FCD7A52DB3A8E21CE /* MusicPlayerManager.swift */; };
 		BF_083EAA44F7514A4C4B1D61E12F3ADF90 /* ScriptingBridge.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = FR_30F744835115BF17E9C29FB97DF8C689 /* ScriptingBridge.framework */; };
 		BF_0867655C4007BA4669B839AADC65C878 /* MusicPlayer.swift in Sources */ = {isa = PBXBuildFile; fileRef = FR_CB29141DC39F40FA114AC0D7B210B3C2 /* MusicPlayer.swift */; };
 		BF_10F9623BD3AA4238623398533980252D /* UIKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = FR_98F914B12BC084C33C66CF56E899257D /* UIKit.framework */; };
@@ -26,7 +27,6 @@
 		BF_B1F3F4FAA0D2ACEDDB5ADF00CB780F50 /* Spotify.swift in Sources */ = {isa = PBXBuildFile; fileRef = FR_76409C18E62F982118FB4AAA97E6EA00 /* Spotify.swift */; };
 		BF_BFB93A079CAB45D71DB222723AD95EED /* Audirvana.swift in Sources */ = {isa = PBXBuildFile; fileRef = FR_11D19D26543CFDF3A4C46272832902F5 /* Audirvana.swift */; };
 		BF_C169BB6F9D806E8FAA623F76CD6B21FB /* SpotifyiOS.swift in Sources */ = {isa = PBXBuildFile; fileRef = FR_CAB5BCBAB843B38C603213C0E6B6E794 /* SpotifyiOS.swift */; };
-		BF_DA0A70581A7992E3E9320612B8F0F3EC /* MusicPlayerManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = FR_3B0493589EAAC6B1A2813C2EF40971A5 /* MusicPlayerManager.swift */; };
 		BF_E59C4AA50A58929314F10D125FC0F314 /* MusicPlayer.swift in Sources */ = {isa = PBXBuildFile; fileRef = FR_CB29141DC39F40FA114AC0D7B210B3C2 /* MusicPlayer.swift */; };
 		BF_EF6A0DBB22525876F0C91C652DEE74B5 /* iTunes.swift in Sources */ = {isa = PBXBuildFile; fileRef = FR_3CB0DD50E6D97EDF6B1CF98A69CA2A92 /* iTunes.swift */; };
 		BF_F2779B6D937EFB2BA58D46F32A58F83B /* SpotifyiOS.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = FR_A92AD1BEC2AAEAA47DAEECBB06DE2A9A /* SpotifyiOS.framework */; };
@@ -39,12 +39,11 @@
 		FR_11D19D26543CFDF3A4C46272832902F5 /* Audirvana.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Audirvana.swift; sourceTree = "<group>"; };
 		FR_30F744835115BF17E9C29FB97DF8C689 /* ScriptingBridge.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = ScriptingBridge.framework; path = System/Library/Frameworks/ScriptingBridge.framework; sourceTree = SDKROOT; };
 		FR_3524A448DBF7F856BA193318DD388505 /* iTunesBridge.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = iTunesBridge.swift; sourceTree = "<group>"; };
-		FR_3B0493589EAAC6B1A2813C2EF40971A5 /* MusicPlayerManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MusicPlayerManager.swift; sourceTree = "<group>"; };
 		FR_3CB0DD50E6D97EDF6B1CF98A69CA2A92 /* iTunes.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = iTunes.swift; sourceTree = "<group>"; };
 		FR_45A439C5C32FF62FCD7A52DB3A8E21CE /* MusicPlayerManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MusicPlayerManager.swift; sourceTree = "<group>"; };
 		FR_4623C42515BA744738BB0586DD0996F9 /* MusicPlayerManagerDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MusicPlayerManagerDelegate.swift; sourceTree = "<group>"; };
 		FR_4654036A5E4417882DDA71F7161B7750 /* SpotifyBridge.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SpotifyBridge.swift; sourceTree = "<group>"; };
-		FR_4F79CD6A9F5D36111EF532B3ADDF3447 /* MusicPlayer-iOS.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = "MusicPlayer-iOS.framework"; sourceTree = BUILT_PRODUCTS_DIR; };
+		FR_4F79CD6A9F5D36111EF532B3ADDF3447 /* MusicPlayer-iOS.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; name = "MusicPlayer-iOS.framework"; path = MusicPlayer.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		FR_5D8176856DE66D267E7FB1687DA50F1A /* VoxBridge.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = VoxBridge.swift; sourceTree = "<group>"; };
 		FR_61BC62FA01E27DC86EF705B8569EB0FB /* AppleMusic.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppleMusic.swift; sourceTree = "<group>"; };
 		FR_72A6D4AEF90210266BF9312C4AD2FB7A /* AudirvanaBridge.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AudirvanaBridge.swift; sourceTree = "<group>"; };
@@ -52,7 +51,7 @@
 		FR_98F914B12BC084C33C66CF56E899257D /* UIKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = UIKit.framework; path = System/Library/Frameworks/UIKit.framework; sourceTree = SDKROOT; };
 		FR_A5DAE222C0506C180F82590F2D57B3CA /* MediaPlayer.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = MediaPlayer.framework; path = System/Library/Frameworks/MediaPlayer.framework; sourceTree = SDKROOT; };
 		FR_A92AD1BEC2AAEAA47DAEECBB06DE2A9A /* SpotifyiOS.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = SpotifyiOS.framework; path = ThirdParty/SpotifyiOS.framework; sourceTree = "<group>"; };
-		FR_ADD1F947819E6904931470C835395E4F /* MusicPlayer-macOS.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = "MusicPlayer-macOS.framework"; sourceTree = BUILT_PRODUCTS_DIR; };
+		FR_ADD1F947819E6904931470C835395E4F /* MusicPlayer-macOS.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; name = "MusicPlayer-macOS.framework"; path = MusicPlayer.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		FR_B00C418ED23658EFC2B8C4C7BC5852E0 /* Vox.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Vox.swift; sourceTree = "<group>"; };
 		FR_C0038417FD6448298DB3BD0E5A4DBA5D /* AppKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = AppKit.framework; path = System/Library/Frameworks/AppKit.framework; sourceTree = SDKROOT; };
 		FR_CAB5BCBAB843B38C603213C0E6B6E794 /* SpotifyiOS.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SpotifyiOS.swift; sourceTree = "<group>"; };
@@ -127,7 +126,6 @@
 			children = (
 				FR_11D19D26543CFDF3A4C46272832902F5 /* Audirvana.swift */,
 				FR_3CB0DD50E6D97EDF6B1CF98A69CA2A92 /* iTunes.swift */,
-				FR_45A439C5C32FF62FCD7A52DB3A8E21CE /* MusicPlayerManager.swift */,
 				FR_76409C18E62F982118FB4AAA97E6EA00 /* Spotify.swift */,
 				FR_B00C418ED23658EFC2B8C4C7BC5852E0 /* Vox.swift */,
 				G_35D6B91F2453550E6DEE7AFBB145AC97 /* BridgeHeader */,
@@ -150,6 +148,7 @@
 				FR_0F53334A5C5A0D72EE6CD8EEDB6583F6 /* Global.swift */,
 				FR_CB29141DC39F40FA114AC0D7B210B3C2 /* MusicPlayer.swift */,
 				FR_4623C42515BA744738BB0586DD0996F9 /* MusicPlayerManagerDelegate.swift */,
+				FR_45A439C5C32FF62FCD7A52DB3A8E21CE /* MusicPlayerManager.swift */,
 				G_D2D07B13A525452DE7148AD0EE99BB8C /* iOS */,
 				G_809B4C79612BD600A92B6B7E0DEBCF25 /* Mac */,
 			);
@@ -160,7 +159,6 @@
 			isa = PBXGroup;
 			children = (
 				FR_61BC62FA01E27DC86EF705B8569EB0FB /* AppleMusic.swift */,
-				FR_3B0493589EAAC6B1A2813C2EF40971A5 /* MusicPlayerManager.swift */,
 				FR_CAB5BCBAB843B38C603213C0E6B6E794 /* SpotifyiOS.swift */,
 				G_435B3F09934647B58B48B437D49AD72C /* Supporting Files */,
 			);
@@ -245,9 +243,9 @@
 			buildActionMask = 2147483647;
 			files = (
 				BF_11D7A44AB4A39F1BCCC913FD2AAA1293 /* AppleMusic.swift in Sources */,
+				BBBB6FB621E5AB7B007C2D92 /* MusicPlayerManager.swift in Sources */,
 				BF_A0D28E2C76371546E66C7A247AE841C0 /* Global.swift in Sources */,
 				BF_E59C4AA50A58929314F10D125FC0F314 /* MusicPlayer.swift in Sources */,
-				BF_DA0A70581A7992E3E9320612B8F0F3EC /* MusicPlayerManager.swift in Sources */,
 				BF_81B4D5C62477CAD679E85C8C16DD2F6E /* MusicPlayerManagerDelegate.swift in Sources */,
 				BF_C169BB6F9D806E8FAA623F76CD6B21FB /* SpotifyiOS.swift in Sources */,
 			);
