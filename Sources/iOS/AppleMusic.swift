@@ -49,13 +49,11 @@ public final class AppleMusic: MusicPlayer {
         }
     }
     
-    public var isAuthorized: Bool = false
-    
     public init?() {
         let nc = NotificationCenter.default
         
-        nc.addObserver(self, selector: #selector(applicationDidBecomeActive), name: UIApplication.didBecomeActiveNotification, object: nil)
-        nc.addObserver(self, selector: #selector(applicationDidBecomeActive), name: UIApplication.willEnterForegroundNotification, object: nil)
+        nc.addObserver(self, selector: #selector(updateFullPlayerState), name: UIApplication.didBecomeActiveNotification, object: nil)
+        nc.addObserver(self, selector: #selector(updateFullPlayerState), name: UIApplication.willEnterForegroundNotification, object: nil)
         
         musicPlayer.beginGeneratingPlaybackNotifications()
         
@@ -72,16 +70,14 @@ public final class AppleMusic: MusicPlayer {
         musicPlayer.endGeneratingPlaybackNotifications()
     }
     
-    public func updatePlayerState() {
-        guard checkAuthorization() else { return }
-        updatePlayerPosition()
-    }
+    // MARK: - Auth
     
-    @objc private func applicationDidBecomeActive() {
-        guard checkAuthorization() else { return }
-        updateCurrentTrack()
-        updatePlaybackState()
-        updatePlayerPosition()
+    public var isAuthorized: Bool = MPMediaLibrary.authorizationStatus() == .authorized
+    
+    public func requestAuthorizationIfNeeded() {
+        MPMediaLibrary.requestAuthorization() { [weak self] _ in
+            self?.updateFullPlayerState()
+        }
     }
     
     private func checkAuthorization() -> Bool {
@@ -94,6 +90,20 @@ public final class AppleMusic: MusicPlayer {
             updatePlayerPosition()
         }
         return isAuthorized
+    }
+    
+    // MARK: - Update
+    
+    public func updatePlayerState() {
+        guard checkAuthorization() else { return }
+        updatePlayerPosition()
+    }
+    
+    @objc private func updateFullPlayerState() {
+        guard checkAuthorization() else { return }
+        updateCurrentTrack()
+        updatePlaybackState()
+        updatePlayerPosition()
     }
     
     private func updateCurrentTrack() {
@@ -132,6 +142,8 @@ public final class AppleMusic: MusicPlayer {
         }
     }
 }
+
+// MARK: - Extension
 
 private extension MPMediaItem {
     
