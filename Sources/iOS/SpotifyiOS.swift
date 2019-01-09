@@ -27,7 +27,7 @@ public final class SpotifyiOS: NSObject, SPTAppRemoteDelegate, SPTAppRemotePlaye
     let appRemote: SPTAppRemote
     var playerState: SPTAppRemotePlayerState?
     
-    init(clientID: String, redirectURL: URL, accessToken: String) {
+    public init(clientID: String, redirectURL: URL, accessToken: String) {
         let configuration = SPTConfiguration(clientID: clientID, redirectURL: redirectURL)
         appRemote = SPTAppRemote(configuration: configuration, logLevel: .debug)
         appRemote.connectionParameters.accessToken = accessToken

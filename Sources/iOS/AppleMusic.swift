@@ -49,7 +49,7 @@ public final class AppleMusic: MusicPlayer {
         }
     }
     
-    public init?() {
+    public init() {
         let nc = NotificationCenter.default
         
         nc.addObserver(self, selector: #selector(updateFullPlayerState), name: UIApplication.didBecomeActiveNotification, object: nil)
