@@ -107,7 +107,7 @@ extension iTunes: MusicPlayer {
     
     public static var name: MusicPlayerName = .itunes
     
-    public static var needsUpdate = false
+    public static var needsUpdateIfNotSelected = false
     
     public var currentTrack: MusicTrack? {
         return _currentTrack

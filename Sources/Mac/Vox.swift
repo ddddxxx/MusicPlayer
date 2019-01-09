@@ -97,7 +97,7 @@ extension Vox: MusicPlayer {
     
     public static var name: MusicPlayerName = .vox
     
-    public static var needsUpdate = true
+    public static var needsUpdateIfNotSelected = true
     
     public var playbackState: MusicPlaybackState {
         guard isRunning else { return .stopped }

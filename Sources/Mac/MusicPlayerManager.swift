@@ -81,7 +81,7 @@ public class MusicPlayerManager: MusicPlayerDelegate {
     @objc func update() {
         // TODO: running state change delegate
         for p in players {
-            if type(of: p).needsUpdate || p === player {
+            if type(of: p).needsUpdateIfNotSelected || p === player {
                 p.updatePlayerState()
             }
         }

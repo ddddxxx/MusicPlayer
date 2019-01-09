@@ -105,7 +105,7 @@ extension Spotify: MusicPlayer {
     
     public static var name: MusicPlayerName = .spotify
     
-    public static var needsUpdate = false
+    public static var needsUpdateIfNotSelected = false
     
     public var playbackState: MusicPlaybackState {
         return _playbackState

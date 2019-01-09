@@ -24,11 +24,12 @@ import MediaPlayer
 public final class AppleMusic: MusicPlayer {
     
     public static let name = MusicPlayerName.appleMusic
-    public static var needsUpdate = false
+    public static var needsUpdateIfNotSelected = false
     
     public weak var delegate: MusicPlayerDelegate?
     
     private let musicPlayer = MPMusicPlayerController.systemMusicPlayer
+    
     public var currentTrack: MusicTrack?
     public var playbackState: MusicPlaybackState = .stopped
     

@@ -116,7 +116,7 @@ extension Audirvana: MusicPlayer {
     
     public static var name: MusicPlayerName = .audirvana
     
-    public static var needsUpdate = false
+    public static var needsUpdateIfNotSelected = false
     
     public var playbackState: MusicPlaybackState {
         return _playbackState

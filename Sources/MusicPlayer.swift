@@ -75,9 +75,7 @@ public protocol MusicPlayerDelegate: class {
 public protocol MusicPlayer: class {
     
     static var name: MusicPlayerName { get }
-    static var needsUpdate: Bool { get }
-    
-    init?()
+    static var needsUpdateIfNotSelected: Bool { get }
     
     var delegate: MusicPlayerDelegate? { get set }
     
@@ -87,13 +85,17 @@ public protocol MusicPlayer: class {
     
     func updatePlayerState()
     
-    #if os(iOS)
-    var isAuthorized: Bool { get }
-    #endif
-    
     #if os(macOS)
+    
+    init?()
     // To prevent property/method name conflict, player should not be extended directly.
     var originalPlayer: SBApplication { get }
+    
+    #elseif os(iOS)
+    
+    var isAuthorized: Bool { get }
+    func requestAuthorizationIfNeeded()
+    
     #endif
 }
 
