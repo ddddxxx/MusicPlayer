@@ -18,8 +18,12 @@
 //  along with this program.  If not, see <http://www.gnu.org/licenses/>.
 //
 
+import Foundation
+
+#if os(macOS)
 import AppKit
 import ScriptingBridge
+#endif
 
 public enum MusicPlaybackState {
     case stopped
@@ -44,10 +48,89 @@ public enum MusicShuffleMode {
 
 public enum MusicPlayerName: String, CaseIterable {
     
+    #if os(macOS)
+    
     case itunes     = "iTunes"
     case spotify    = "Spotify"
     case vox        = "Vox"
     case audirvana  = "Audirvana Plus"
+    
+    #elseif os(iOS)
+    
+    case appleMusic = "Apple Music"
+    case spotify    = "Spotify"
+    
+    #endif
+}
+
+// MARK: -
+
+public protocol MusicPlayerDelegate: class {
+    
+    func currentTrackChanged(track: MusicTrack?, from player: MusicPlayer)
+    func playbackStateChanged(state: MusicPlaybackState, from player: MusicPlayer)
+    func playerPositionMutated(position: TimeInterval, from player: MusicPlayer)
+}
+
+public protocol MusicPlayer: class {
+    
+    static var name: MusicPlayerName { get }
+    static var needsUpdateIfNotSelected: Bool { get }
+    
+    var delegate: MusicPlayerDelegate? { get set }
+    
+    var currentTrack: MusicTrack? { get }
+    var playbackState: MusicPlaybackState { get }
+    var playerPosition: TimeInterval { get set }
+    
+    func updatePlayerState()
+    
+    #if os(macOS)
+    
+    init?()
+    // To prevent property/method name conflict, player should not be extended directly.
+    var originalPlayer: SBApplication { get }
+    
+    #elseif os(iOS)
+    
+    var isAuthorized: Bool { get }
+    func requestAuthorizationIfNeeded()
+    
+    #endif
+}
+
+public struct MusicTrack {
+    
+    public var id:     String
+    public var title:   String?
+    public var album:  String?
+    public var artist: String?
+    public var duration: TimeInterval?
+    public var url:    URL?
+    public var artwork: Image?
+    
+    #if os(macOS)
+    public var originalTrack: SBObject?
+    #endif
+}
+
+// MARK: -
+
+extension MusicPlaybackState {
+    
+    var isPlaying: Bool {
+        switch self {
+        case .playing, .fastForwarding, .rewinding:
+            return true
+        case .paused, .stopped:
+            return false
+        }
+    }
+}
+
+#if os(macOS)
+
+extension MusicPlayerName {
     
     var bundleID: String {
         switch self {
@@ -68,60 +151,6 @@ public enum MusicPlayerName: String, CaseIterable {
     }
 }
 
-// MARK: -
-
-public protocol MusicPlayerDelegate: class {
-    
-    func currentTrackChanged(track: MusicTrack?, from player: MusicPlayer)
-    func playbackStateChanged(state: MusicPlaybackState, from player: MusicPlayer)
-    func playerPositionMutated(position: TimeInterval, from player: MusicPlayer)
-}
-
-public protocol MusicPlayer: class {
-    
-    static var name: MusicPlayerName { get }
-    static var needsUpdate: Bool { get }
-    
-    init?()
-    
-    var delegate: MusicPlayerDelegate? { get set }
-    
-    var playbackState: MusicPlaybackState { get }
-    
-    var currentTrack: MusicTrack? { get }
-    var playerPosition: TimeInterval { get set }
-    
-    func updatePlayerState()
-    
-    // To prevent property/method name conflict, player should not be extended directly.
-    var originalPlayer: SBApplication { get }
-}
-
-public struct MusicTrack {
-    
-    public var id:     String
-    public var title:   String?
-    public var album:  String?
-    public var artist: String?
-    public var duration: TimeInterval?
-    public var url:    URL?
-    public var artwork: NSImage?
-}
-
-// MARK: -
-
-extension MusicPlaybackState {
-    
-    var isPlaying: Bool {
-        switch self {
-        case .playing, .fastForwarding, .rewinding:
-            return true
-        case .paused, .stopped:
-            return false
-        }
-    }
-}
-
 extension MusicPlayer {
     
     public var isRunning: Bool {
@@ -132,3 +161,5 @@ extension MusicPlayer {
         originalPlayer.activate()
     }
 }
+
+#endif

@@ -1,0 +1,51 @@
+name: MusicPlayer
+options:
+  deploymentTarget:
+    macOS: "10.9"
+    iOS: "9.3"
+settingGroups:
+  general:
+    INFOPLIST_FILE: MusicPlayer.xcodeproj/MusicPlayer_Info.plist
+    PRODUCT_BUNDLE_IDENTIFIER: ddddxxx.LyricsX.MusicPlayer
+    TARGET_NAME: MusicPlayer
+    PRODUCT_MODULE_NAME: $(TARGET_NAME:c99extidentifier)
+    PRODUCT_NAME: $(TARGET_NAME:c99extidentifier)
+    SWIFT_VERSION: 4.2
+targets:
+  MusicPlayer-macOS:
+    type: framework
+    platform: macOS
+    scheme: {}
+    sources:
+      - path: Sources
+        excludes:
+          - iOS/*
+    settings:
+      groups:
+        - general
+    dependencies:
+      - sdk: AppKit.framework
+      - sdk: ScriptingBridge.framework
+  MusicPlayer-iOS:
+    type: framework
+    platform: iOS
+    scheme: {}
+    sources:
+      - path: Sources
+        excludes:
+          - Mac/*
+    settings:
+      base:
+        SWIFT_OBJC_BRIDGING_HEADER: Sources/iOS/Supporting Files/MusicPlayer-Bridging-Header.h
+      groups:
+        - general
+    dependencies:
+      - sdk: UIKit.framework
+      - sdk: MediaPlayer.framework
+      - framework: ThirdParty/SpotifyiOS.framework
+
+
+
+
+
+
