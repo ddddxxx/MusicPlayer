@@ -27,16 +27,15 @@ public final class SpotifyiOS: NSObject, SPTAppRemoteDelegate, SPTAppRemotePlaye
     let appRemote: SPTAppRemote
     var playerState: SPTAppRemotePlayerState?
     
+    private var _startTime: Date?
+    private var _pausePosition: Double?
+    
     public init(clientID: String, redirectURL: URL, accessToken: String) {
         let configuration = SPTConfiguration(clientID: clientID, redirectURL: redirectURL)
         appRemote = SPTAppRemote(configuration: configuration, logLevel: .debug)
         appRemote.connectionParameters.accessToken = accessToken
         super.init()
         appRemote.delegate = self
-    }
-    
-    public func requestAuthorizationIfNeeded() {
-        appRemote.connect()
     }
     
     // MARK: - SPTAppRemoteDelegate
@@ -57,11 +56,29 @@ public final class SpotifyiOS: NSObject, SPTAppRemoteDelegate, SPTAppRemotePlaye
     
     public func playerStateDidChange(_ playerState: SPTAppRemotePlayerState) {
         if playerState.track.uri != self.playerState?.track.uri {
-//            delegate?.currentTrackChanged(track: playerState.track.track, from: self)
+            delegate?.currentTrackChanged(track: playerState.track.track, from: self)
         } else if playerState.isPaused != self.playerState?.isPaused {
-//            delegate?.playbackStateChanged(state: playerState.playbackState, from: self)
+            if playbackState.isPlaying {
+                let startTimeNew = playerState.startTime
+                if let _startTime = _startTime,
+                    abs(startTimeNew.timeIntervalSince(_startTime)) > positionMutateThreshold {
+                    self._startTime = startTimeNew
+                    delegate?.playerPositionMutated(position: playerPosition, from: self)
+                } else {
+                    self._startTime = startTimeNew
+                }
+            } else {
+                let pausePositionNew = playerState.position
+                if let _pausePosition = _pausePosition,
+                    abs(_pausePosition - pausePositionNew) > positionMutateThreshold {
+                    self._pausePosition = pausePositionNew
+                    delegate?.playerPositionMutated(position: playerPosition, from: self)
+                } else {
+                    self._pausePosition = pausePositionNew
+                }
+            }
         } else if playerState.startTime != self.playerState?.startTime {
-//            delegate?.playerPositionMutated(position: playerState.position, from: self)
+            delegate?.playerPositionMutated(position: playerState.position, from: self)
         }
         self.playerState = playerState
     }
@@ -76,6 +93,10 @@ extension SpotifyiOS: MusicPlayer {
         return appRemote.isConnected
     }
     
+    public func requestAuthorizationIfNeeded() {
+        appRemote.authorizeAndPlayURI("")
+    }
+    
     public var currentTrack: MusicTrack? {
         return playerState?.track.track
     }
@@ -86,9 +107,13 @@ extension SpotifyiOS: MusicPlayer {
     
     public var playerPosition: TimeInterval {
         get {
-            return playerState?.position ?? 0
+            guard playbackState.isPlaying else { return _pausePosition ?? 0 }
+            guard let _startTime = _startTime else { return 0 }
+            return -_startTime.timeIntervalSinceNow
         }
         set {
+            guard isAuthorized else { return }
+            _startTime = Date().addingTimeInterval(-newValue)
             let positionInMilliseconds = Int(newValue * 1000)
             appRemote.playerAPI?.seek(toPosition: positionInMilliseconds, callback: nil)
         }

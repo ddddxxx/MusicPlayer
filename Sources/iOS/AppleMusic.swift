@@ -21,10 +21,7 @@
 import UIKit
 import MediaPlayer
 
-public final class AppleMusic: MusicPlayer {
-    
-    public static let name = MusicPlayerName.appleMusic
-    public static var needsUpdateIfNotSelected = false
+public final class AppleMusic {
     
     public weak var delegate: MusicPlayerDelegate?
     
@@ -36,18 +33,7 @@ public final class AppleMusic: MusicPlayer {
     private var _startTime: Date?
     private var _pausePosition: Double?
     
-    public var playerPosition: TimeInterval {
-        get {
-            guard playbackState.isPlaying else { return _pausePosition ?? 0 }
-            guard let _startTime = _startTime else { return 0 }
-            return -_startTime.timeIntervalSinceNow
-        }
-        set {
-            guard isAuthorized else { return }
-            musicPlayer.currentPlaybackTime = newValue
-            _startTime = Date().addingTimeInterval(-newValue)
-        }
-    }
+    private var _isAuthorized: Bool = MPMediaLibrary.authorizationStatus() == .authorized
     
     public init() {
         let nc = NotificationCenter.default
@@ -70,44 +56,17 @@ public final class AppleMusic: MusicPlayer {
         musicPlayer.endGeneratingPlaybackNotifications()
     }
     
-    // MARK: - Auth
-    
-    public var isAuthorized: Bool = MPMediaLibrary.authorizationStatus() == .authorized
-    
-    public func requestAuthorizationIfNeeded() {
-        MPMediaLibrary.requestAuthorization() { [weak self] _ in
-            self?.updateFullPlayerState()
-        }
-    }
-    
-    private func checkAuthorization() -> Bool {
-        let newAuth = MPMediaLibrary.authorizationStatus() == .authorized
-        let needsUpdate = isAuthorized != newAuth
-        isAuthorized = newAuth
-        if needsUpdate {
-            updateCurrentTrack()
-            updatePlaybackState()
-            updatePlayerPosition()
-        }
-        return isAuthorized
-    }
-    
     // MARK: - Update
     
-    public func updatePlayerState() {
-        guard checkAuthorization() else { return }
-        updatePlayerPosition()
-    }
-    
     @objc private func updateFullPlayerState() {
-        guard checkAuthorization() else { return }
+        guard isAuthorized else { return }
         updateCurrentTrack()
         updatePlaybackState()
         updatePlayerPosition()
     }
     
     private func updateCurrentTrack() {
-        guard checkAuthorization() else { return }
+        guard isAuthorized else { return }
         if currentTrack?.id != musicPlayer.nowPlayingItem?.idString {
             currentTrack = musicPlayer.currentTrack
             delegate?.currentTrackChanged(track: currentTrack, from: self)
@@ -115,7 +74,7 @@ public final class AppleMusic: MusicPlayer {
     }
     
     private func updatePlaybackState() {
-        guard checkAuthorization() else { return }
+        guard isAuthorized else { return }
         if musicPlayer._playbackState != playbackState {
             playbackState = musicPlayer._playbackState
             delegate?.playbackStateChanged(state: playbackState, from: self)
@@ -125,21 +84,67 @@ public final class AppleMusic: MusicPlayer {
     private func updatePlayerPosition() {
         guard isAuthorized else { return }
         if playbackState.isPlaying {
-            let startTime = musicPlayer.startTime
+            let startTimeNew = musicPlayer.startTime
             if let _startTime = _startTime,
-                abs(startTime.timeIntervalSince(_startTime)) > positionMutateThreshold {
-                self._startTime = startTime
+                abs(startTimeNew.timeIntervalSince(_startTime)) > positionMutateThreshold {
+                self._startTime = startTimeNew
                 delegate?.playerPositionMutated(position: playerPosition, from: self)
+            } else {
+                self._startTime = startTimeNew
             }
         } else {
-            let pausePosition = musicPlayer.currentPlaybackTime
+            let pausePositionNew = musicPlayer.currentPlaybackTime
             if let _pausePosition = _pausePosition,
-                abs(_pausePosition - pausePosition) > positionMutateThreshold {
-                self._pausePosition = pausePosition
-                self.playerPosition = pausePosition
+                abs(_pausePosition - pausePositionNew) > positionMutateThreshold {
+                self._pausePosition = pausePositionNew
                 delegate?.playerPositionMutated(position: playerPosition, from: self)
+            } else {
+                self._pausePosition = pausePositionNew
             }
         }
+    }
+}
+
+extension AppleMusic: MusicPlayer {
+    
+    public static let name = MusicPlayerName.appleMusic
+    public static var needsUpdateIfNotSelected = false
+    
+    
+    public var isAuthorized: Bool {
+        let newAuth = MPMediaLibrary.authorizationStatus() == .authorized
+        let needsUpdate = _isAuthorized != newAuth
+        _isAuthorized = newAuth
+        if needsUpdate {
+            updateCurrentTrack()
+            updatePlaybackState()
+            updatePlayerPosition()
+        }
+        return newAuth
+    }
+    
+    public func requestAuthorizationIfNeeded() {
+        MPMediaLibrary.requestAuthorization() { [weak self] _ in
+            self?.updateFullPlayerState()
+        }
+    }
+    
+    public var playerPosition: TimeInterval {
+        get {
+            guard playbackState.isPlaying else { return _pausePosition ?? 0 }
+            guard let _startTime = _startTime else { return 0 }
+            return -_startTime.timeIntervalSinceNow
+        }
+        set {
+            guard isAuthorized else { return }
+            musicPlayer.currentPlaybackTime = newValue
+            _startTime = Date().addingTimeInterval(-newValue)
+        }
+    }
+    
+    public func updatePlayerState() {
+        guard isAuthorized else { return }
+        updatePlayerPosition()
     }
 }
 
