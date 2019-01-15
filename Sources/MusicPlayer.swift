@@ -18,8 +18,12 @@
 //  along with this program.  If not, see <http://www.gnu.org/licenses/>.
 //
 
+import Foundation
+
+#if os(macOS)
 import AppKit
 import ScriptingBridge
+#endif
 
 public enum MusicPlaybackState {
     case stopped
@@ -44,28 +48,19 @@ public enum MusicShuffleMode {
 
 public enum MusicPlayerName: String, CaseIterable {
     
+    #if os(macOS)
+    
     case itunes     = "iTunes"
     case spotify    = "Spotify"
     case vox        = "Vox"
     case audirvana  = "Audirvana Plus"
     
-    var bundleID: String {
-        switch self {
-        case .itunes:    return "com.apple.iTunes"
-        case .spotify:   return "com.spotify.client"
-        case .vox:       return "com.coppertino.Vox"
-        case .audirvana: return "com.audirvana.Audirvana-Plus"
-        }
-    }
+    #elseif os(iOS)
     
-    var cls: MusicPlayer.Type {
-        switch self {
-        case .itunes:    return iTunes.self
-        case .spotify:   return Spotify.self
-        case .vox:       return Vox.self
-        case .audirvana: return Audirvana.self
-        }
-    }
+    case appleMusic = "Apple Music"
+    case spotify    = "Spotify"
+    
+    #endif
 }
 
 // MARK: -
@@ -86,15 +81,20 @@ public protocol MusicPlayer: class {
     
     var delegate: MusicPlayerDelegate? { get set }
     
-    var playbackState: MusicPlaybackState { get }
-    
     var currentTrack: MusicTrack? { get }
+    var playbackState: MusicPlaybackState { get }
     var playerPosition: TimeInterval { get set }
     
     func updatePlayerState()
     
+    #if os(iOS)
+    var isAuthorized: Bool { get }
+    #endif
+    
+    #if os(macOS)
     // To prevent property/method name conflict, player should not be extended directly.
     var originalPlayer: SBApplication { get }
+    #endif
 }
 
 public struct MusicTrack {
@@ -105,7 +105,11 @@ public struct MusicTrack {
     public var artist: String?
     public var duration: TimeInterval?
     public var url:    URL?
-    public var artwork: NSImage?
+    public var artwork: Image?
+    
+    #if os(macOS)
+    public var originalTrack: SBObject?
+    #endif
 }
 
 // MARK: -
@@ -122,6 +126,29 @@ extension MusicPlaybackState {
     }
 }
 
+#if os(macOS)
+
+extension MusicPlayerName {
+    
+    var bundleID: String {
+        switch self {
+        case .itunes:    return "com.apple.iTunes"
+        case .spotify:   return "com.spotify.client"
+        case .vox:       return "com.coppertino.Vox"
+        case .audirvana: return "com.audirvana.Audirvana-Plus"
+        }
+    }
+    
+    var cls: MusicPlayer.Type {
+        switch self {
+        case .itunes:    return iTunes.self
+        case .spotify:   return Spotify.self
+        case .vox:       return Vox.self
+        case .audirvana: return Audirvana.self
+        }
+    }
+}
+
 extension MusicPlayer {
     
     public var isRunning: Bool {
@@ -132,3 +159,5 @@ extension MusicPlayer {
         originalPlayer.activate()
     }
 }
+
+#endif

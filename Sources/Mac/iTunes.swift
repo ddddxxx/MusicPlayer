@@ -1,5 +1,5 @@
 //
-//  Spotify.swift
+//  iTunes.swift
 //
 //  This file is part of LyricsX
 //  Copyright (C) 2017  Xander Deng
@@ -21,11 +21,11 @@
 import AppKit
 import ScriptingBridge
 
-public final class Spotify {
+public final class iTunes {
     
     public weak var delegate: MusicPlayerDelegate?
     
-    private var _spotify: SpotifyApplication
+    private var _iTunes: iTunesApplication
     private var _currentTrack: MusicTrack?
     private var _playbackState: MusicPlaybackState = .stopped
     private var _startTime: Date?
@@ -34,17 +34,17 @@ public final class Spotify {
     private var observer: NSObjectProtocol?
     
     public init?() {
-        guard let spotify = SBApplication(bundleIdentifier: Spotify.name.bundleID) else {
+        guard let iTunes = SBApplication(bundleIdentifier: iTunes.name.bundleID) else {
             return nil
         }
-        _spotify = spotify
+        _iTunes = iTunes
         if isRunning {
-            _playbackState = _spotify._playbackState
-            _currentTrack = _spotify._currentTrack
-            _startTime = _spotify._startTime
+            _playbackState = _iTunes._playbackState
+            _currentTrack = _iTunes._currentTrack
+            _startTime = _iTunes._startTime
         }
         
-        observer = DistributedNotificationCenter.default.addObserver(forName: .SpotifyPlayerInfo, object: nil, queue: nil) { [unowned self] n in self.playerInfoNotification(n) }
+        observer = DistributedNotificationCenter.default.addObserver(forName: .iTunesPlayerInfo, object: nil, queue: nil) { [unowned self] n in self.playerInfoNotification(n) }
     }
     
     deinit {
@@ -53,27 +53,29 @@ public final class Spotify {
     
     func playerInfoNotification(_ n: Notification) {
         guard isRunning else { return }
-        let id = n.userInfo?["Track ID"] as? String
+        // iTunes will send notification before quit. if we send
+        // apple event here, iTunes will be restarted immediately
+        let id = (n.userInfo?["PersistentID"] as? Int).map { String(format: "%08X", arguments: [UInt(bitPattern: $0)]) }
         let state: MusicPlaybackState
         switch n.userInfo?["Player State"] as? String {
-        case "Playing"?:    state = .playing
-        case "Paused"?:     state = .paused
-        case "Stopped"?, _:  state = .stopped
+        case "Playing"?: state = .playing
+        case "Paused"?:  state = .paused
+        case "Stopped"?, _: state = .stopped
         }
-        let position = n.userInfo?["Playback Position"] as? TimeInterval
-        let startTime = position.map { Date().addingTimeInterval(-$0) }
-        guard id == _currentTrack?.id else {
-            let track = id == nil ? nil : _spotify._currentTrack
+        // Int64 hex uppercased persistent id from notification
+        // But iTunesTrack.persistentID is Int128. truncate first 8 characters
+        guard id == (_currentTrack?.id.dropFirst(8)).map(String.init) else {
+            let track = _iTunes._currentTrack
             _currentTrack = track
             _playbackState = state
-            _startTime = startTime
+            _startTime = _iTunes._startTime
             delegate?.currentTrackChanged(track: track, from: self)
             return
         }
         guard state == _playbackState else {
             _playbackState = state
-            _startTime = startTime
-            _pausePosition = position
+            _startTime = _iTunes._startTime
+            _pausePosition = playerPosition
             delegate?.playbackStateChanged(state: state, from: self)
             return
         }
@@ -84,14 +86,14 @@ public final class Spotify {
         guard isRunning else { return }
         if _playbackState.isPlaying {
             if let _startTime = _startTime,
-                let startTime = _spotify._startTime,
+                let startTime = _iTunes._startTime,
                 abs(startTime.timeIntervalSince(_startTime)) > positionMutateThreshold {
                 self._startTime = startTime
                 delegate?.playerPositionMutated(position: playerPosition, from: self)
             }
         } else {
             if let _pausePosition = _pausePosition,
-                let pausePosition = _spotify.playerPosition,
+                let pausePosition = _iTunes.playerPosition,
                 abs(_pausePosition - pausePosition) > positionMutateThreshold {
                 self._pausePosition = pausePosition
                 self.playerPosition = pausePosition
@@ -100,32 +102,31 @@ public final class Spotify {
         }
     }
 }
-
-extension Spotify: MusicPlayer {
     
-    public static var name: MusicPlayerName = .spotify
+extension iTunes: MusicPlayer {
+    
+    public static var name: MusicPlayerName = .itunes
     
     public static var needsUpdate = false
-    
-    public var playbackState: MusicPlaybackState {
-        return _playbackState
-    }
     
     public var currentTrack: MusicTrack? {
         return _currentTrack
     }
     
+    public var playbackState: MusicPlaybackState {
+        return _playbackState
+    }
+    
     public var playerPosition: TimeInterval {
         get {
             guard _playbackState.isPlaying else { return _pausePosition ?? 0 }
-            guard isRunning else { return 0 }
             guard let _startTime = _startTime else { return 0 }
             return -_startTime.timeIntervalSinceNow
         }
         set {
             guard isRunning else { return }
             originalPlayer.setValue(newValue, forKey: "playerPosition")
-//            _spotify.playerPosition = newValue
+//            _iTunes.playerPosition = newValue
             _startTime = Date().addingTimeInterval(-newValue)
         }
     }
@@ -135,21 +136,28 @@ extension Spotify: MusicPlayer {
     }
     
     public var originalPlayer: SBApplication {
-        return _spotify as! SBApplication
+        return _iTunes as! SBApplication
     }
 }
 
-extension SpotifyApplication {
+extension iTunesApplication {
     
     var _currentTrack: MusicTrack? {
-        guard let t = currentTrack else { return nil }
-        return MusicTrack(id: t.id?() ?? "",
-                          title: t.name ?? nil,
-                          album: t.album ?? nil,
-                          artist: t.artist ?? nil,
-                          duration: t.duration.map(TimeInterval.init),
-                          url: nil,
-                          artwork: nil)
+        guard let track = currentTrack,
+            track.mediaKind == .song || track.mediaKind == .musicVideo,
+            currentStreamURL ?? nil == nil else {
+                return nil
+        }
+        let originalTrack = (track as! SBObject).get()
+        let url = (originalTrack as? iTunesFileTrack)?.location
+        return MusicTrack(id: (track.persistentID ?? "") ?? "",
+                          title: track.name ?? nil,
+                          album: track.album ?? nil,
+                          artist: track.artist ?? nil,
+                          duration: track.duration,
+                          url: url,
+                          artwork: nil,
+                          originalTrack: (originalTrack as! SBObject))
     }
     
     var _startTime: Date? {
@@ -163,6 +171,8 @@ extension SpotifyApplication {
         switch playerState {
         case .playing?:         return .playing
         case .paused?:          return .paused
+        case .fastForwarding?:  return .fastForwarding
+        case .rewinding?:       return .playing
         case .stopped?, nil, _: return .stopped
         }
     }

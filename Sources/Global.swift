@@ -22,6 +22,8 @@ import Foundation
 
 let positionMutateThreshold = 1.0
 
+#if os(macOS)
+
 extension Notification.Name {
     static let iTunesPlayerInfo = Notification.Name("com.apple.iTunes.playerInfo")
     static let SpotifyPlayerInfo = Notification.Name("com.spotify.client.PlaybackStateChanged")
@@ -29,3 +31,13 @@ extension Notification.Name {
     static let AudirvanaPlayerInfo = Notification.Name("com.audirvana.audirvana-plus.playerStatus")
     static let AudirvanaPlayerPosition = Notification.Name("com.audirvana.audirvana-plus.playerPosition")
 }
+
+#endif
+
+#if canImport(AppKit)
+import AppKit
+public typealias Image = NSImage
+#elseif canImport(UIKit)
+import UIKit
+public typealias Image = UIImage
+#endif

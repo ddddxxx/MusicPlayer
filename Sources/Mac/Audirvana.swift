@@ -166,7 +166,8 @@ extension AudirvanaApplication {
                           artist: playingTrackArtist ?? nil,
                           duration: playingTrackDuration.map(TimeInterval.init),
                           url: nil,
-                          artwork: playingTrackAirfoillogo ?? nil)
+                          artwork: playingTrackAirfoillogo ?? nil,
+                          originalTrack: nil)
     }
     
     var _startTime: Date? {

@@ -1,5 +1,5 @@
 //
-//  Vox.swift
+//  Spotify.swift
 //
 //  This file is part of LyricsX
 //  Copyright (C) 2017  Xander Deng
@@ -21,11 +21,11 @@
 import AppKit
 import ScriptingBridge
 
-public final class Vox {
+public final class Spotify {
     
     public weak var delegate: MusicPlayerDelegate?
     
-    private var _vox: VoxApplication
+    private var _spotify: SpotifyApplication
     private var _currentTrack: MusicTrack?
     private var _playbackState: MusicPlaybackState = .stopped
     private var _startTime: Date?
@@ -34,56 +34,64 @@ public final class Vox {
     private var observer: NSObjectProtocol?
     
     public init?() {
-        guard let vox = SBApplication(bundleIdentifier: Vox.name.bundleID) else {
+        guard let spotify = SBApplication(bundleIdentifier: Spotify.name.bundleID) else {
             return nil
         }
-        _vox = vox
+        _spotify = spotify
         if isRunning {
-            _playbackState = _vox._playbackState
-            _currentTrack = _vox._currentTrack
-            _startTime = _vox._startTime
+            _playbackState = _spotify._playbackState
+            _currentTrack = _spotify._currentTrack
+            _startTime = _spotify._startTime
         }
         
-        observer = DistributedNotificationCenter.default.addObserver(forName: .VoxTrackChanged, object: nil, queue: nil) { [unowned self] n in self.trackChangeNotification(n) }
+        observer = DistributedNotificationCenter.default.addObserver(forName: .SpotifyPlayerInfo, object: nil, queue: nil) { [unowned self] n in self.playerInfoNotification(n) }
     }
     
     deinit {
         observer.map(DistributedNotificationCenter.default.removeObserver)
     }
     
-    func trackChangeNotification(_ n: Notification) {
+    func playerInfoNotification(_ n: Notification) {
         guard isRunning else { return }
-        let id = _vox.uniqueID ?? nil
+        let id = n.userInfo?["Track ID"] as? String
+        let state: MusicPlaybackState
+        switch n.userInfo?["Player State"] as? String {
+        case "Playing"?:    state = .playing
+        case "Paused"?:     state = .paused
+        case "Stopped"?, _:  state = .stopped
+        }
+        let position = n.userInfo?["Playback Position"] as? TimeInterval
+        let startTime = position.map { Date().addingTimeInterval(-$0) }
         guard id == _currentTrack?.id else {
-            _currentTrack = _vox._currentTrack
-            _playbackState = _vox.playerState == 1 ? .playing : .paused
-            _startTime = _vox._startTime
-            delegate?.currentTrackChanged(track: _currentTrack, from: self)
+            let track = id == nil ? nil : _spotify._currentTrack
+            _currentTrack = track
+            _playbackState = state
+            _startTime = startTime
+            delegate?.currentTrackChanged(track: track, from: self)
             return
         }
-        updatePlayerState()
-    }
-    
-    public func updatePlayerState() {
-        guard isRunning else { return }
-        let state = _vox._playbackState
         guard state == _playbackState else {
             _playbackState = state
-            _startTime = _vox._startTime
-            _pausePosition = playerPosition
+            _startTime = startTime
+            _pausePosition = position
             delegate?.playbackStateChanged(state: state, from: self)
             return
         }
+        updatePlayerPosition()
+    }
+    
+    func updatePlayerPosition() {
+        guard isRunning else { return }
         if _playbackState.isPlaying {
             if let _startTime = _startTime,
-                let startTime = _vox._startTime,
+                let startTime = _spotify._startTime,
                 abs(startTime.timeIntervalSince(_startTime)) > positionMutateThreshold {
                 self._startTime = startTime
                 delegate?.playerPositionMutated(position: playerPosition, from: self)
             }
         } else {
             if let _pausePosition = _pausePosition,
-                let pausePosition = _vox.currentTime,
+                let pausePosition = _spotify.playerPosition,
                 abs(_pausePosition - pausePosition) > positionMutateThreshold {
                 self._pausePosition = pausePosition
                 self.playerPosition = pausePosition
@@ -93,19 +101,17 @@ public final class Vox {
     }
 }
 
-extension Vox: MusicPlayer {
+extension Spotify: MusicPlayer {
     
-    public static var name: MusicPlayerName = .vox
+    public static var name: MusicPlayerName = .spotify
     
-    public static var needsUpdate = true
+    public static var needsUpdate = false
     
     public var playbackState: MusicPlaybackState {
-        guard isRunning else { return .stopped }
         return _playbackState
     }
     
     public var currentTrack: MusicTrack? {
-        guard isRunning else { return nil }
         return _currentTrack
     }
     
@@ -118,47 +124,48 @@ extension Vox: MusicPlayer {
         }
         set {
             guard isRunning else { return }
-            originalPlayer.setValue(newValue, forKey: "currentTime")
-//            _vox.currentTime = newValue
+            originalPlayer.setValue(newValue, forKey: "playerPosition")
+//            _spotify.playerPosition = newValue
             _startTime = Date().addingTimeInterval(-newValue)
         }
     }
     
-    public func skipToPrevious() {
-        guard isRunning else { return }
-        _vox.previous?()
+    public func updatePlayerState() {
+        updatePlayerPosition()
     }
     
     public var originalPlayer: SBApplication {
-        return _vox as! SBApplication
+        return _spotify as! SBApplication
     }
 }
 
-extension VoxApplication {
+extension SpotifyApplication {
     
-    var _currentTrack: MusicTrack {
-        let id = (uniqueID ?? "") ?? ""
-        let url = trackUrl?.flatMap(URL.init(string:))
-        return MusicTrack(id: id,
-                          title: track ?? nil,
-                          album: album ?? nil,
-                          artist: artist ?? nil,
-                          duration: totalTime,
-                          url: url,
-                          artwork: nil)
+    var _currentTrack: MusicTrack? {
+        guard let track = currentTrack else { return nil }
+        let originalTrack = (track as! SBObject).get()
+        return MusicTrack(id: track.id?() ?? "",
+                          title: track.name ?? nil,
+                          album: track.album ?? nil,
+                          artist: track.artist ?? nil,
+                          duration: track.duration.map(TimeInterval.init),
+                          url: nil,
+                          artwork: nil,
+                          originalTrack: (originalTrack as! SBObject))
     }
-        
+    
     var _startTime: Date? {
-        guard let currentTime = currentTime else {
+        guard let playerPosition = playerPosition else {
             return nil
         }
-        return Date().addingTimeInterval(-currentTime)
+        return Date().addingTimeInterval(-playerPosition)
     }
     
     var _playbackState: MusicPlaybackState {
         switch playerState {
-        case 1?: return     .playing
-        case 0?, _: return  .stopped
+        case .playing?:         return .playing
+        case .paused?:          return .paused
+        case .stopped?, nil, _: return .stopped
         }
     }
 }
