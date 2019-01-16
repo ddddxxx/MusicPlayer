@@ -148,8 +148,12 @@ extension iTunesApplication {
             currentStreamURL ?? nil == nil else {
                 return nil
         }
-        let originalTrack = (track as! SBObject).get()
-        let url = (originalTrack as? iTunesFileTrack)?.location
+        let originalTrack = (track as! SBObject).get() as! SBObject
+        // conditional casting originalTrack to iTunesFileTrack causes crash.
+        var url: URL?
+        if originalTrack.responds(to: #selector(getter: NSTextTab.location)) {
+            url = originalTrack.perform(#selector(getter: NSTextTab.location))?.takeUnretainedValue() as? URL
+        }
         return MusicTrack(id: (track.persistentID ?? "") ?? "",
                           title: track.name ?? nil,
                           album: track.album ?? nil,
@@ -157,7 +161,7 @@ extension iTunesApplication {
                           duration: track.duration,
                           url: url,
                           artwork: nil,
-                          originalTrack: (originalTrack as! SBObject))
+                          originalTrack: originalTrack)
     }
     
     var _startTime: Date? {
