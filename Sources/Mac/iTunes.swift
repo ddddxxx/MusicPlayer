@@ -219,13 +219,14 @@ extension iTunesApplication {
         if originalTrack.responds(to: #selector(getter: NSTextTab.location)) {
             url = originalTrack.perform(#selector(getter: NSTextTab.location))?.takeUnretainedValue() as? URL
         }
+        let artwork = track.artworks?().first?.data
         return MusicTrack(id: (track.persistentID ?? "") ?? "",
                           title: track.name ?? nil,
                           album: track.album ?? nil,
                           artist: track.artist ?? nil,
                           duration: track.duration,
                           url: url,
-                          artwork: nil,
+                          artwork: artwork,
                           originalTrack: originalTrack)
     }
     

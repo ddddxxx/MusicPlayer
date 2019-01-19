@@ -194,7 +194,7 @@ extension SpotifyApplication {
                           artist: track.artist ?? nil,
                           duration: track.duration.map(TimeInterval.init),
                           url: nil,
-                          artwork: nil,
+                          artwork: track.artwork,
                           originalTrack: (originalTrack as! SBObject))
     }
     
