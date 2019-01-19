@@ -135,9 +135,74 @@ extension iTunes: MusicPlayer {
         updatePlayerPosition()
     }
     
+    public func resume() {
+        _iTunes.resume?()
+    }
+    
+    public func pause() {
+        _iTunes.pause?()
+    }
+    
+    public func playPause() {
+        _iTunes.playpause?()
+    }
+    
+    public func skipToNextItem() {
+        _iTunes.nextTrack?()
+    }
+    
+    public func skipToPreviousItem() {
+        _iTunes.previousTrack?()
+    }
+    
     public var originalPlayer: SBApplication {
         return _iTunes as! SBApplication
     }
+}
+
+extension iTunes: PlaybackModeSettable {
+    
+    public var repeatMode: MusicRepeatMode {
+        get {
+            return _iTunes.songRepeat?.mode ?? .off
+        }
+        set {
+//            _iTunes.songRepeat = iTunesERpt(newValue)
+            originalPlayer.setValue(iTunesERpt(newValue), forKey: "songRepeat")
+        }
+    }
+    
+    public var shuffleMode: MusicShuffleMode {
+        get {
+            if _iTunes.shuffleEnabled != true {
+                return .off
+            }
+            switch _iTunes.shuffleMode {
+            case .songs?: return .songs
+            case .albums?: return .albums
+            case .groupings?: return .groupings
+            default: return .off
+            }
+        }
+        set {
+            let app = originalPlayer
+            switch newValue {
+            case .off:
+                app.setValue(false, forKey: "shuffleEnabled")
+            case .songs:
+                app.setValue(true, forKey: "shuffleEnabled")
+                app.setValue(iTunesEShM.songs, forKey: "shuffleMode")
+            case .albums:
+                app.setValue(true, forKey: "shuffleEnabled")
+                app.setValue(iTunesEShM.albums, forKey: "shuffleMode")
+            case .groupings:
+                app.setValue(true, forKey: "shuffleEnabled")
+                app.setValue(iTunesEShM.groupings, forKey: "shuffleMode")
+            }
+        }
+    }
+    
+    
 }
 
 extension iTunesApplication {
@@ -148,16 +213,21 @@ extension iTunesApplication {
             currentStreamURL ?? nil == nil else {
                 return nil
         }
-        let originalTrack = (track as! SBObject).get()
-        let url = (originalTrack as? iTunesFileTrack)?.location
+        let originalTrack = (track as! SBObject).get() as! SBObject
+        // conditional casting originalTrack to iTunesFileTrack causes crash.
+        var url: URL?
+        if originalTrack.responds(to: #selector(getter: NSTextTab.location)) {
+            url = originalTrack.perform(#selector(getter: NSTextTab.location))?.takeUnretainedValue() as? URL
+        }
+        let artwork = track.artworks?().first?.data
         return MusicTrack(id: (track.persistentID ?? "") ?? "",
                           title: track.name ?? nil,
                           album: track.album ?? nil,
                           artist: track.artist ?? nil,
                           duration: track.duration,
                           url: url,
-                          artwork: nil,
-                          originalTrack: (originalTrack as! SBObject))
+                          artwork: artwork,
+                          originalTrack: originalTrack)
     }
     
     var _startTime: Date? {
@@ -174,6 +244,25 @@ extension iTunesApplication {
         case .fastForwarding?:  return .fastForwarding
         case .rewinding?:       return .playing
         case .stopped?, nil, _: return .stopped
+        }
+    }
+}
+
+private extension iTunesERpt {
+    
+    var mode: MusicRepeatMode {
+        switch self {
+        case .off: return .off
+        case .one: return .one
+        case .all: return .all
+        }
+    }
+    
+    init(_ mode: MusicRepeatMode) {
+        switch mode {
+        case .off: self = .off
+        case .one: self = .one
+        case .all: self = .all
         }
     }
 }

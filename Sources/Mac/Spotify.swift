@@ -134,9 +134,53 @@ extension Spotify: MusicPlayer {
         updatePlayerPosition()
     }
     
+    public func resume() {
+        _spotify.play?()
+    }
+    
+    public func pause() {
+        _spotify.pause?()
+    }
+    
+    public func playPause() {
+        _spotify.playpause?()
+    }
+    
+    public func skipToNextItem() {
+        _spotify.nextTrack?()
+    }
+    
+    public func skipToPreviousItem() {
+        _spotify.previousTrack?()
+    }
+    
     public var originalPlayer: SBApplication {
         return _spotify as! SBApplication
     }
+}
+
+extension Spotify: PlaybackModeSettable {
+    
+    public var repeatMode: MusicRepeatMode {
+        get {
+            return _spotify.repeating == true ? .all : .off
+        }
+        set {
+            originalPlayer.setValue(newValue != .off, forKey: "repeating")
+        }
+    }
+    
+    public var shuffleMode: MusicShuffleMode {
+        get {
+            return _spotify.shuffling == true ? .groupings : .off
+        }
+        set {
+//            _spotify.shuffling = newValue != .off
+            originalPlayer.setValue(newValue != .off, forKey: "shuffling")
+        }
+    }
+    
+    
 }
 
 extension SpotifyApplication {
@@ -150,7 +194,7 @@ extension SpotifyApplication {
                           artist: track.artist ?? nil,
                           duration: track.duration.map(TimeInterval.init),
                           url: nil,
-                          artwork: nil,
+                          artwork: track.artwork,
                           originalTrack: (originalTrack as! SBObject))
     }
     

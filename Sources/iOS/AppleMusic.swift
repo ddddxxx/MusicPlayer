@@ -146,6 +146,51 @@ extension AppleMusic: MusicPlayer {
         guard isAuthorized else { return }
         updatePlayerPosition()
     }
+    
+    public func resume() {
+        musicPlayer.play()
+    }
+    
+    public func pause() {
+        musicPlayer.pause()
+    }
+    
+    public func playPause() {
+        if playbackState.isPlaying {
+            musicPlayer.pause()
+        } else {
+            musicPlayer.play()
+        }
+    }
+    
+    public func skipToNextItem() {
+        musicPlayer.skipToNextItem()
+    }
+    
+    public func skipToPreviousItem() {
+        musicPlayer.skipToPreviousItem()
+    }
+}
+
+extension AppleMusic: PlaybackModeSettable {
+    
+    public var repeatMode: MusicRepeatMode {
+        get {
+            return musicPlayer.repeatMode.mode
+        }
+        set {
+            musicPlayer.repeatMode = MPMusicRepeatMode(newValue)
+        }
+    }
+    
+    public var shuffleMode: MusicShuffleMode {
+        get {
+            return musicPlayer.shuffleMode.mode
+        }
+        set {
+            musicPlayer.shuffleMode = MPMusicShuffleMode(newValue)
+        }
+    }
 }
 
 // MARK: - Extension
@@ -188,5 +233,48 @@ private extension MPMusicPlayerController {
     
     var startTime: Date {
         return Date(timeIntervalSinceNow: -currentPlaybackTime)
+    }
+}
+
+private extension MPMusicRepeatMode {
+    
+    var mode: MusicRepeatMode {
+        switch self {
+        case .none: return .off
+        case .one:  return .one
+        case .all:  return .all
+        // FIXME: What Mode?
+        case .default: return .off
+        }
+    }
+    
+    init(_ mode: MusicRepeatMode) {
+        switch mode {
+        case .off: self = .none
+        case .one: self = .one
+        case .all: self = .all
+        }
+    }
+}
+
+private extension MPMusicShuffleMode {
+    
+    var mode: MusicShuffleMode {
+        switch self {
+        case .off: return .off
+        case .songs: return .songs
+        case .albums: return .albums
+        // FIXME: What Mode?
+        case .default: return .off
+        }
+    }
+    
+    init(_ mode: MusicShuffleMode) {
+        switch mode {
+        case .off: self = .off
+        case .songs: self = .songs
+        case .albums: self = .albums
+        case .groupings: self = .albums
+        }
     }
 }

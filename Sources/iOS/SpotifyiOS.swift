@@ -122,6 +122,54 @@ extension SpotifyiOS: MusicPlayer {
     public func updatePlayerState() {
         // TODO: update
     }
+    
+    public func resume() {
+        appRemote.playerAPI?.resume(nil)
+    }
+    
+    public func pause() {
+        appRemote.playerAPI?.pause(nil)
+    }
+    
+    public func playPause() {
+        if playbackState.isPlaying {
+            pause()
+        } else {
+            resume()
+        }
+    }
+    
+    public func skipToNextItem() {
+        appRemote.playerAPI?.skip(toNext: nil)
+    }
+    
+    public func skipToPreviousItem() {
+        appRemote.playerAPI?.skip(toPrevious: nil)
+    }
+}
+
+extension SpotifyiOS: PlaybackModeSettable {
+    
+    public var repeatMode: MusicRepeatMode {
+        get {
+            // TODO: get repeat mode
+            return .off
+        }
+        set {
+            appRemote.playerAPI?.setRepeatMode(SPTAppRemotePlaybackOptionsRepeatMode(newValue), callback: nil)
+        }
+    }
+    
+    public var shuffleMode: MusicShuffleMode {
+        get {
+            // TODO: get repeat mode
+            return .off
+        }
+        set {
+            let shuffle = newValue != .off
+            appRemote.playerAPI?.setShuffle(shuffle, callback: nil)
+        }
+    }
 }
 
 // MARK: - Extension
@@ -147,5 +195,24 @@ extension SPTAppRemotePlayerState {
     
     var startTime: Date {
         return Date(timeIntervalSinceNow: -position)
+    }
+}
+
+extension SPTAppRemotePlaybackOptionsRepeatMode {
+    
+    var mode: MusicRepeatMode {
+        switch self {
+        case .off: return .off
+        case .track: return .one
+        case .context: return .all
+        }
+    }
+    
+    init(_ mode: MusicRepeatMode) {
+        switch mode {
+        case .off: self = .off
+        case .one: self = .track
+        case .all: self = .context
+        }
     }
 }

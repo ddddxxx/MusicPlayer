@@ -129,8 +129,54 @@ extension Vox: MusicPlayer {
         _vox.previous?()
     }
     
+    public func resume() {
+        _vox.play?()
+    }
+    
+    public func pause() {
+        _vox.pause?()
+    }
+    
+    public func playPause() {
+        _vox.playpause?()
+    }
+    
+    public func skipToNextItem() {
+        _vox.next?()
+    }
+    
+    public func skipToPreviousItem() {
+        _vox.previous?()
+    }
+    
     public var originalPlayer: SBApplication {
         return _vox as! SBApplication
+    }
+}
+
+extension Vox: PlaybackModeSettable {
+    
+    public var repeatMode: MusicRepeatMode {
+        get {
+            switch _vox.repeatState {
+            case 0: return .off
+            case 1: return .one
+            case 2: return .all
+            default: return .off
+            }
+        }
+        set {
+            let state = [MusicRepeatMode.off, .one, .all].firstIndex(of: newValue) ?? 0
+//            _vox.repeatState = state
+            originalPlayer.setValue(state, forKey: "repeatState")
+        }
+    }
+    
+    public var shuffleMode: MusicShuffleMode {
+        get {
+            return .off
+        }
+        set {}
     }
 }
 
@@ -145,7 +191,7 @@ extension VoxApplication {
                           artist: artist ?? nil,
                           duration: totalTime,
                           url: url,
-                          artwork: nil,
+                          artwork: artworkImage,
                           originalTrack: nil)
     }
         

@@ -85,6 +85,13 @@ public protocol MusicPlayer: class {
     
     func updatePlayerState()
     
+    func resume()
+    func pause()
+    func playPause()
+    
+    func skipToNextItem()
+    func skipToPreviousItem()
+    
     #if os(macOS)
     
     init?()
@@ -97,6 +104,11 @@ public protocol MusicPlayer: class {
     func requestAuthorizationIfNeeded()
     
     #endif
+}
+
+public protocol PlaybackModeSettable {
+    var repeatMode: MusicRepeatMode { get set }
+    var shuffleMode: MusicShuffleMode { get set }
 }
 
 public struct MusicTrack {
@@ -118,7 +130,7 @@ public struct MusicTrack {
 
 extension MusicPlaybackState {
     
-    var isPlaying: Bool {
+    public var isPlaying: Bool {
         switch self {
         case .playing, .fastForwarding, .rewinding:
             return true
@@ -132,7 +144,7 @@ extension MusicPlaybackState {
 
 extension MusicPlayerName {
     
-    var bundleID: String {
+    public var bundleID: String {
         switch self {
         case .itunes:    return "com.apple.iTunes"
         case .spotify:   return "com.spotify.client"
@@ -141,7 +153,7 @@ extension MusicPlayerName {
         }
     }
     
-    var cls: MusicPlayer.Type {
+    public var cls: MusicPlayer.Type {
         switch self {
         case .itunes:    return iTunes.self
         case .spotify:   return Spotify.self

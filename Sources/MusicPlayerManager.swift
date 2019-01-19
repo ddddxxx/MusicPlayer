@@ -102,7 +102,7 @@ public class MusicPlayerManager: MusicPlayerDelegate {
         }
     }
     
-    convenience init() {
+    public convenience init() {
         let players = MusicPlayerName.allCases.compactMap { $0.cls.init() }
         self.init(players: players)
         addObserver()
