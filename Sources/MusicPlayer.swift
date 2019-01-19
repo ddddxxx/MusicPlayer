@@ -106,6 +106,11 @@ public protocol MusicPlayer: class {
     #endif
 }
 
+public protocol PlaybackModeSettable {
+    var repeatMode: MusicRepeatMode { get set }
+    var shuffleMode: MusicShuffleMode { get set }
+}
+
 public struct MusicTrack {
     
     public var id:     String

@@ -159,6 +159,30 @@ extension Spotify: MusicPlayer {
     }
 }
 
+extension Spotify: PlaybackModeSettable {
+    
+    public var repeatMode: MusicRepeatMode {
+        get {
+            return _spotify.repeating == true ? .all : .off
+        }
+        set {
+            originalPlayer.setValue(newValue != .off, forKey: "repeating")
+        }
+    }
+    
+    public var shuffleMode: MusicShuffleMode {
+        get {
+            return _spotify.shuffling == true ? .groupings : .off
+        }
+        set {
+//            _spotify.shuffling = newValue != .off
+            originalPlayer.setValue(newValue != .off, forKey: "shuffling")
+        }
+    }
+    
+    
+}
+
 extension SpotifyApplication {
     
     var _currentTrack: MusicTrack? {

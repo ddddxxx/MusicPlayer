@@ -154,6 +154,32 @@ extension Vox: MusicPlayer {
     }
 }
 
+extension Vox: PlaybackModeSettable {
+    
+    public var repeatMode: MusicRepeatMode {
+        get {
+            switch _vox.repeatState {
+            case 0: return .off
+            case 1: return .one
+            case 2: return .all
+            default: return .off
+            }
+        }
+        set {
+            let state = [MusicRepeatMode.off, .one, .all].firstIndex(of: newValue) ?? 0
+//            _vox.repeatState = state
+            originalPlayer.setValue(state, forKey: "repeatState")
+        }
+    }
+    
+    public var shuffleMode: MusicShuffleMode {
+        get {
+            return .off
+        }
+        set {}
+    }
+}
+
 extension VoxApplication {
     
     var _currentTrack: MusicTrack {

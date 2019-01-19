@@ -160,6 +160,51 @@ extension iTunes: MusicPlayer {
     }
 }
 
+extension iTunes: PlaybackModeSettable {
+    
+    public var repeatMode: MusicRepeatMode {
+        get {
+            return _iTunes.songRepeat?.mode ?? .off
+        }
+        set {
+//            _iTunes.songRepeat = iTunesERpt(newValue)
+            originalPlayer.setValue(iTunesERpt(newValue), forKey: "songRepeat")
+        }
+    }
+    
+    public var shuffleMode: MusicShuffleMode {
+        get {
+            if _iTunes.shuffleEnabled != true {
+                return .off
+            }
+            switch _iTunes.shuffleMode {
+            case .songs?: return .songs
+            case .albums?: return .albums
+            case .groupings?: return .groupings
+            default: return .off
+            }
+        }
+        set {
+            let app = originalPlayer
+            switch newValue {
+            case .off:
+                app.setValue(false, forKey: "shuffleEnabled")
+            case .songs:
+                app.setValue(true, forKey: "shuffleEnabled")
+                app.setValue(iTunesEShM.songs, forKey: "shuffleMode")
+            case .albums:
+                app.setValue(true, forKey: "shuffleEnabled")
+                app.setValue(iTunesEShM.albums, forKey: "shuffleMode")
+            case .groupings:
+                app.setValue(true, forKey: "shuffleEnabled")
+                app.setValue(iTunesEShM.groupings, forKey: "shuffleMode")
+            }
+        }
+    }
+    
+    
+}
+
 extension iTunesApplication {
     
     var _currentTrack: MusicTrack? {
@@ -198,6 +243,25 @@ extension iTunesApplication {
         case .fastForwarding?:  return .fastForwarding
         case .rewinding?:       return .playing
         case .stopped?, nil, _: return .stopped
+        }
+    }
+}
+
+private extension iTunesERpt {
+    
+    var mode: MusicRepeatMode {
+        switch self {
+        case .off: return .off
+        case .one: return .one
+        case .all: return .all
+        }
+    }
+    
+    init(_ mode: MusicRepeatMode) {
+        switch mode {
+        case .off: self = .off
+        case .one: self = .one
+        case .all: self = .all
         }
     }
 }
