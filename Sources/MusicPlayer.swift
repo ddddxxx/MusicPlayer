@@ -85,6 +85,10 @@ public protocol MusicPlayer: class {
     
     func updatePlayerState()
     
+    func resume()
+    func pause()
+    func playPause()
+    
     #if os(macOS)
     
     init?()

@@ -146,6 +146,22 @@ extension AppleMusic: MusicPlayer {
         guard isAuthorized else { return }
         updatePlayerPosition()
     }
+    
+    public func resume() {
+        musicPlayer.play()
+    }
+    
+    public func pause() {
+        musicPlayer.pause()
+    }
+    
+    public func playPause() {
+        if playbackState.isPlaying {
+            musicPlayer.pause()
+        } else {
+            musicPlayer.play()
+        }
+    }
 }
 
 // MARK: - Extension

@@ -144,6 +144,18 @@ extension Audirvana: MusicPlayer {
         updatePlayerPosition()
     }
     
+    public func resume() {
+        _audirvana.resume?()
+    }
+    
+    public func pause() {
+        _audirvana.pause?()
+    }
+    
+    public func playPause() {
+        _audirvana.playpause?()
+    }
+    
     public var originalPlayer: SBApplication {
         return _audirvana as! SBApplication
     }

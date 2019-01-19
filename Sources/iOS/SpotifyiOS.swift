@@ -122,6 +122,23 @@ extension SpotifyiOS: MusicPlayer {
     public func updatePlayerState() {
         // TODO: update
     }
+    
+    
+    public func resume() {
+        appRemote.playerAPI?.resume(nil)
+    }
+    
+    public func pause() {
+        appRemote.playerAPI?.pause(nil)
+    }
+    
+    public func playPause() {
+        if playbackState.isPlaying {
+            pause()
+        } else {
+            resume()
+        }
+    }
 }
 
 // MARK: - Extension

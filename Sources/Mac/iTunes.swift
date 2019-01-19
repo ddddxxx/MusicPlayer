@@ -135,6 +135,18 @@ extension iTunes: MusicPlayer {
         updatePlayerPosition()
     }
     
+    public func resume() {
+        _iTunes.resume?()
+    }
+    
+    public func pause() {
+        _iTunes.pause?()
+    }
+    
+    public func playPause() {
+        _iTunes.playpause?()
+    }
+    
     public var originalPlayer: SBApplication {
         return _iTunes as! SBApplication
     }

@@ -129,6 +129,18 @@ extension Vox: MusicPlayer {
         _vox.previous?()
     }
     
+    public func resume() {
+        _vox.play?()
+    }
+    
+    public func pause() {
+        _vox.pause?()
+    }
+    
+    public func playPause() {
+        _vox.playpause?()
+    }
+    
     public var originalPlayer: SBApplication {
         return _vox as! SBApplication
     }

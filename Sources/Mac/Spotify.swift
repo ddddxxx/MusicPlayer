@@ -134,6 +134,18 @@ extension Spotify: MusicPlayer {
         updatePlayerPosition()
     }
     
+    public func resume() {
+        _spotify.play?()
+    }
+    
+    public func pause() {
+        _spotify.pause?()
+    }
+    
+    public func playPause() {
+        _spotify.playpause?()
+    }
+    
     public var originalPlayer: SBApplication {
         return _spotify as! SBApplication
     }
