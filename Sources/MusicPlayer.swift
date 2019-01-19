@@ -89,6 +89,9 @@ public protocol MusicPlayer: class {
     func pause()
     func playPause()
     
+    func skipToNextItem()
+    func skipToPreviousItem()
+    
     #if os(macOS)
     
     init?()

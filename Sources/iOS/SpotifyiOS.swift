@@ -139,6 +139,14 @@ extension SpotifyiOS: MusicPlayer {
             resume()
         }
     }
+    
+    public func skipToNextItem() {
+        appRemote.playerAPI?.skip(toNext: nil)
+    }
+    
+    public func skipToPreviousItem() {
+        appRemote.playerAPI?.skip(toPrevious: nil)
+    }
 }
 
 // MARK: - Extension

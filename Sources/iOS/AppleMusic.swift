@@ -162,6 +162,14 @@ extension AppleMusic: MusicPlayer {
             musicPlayer.play()
         }
     }
+    
+    public func skipToNextItem() {
+        musicPlayer.skipToNextItem()
+    }
+    
+    public func skipToPreviousItem() {
+        musicPlayer.skipToPreviousItem()
+    }
 }
 
 // MARK: - Extension

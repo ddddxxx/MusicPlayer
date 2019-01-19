@@ -147,6 +147,14 @@ extension iTunes: MusicPlayer {
         _iTunes.playpause?()
     }
     
+    public func skipToNextItem() {
+        _iTunes.nextTrack?()
+    }
+    
+    public func skipToPreviousItem() {
+        _iTunes.previousTrack?()
+    }
+    
     public var originalPlayer: SBApplication {
         return _iTunes as! SBApplication
     }

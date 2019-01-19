@@ -141,6 +141,14 @@ extension Vox: MusicPlayer {
         _vox.playpause?()
     }
     
+    public func skipToNextItem() {
+        _vox.next?()
+    }
+    
+    public func skipToPreviousItem() {
+        _vox.previous?()
+    }
+    
     public var originalPlayer: SBApplication {
         return _vox as! SBApplication
     }

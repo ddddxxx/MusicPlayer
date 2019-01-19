@@ -146,6 +146,14 @@ extension Spotify: MusicPlayer {
         _spotify.playpause?()
     }
     
+    public func skipToNextItem() {
+        _spotify.nextTrack?()
+    }
+    
+    public func skipToPreviousItem() {
+        _spotify.previousTrack?()
+    }
+    
     public var originalPlayer: SBApplication {
         return _spotify as! SBApplication
     }
