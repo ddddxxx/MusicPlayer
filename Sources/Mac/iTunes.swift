@@ -209,11 +209,11 @@ extension iTunesApplication {
     
     var _currentTrack: MusicTrack? {
         guard let track = currentTrack,
-            track.mediaKind == .song || track.mediaKind == .musicVideo,
+            let originalTrack = (track as! SBObject).get() as? SBObject,
+            track.mediaKind == .song || track.mediaKind == .musicVideo || track.mediaKind == .wtf,
             currentStreamURL ?? nil == nil else {
                 return nil
         }
-        let originalTrack = (track as! SBObject).get() as! SBObject
         // conditional casting originalTrack to iTunesFileTrack causes crash.
         var url: URL?
         if originalTrack.responds(to: #selector(getter: NSTextTab.location)) {

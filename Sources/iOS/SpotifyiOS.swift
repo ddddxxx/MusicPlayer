@@ -36,6 +36,11 @@ public final class SpotifyiOS: NSObject, SPTAppRemoteDelegate, SPTAppRemotePlaye
         appRemote.connectionParameters.accessToken = accessToken
         super.init()
         appRemote.delegate = self
+        SPTAppRemote.checkIfSpotifyAppIsActive { active in
+            if active {
+                self.appRemote.connect()
+            }
+        }
     }
     
     // MARK: - SPTAppRemoteDelegate
@@ -120,7 +125,11 @@ extension SpotifyiOS: MusicPlayer {
     }
     
     public func updatePlayerState() {
-        // TODO: update
+        appRemote.playerAPI?.getPlayerState { state, error in
+            if let state = state as? SPTAppRemotePlayerState {
+                self.playerStateDidChange(state)
+            }
+        }
     }
     
     public func resume() {
