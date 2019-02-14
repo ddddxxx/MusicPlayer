@@ -63,6 +63,7 @@ public class MusicPlayerManager: MusicPlayerDelegate {
     
     public func currentTrackChanged(track: MusicTrack?, from player: MusicPlayer) {
         guard self.player === player else {
+            _ = selectNewPlayer()
             return
         }
         delegate?.currentTrackChanged(track: track)

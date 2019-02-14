@@ -107,6 +107,8 @@ import ScriptingBridge
     case tvShow = 0x6b566454 /* TV show track */
     case voiceMemo = 0x6b4d644f /* voice memo track */
     case unknown = 0x6b556e6b
+    
+    case wtf = 0 // for some reason this value could be 0.
 }
 
 @objc enum iTunesEVdK: AEKeyword {
