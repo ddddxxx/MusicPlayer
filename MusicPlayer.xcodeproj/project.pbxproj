@@ -49,7 +49,7 @@
 		FR_76409C18E62F982118FB4AAA97E6EA00 /* Spotify.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Spotify.swift; sourceTree = "<group>"; };
 		FR_A5DAE222C0506C180F82590F2D57B3CA /* MediaPlayer.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = MediaPlayer.framework; path = System/Library/Frameworks/MediaPlayer.framework; sourceTree = SDKROOT; };
 		FR_A92AD1BEC2AAEAA47DAEECBB06DE2A9A /* SpotifyiOS.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = SpotifyiOS.framework; path = ThirdParty/SpotifyiOS.framework; sourceTree = "<group>"; };
-		FR_ADD1F947819E6904931470C835395E4F /* MusicPlayer-macOS.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; name = "MusicPlayer-macOS.framework"; path = MusicPlayer.framework; sourceTree = BUILT_PRODUCTS_DIR; };
+		FR_ADD1F947819E6904931470C835395E4F /* MusicPlayer.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = MusicPlayer.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		FR_B00C418ED23658EFC2B8C4C7BC5852E0 /* Vox.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Vox.swift; sourceTree = "<group>"; };
 		FR_C0038417FD6448298DB3BD0E5A4DBA5D /* AppKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = AppKit.framework; path = System/Library/Frameworks/AppKit.framework; sourceTree = SDKROOT; };
 		FR_CAB5BCBAB843B38C603213C0E6B6E794 /* SpotifyiOS.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SpotifyiOS.swift; sourceTree = "<group>"; };
@@ -82,7 +82,7 @@
 			isa = PBXGroup;
 			children = (
 				FR_4F79CD6A9F5D36111EF532B3ADDF3447 /* MusicPlayer-iOS.framework */,
-				FR_ADD1F947819E6904931470C835395E4F /* MusicPlayer-macOS.framework */,
+				FR_ADD1F947819E6904931470C835395E4F /* MusicPlayer.framework */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -188,7 +188,7 @@
 			);
 			name = "MusicPlayer-macOS";
 			productName = "MusicPlayer-macOS";
-			productReference = FR_ADD1F947819E6904931470C835395E4F /* MusicPlayer-macOS.framework */;
+			productReference = FR_ADD1F947819E6904931470C835395E4F /* MusicPlayer.framework */;
 			productType = "com.apple.product-type.framework";
 		};
 		NT_CA2B6E6054C463B27E463B482EB02735 /* MusicPlayer-iOS */ = {
@@ -215,6 +215,11 @@
 			isa = PBXProject;
 			attributes = {
 				LastUpgradeCheck = 1000;
+				TargetAttributes = {
+					NT_8D037AEAB2E09A5F7B250A91CC9BB18D = {
+						LastSwiftMigration = 1020;
+					};
+				};
 			};
 			buildConfigurationList = CL_EB648DF675CD89D6815B6255741009B6 /* Build configuration list for PBXProject "MusicPlayer" */;
 			compatibilityVersion = "Xcode 3.2";
@@ -339,7 +344,7 @@
 				PRODUCT_NAME = "$(TARGET_NAME:c99extidentifier)";
 				SDKROOT = macosx;
 				SKIP_INSTALL = YES;
-				SWIFT_VERSION = 4.2;
+				SWIFT_VERSION = 5.0;
 				TARGET_NAME = MusicPlayer;
 				VERSIONING_SYSTEM = "apple-generic";
 			};
@@ -392,7 +397,7 @@
 				PRODUCT_NAME = "$(TARGET_NAME:c99extidentifier)";
 				SDKROOT = macosx;
 				SKIP_INSTALL = YES;
-				SWIFT_VERSION = 4.2;
+				SWIFT_VERSION = 5.0;
 				TARGET_NAME = MusicPlayer;
 				VERSIONING_SYSTEM = "apple-generic";
 			};
