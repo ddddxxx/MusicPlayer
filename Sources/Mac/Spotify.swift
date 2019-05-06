@@ -187,7 +187,7 @@ extension SpotifyApplication {
     
     var _currentTrack: MusicTrack? {
         guard let track = currentTrack else { return nil }
-        let originalTrack = (track as! SBObject).get()
+        let originalTrack = (track as! SBObject).get() as? SBObject
         return MusicTrack(id: track.id?() ?? "",
                           title: track.name ?? nil,
                           album: track.album ?? nil,
@@ -195,7 +195,7 @@ extension SpotifyApplication {
                           duration: track.duration.map(TimeInterval.init),
                           url: nil,
                           artwork: nil,
-                          originalTrack: (originalTrack as! SBObject))
+                          originalTrack: originalTrack)
     }
     
     var _startTime: Date? {
