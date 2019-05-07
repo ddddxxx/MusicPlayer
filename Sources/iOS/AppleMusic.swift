@@ -33,8 +33,6 @@ public final class AppleMusic {
     private var _startTime: Date?
     private var _pausePosition: Double?
     
-    private var _isAuthorized: Bool = MPMediaLibrary.authorizationStatus() == .authorized
-    
     public init() {
         let nc = NotificationCenter.default
         
@@ -55,6 +53,8 @@ public final class AppleMusic {
         nc.addObserver(forName: UIApplication.willEnterForegroundNotification, object: nil, queue: nil) { [weak self] _ in
             self?.updateFullPlayerState()
         }
+        
+        updateFullPlayerState()
     }
     
     deinit {
@@ -117,20 +117,22 @@ extension AppleMusic: MusicPlayer {
     
     
     public var isAuthorized: Bool {
-        let newAuth = MPMediaLibrary.authorizationStatus() == .authorized
-        let needsUpdate = _isAuthorized != newAuth
-        _isAuthorized = newAuth
-        if needsUpdate {
-            updateCurrentTrack()
-            updatePlaybackState()
-            updatePlayerPosition()
-        }
-        return newAuth
+        return MPMediaLibrary.authorizationStatus() == .authorized
     }
     
     public func requestAuthorizationIfNeeded() {
-        MPMediaLibrary.requestAuthorization() { [weak self] _ in
-            self?.updateFullPlayerState()
+        switch MPMediaLibrary.authorizationStatus() {
+        case .notDetermined:
+            MPMediaLibrary.requestAuthorization() { [weak self] _ in
+                self?.updateFullPlayerState()
+            }
+        case .denied, .restricted:
+            break
+//            if let settingsURL = URL(string: UIApplication.openSettingsURLString) {
+//                UIApplication.shared.open(settingsURL)
+//            }
+        case .authorized:
+            break
         }
     }
     

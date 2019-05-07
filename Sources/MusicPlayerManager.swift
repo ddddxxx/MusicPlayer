@@ -167,7 +167,7 @@ public class MusicPlayerManager: MusicPlayerDelegate {
         } else if let playing = players.first(where: { $0.playbackState == .playing }) {
             newPlayer = playing
         } else if player == nil {
-            player = players.first { type(of: $0).name == defaultPlayerName }
+            newPlayer = players.first { type(of: $0).name == defaultPlayerName }
         } else {
             newPlayer = player
         }

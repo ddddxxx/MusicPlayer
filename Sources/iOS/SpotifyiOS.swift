@@ -22,6 +22,8 @@ import UIKit
 
 public final class SpotifyiOS: NSObject, SPTAppRemoteDelegate, SPTAppRemotePlayerStateDelegate {
     
+    public static let accessTokenDefaultsKey = "ddddxxx.SpotifyiOS.AccessTokenDefaultsKey"
+    
     public weak var delegate: MusicPlayerDelegate?
     
     let appRemote: SPTAppRemote
@@ -30,7 +32,8 @@ public final class SpotifyiOS: NSObject, SPTAppRemoteDelegate, SPTAppRemotePlaye
     private var _startTime: Date?
     private var _pausePosition: Double?
     
-    public init(clientID: String, redirectURL: URL, accessToken: String) {
+    public init(clientID: String, redirectURL: URL) {
+        let accessToken = UserDefaults.standard.string(forKey: SpotifyiOS.accessTokenDefaultsKey)
         let configuration = SPTConfiguration(clientID: clientID, redirectURL: redirectURL)
         appRemote = SPTAppRemote(configuration: configuration, logLevel: .debug)
         appRemote.connectionParameters.accessToken = accessToken
@@ -47,6 +50,7 @@ public final class SpotifyiOS: NSObject, SPTAppRemoteDelegate, SPTAppRemotePlaye
     
     public func appRemoteDidEstablishConnection(_ appRemote: SPTAppRemote) {
         appRemote.playerAPI?.delegate = self
+        appRemote.playerAPI?.subscribe(toPlayerState: nil)
     }
     
     public func appRemote(_ appRemote: SPTAppRemote, didFailConnectionAttemptWithError error: Error?) {
@@ -91,7 +95,7 @@ public final class SpotifyiOS: NSObject, SPTAppRemoteDelegate, SPTAppRemotePlaye
 
 extension SpotifyiOS: MusicPlayer {
     
-    public static let name: MusicPlayerName = .appleMusic
+    public static let name: MusicPlayerName = .spotify
     public static var needsUpdateIfNotSelected = false
     
     public var isAuthorized: Bool {
@@ -100,6 +104,16 @@ extension SpotifyiOS: MusicPlayer {
     
     public func requestAuthorizationIfNeeded() {
         appRemote.authorizeAndPlayURI("")
+    }
+    
+    public func getAccessTokenAndConnect(from url: URL) -> Bool {
+        if let token = appRemote.authorizationParameters(from: url)?[SPTAppRemoteAccessTokenKey] {
+            appRemote.connectionParameters.accessToken = token
+            appRemote.connect()
+            UserDefaults.standard.set(token, forKey: SpotifyiOS.accessTokenDefaultsKey)
+            return true
+        }
+        return false
     }
     
     public var currentTrack: MusicTrack? {
