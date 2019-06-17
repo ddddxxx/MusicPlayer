@@ -26,7 +26,7 @@ import ScriptingBridge
     case stopped = 0x6b505353
     case playing = 0x6b505350
     case paused = 0x6b505370
-};
+}
 
 
 /*
@@ -60,7 +60,7 @@ import ScriptingBridge
     // Pause playback.
     @objc optional func play()
     // Resume playback.
-    @objc optional func playTrack(x: String, inContext: String)
+    @objc optional func playTrack(x: String!, inContext: String!)
     // Start playback of a track in the given context.
     
     /*
@@ -101,7 +101,7 @@ extension SBApplication: SpotifyApplication{}
     // The name of the track.
     @objc optional var artworkUrl: String? {get}
     // The URL of the track%apos
-    @objc optional var artwork: NSImage {get}
+    @objc optional var artwork: NSImage? {get}
     // The property is deprecated and will never be set. Use the "artwork url" instead.
     @objc optional var albumArtist: String? {get}
     // That album artist of the track.

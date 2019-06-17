@@ -47,9 +47,9 @@ import ScriptingBridge
     // Skip to the previous track in the playlist.
     @objc optional func shuffle()
     // Shuffle the tracks in the playlist.
-    @objc optional func playUrl(x: String)
+    @objc optional func playUrl(x: String!)
     // Play specified URL.
-    @objc optional func addUrl(x: String)
+    @objc optional func addUrl(x: String!)
     // Add specified URL to playlist
     @objc optional func rewindForward()
     // Rewind current track forward.
@@ -72,7 +72,7 @@ import ScriptingBridge
     // The application"s top-level scripting object.
     @objc optional var tiffArtworkData: Data {get}
     // Current track artwork data in TIFF format.
-    @objc optional var artworkImage: NSImage {get}
+    @objc optional var artworkImage: NSImage? {get}
     // Current track artwork as an image.
     @objc optional var playerState: Int {get}
     // Player state (playing = 1, paused = 0)

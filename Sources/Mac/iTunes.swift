@@ -25,7 +25,7 @@ public final class iTunes {
     
     public weak var delegate: MusicPlayerDelegate?
     
-    private var _iTunes: iTunesApplication
+    private var _iTunes: MusicApplication
     private var _currentTrack: MusicTrack?
     private var _playbackState: MusicPlaybackState = .stopped
     private var _startTime: Date?
@@ -34,7 +34,7 @@ public final class iTunes {
     private var observer: NSObjectProtocol?
     
     public init?() {
-        guard let iTunes = SBApplication(bundleIdentifier: iTunes.name.bundleID) else {
+        guard let iTunes = iTunes.makeScriptingApplication() else {
             return nil
         }
         _iTunes = iTunes
@@ -167,8 +167,8 @@ extension iTunes: PlaybackModeSettable {
             return _iTunes.songRepeat?.mode ?? .off
         }
         set {
-//            _iTunes.songRepeat = iTunesERpt(newValue)
-            originalPlayer.setValue(iTunesERpt(newValue), forKey: "songRepeat")
+//            _iTunes.songRepeat = MusicERpt(newValue)
+            originalPlayer.setValue(MusicERpt(newValue), forKey: "songRepeat")
         }
     }
     
@@ -191,13 +191,13 @@ extension iTunes: PlaybackModeSettable {
                 app.setValue(false, forKey: "shuffleEnabled")
             case .songs:
                 app.setValue(true, forKey: "shuffleEnabled")
-                app.setValue(iTunesEShM.songs, forKey: "shuffleMode")
+                app.setValue(MusicEShM.songs, forKey: "shuffleMode")
             case .albums:
                 app.setValue(true, forKey: "shuffleEnabled")
-                app.setValue(iTunesEShM.albums, forKey: "shuffleMode")
+                app.setValue(MusicEShM.albums, forKey: "shuffleMode")
             case .groupings:
                 app.setValue(true, forKey: "shuffleEnabled")
-                app.setValue(iTunesEShM.groupings, forKey: "shuffleMode")
+                app.setValue(MusicEShM.groupings, forKey: "shuffleMode")
             }
         }
     }
@@ -205,12 +205,12 @@ extension iTunes: PlaybackModeSettable {
     
 }
 
-extension iTunesApplication {
+extension MusicApplication {
     
     var _currentTrack: MusicTrack? {
         guard let track = currentTrack,
             let originalTrack = (track as! SBObject).get() as? SBObject,
-            track.mediaKind == .song || track.mediaKind == .musicVideo || track.mediaKind == .wtf,
+            track.mediaKind == .song || track.mediaKind == .musicVideo || track.mediaKind?.rawValue == 0,
             currentStreamURL ?? nil == nil else {
                 return nil
         }
@@ -226,7 +226,7 @@ extension iTunesApplication {
                           artist: track.artist ?? nil,
                           duration: track.duration,
                           url: url,
-                          artwork: artwork,
+                          artwork: artwork ?? nil,
                           originalTrack: originalTrack)
     }
     
@@ -248,7 +248,7 @@ extension iTunesApplication {
     }
 }
 
-private extension iTunesERpt {
+private extension MusicERpt {
     
     var mode: MusicRepeatMode {
         switch self {

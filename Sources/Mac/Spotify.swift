@@ -34,7 +34,7 @@ public final class Spotify {
     private var observer: NSObjectProtocol?
     
     public init?() {
-        guard let spotify = SBApplication(bundleIdentifier: Spotify.name.bundleID) else {
+        guard let spotify = Spotify.makeScriptingApplication() else {
             return nil
         }
         _spotify = spotify

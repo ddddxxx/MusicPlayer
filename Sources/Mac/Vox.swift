@@ -34,7 +34,7 @@ public final class Vox {
     private var observer: NSObjectProtocol?
     
     public init?() {
-        guard let vox = SBApplication(bundleIdentifier: Vox.name.bundleID) else {
+        guard let vox = Vox.makeScriptingApplication() else {
             return nil
         }
         _vox = vox
@@ -191,7 +191,7 @@ extension VoxApplication {
                           artist: artist ?? nil,
                           duration: totalTime,
                           url: url,
-                          artwork: artworkImage,
+                          artwork: artworkImage ?? nil,
                           originalTrack: nil)
     }
         

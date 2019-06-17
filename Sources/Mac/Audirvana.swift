@@ -34,7 +34,7 @@ public final class Audirvana {
     private var observer: [NSObjectProtocol] = []
     
     public init?() {
-        guard let audirvana = SBApplication(bundleIdentifier: Audirvana.name.bundleID) else {
+        guard let audirvana = Audirvana.makeScriptingApplication() else {
             return nil
         }
         _audirvana = audirvana
@@ -50,7 +50,8 @@ public final class Audirvana {
             DistributedNotificationCenter.default.addObserver(forName: .AudirvanaPlayerInfo, object: nil, queue: nil) { [unowned self] n in self.playerInfoNotification(n) },
             NSWorkspace.shared.notificationCenter.addObserver(forName: NSWorkspace.didLaunchApplicationNotification, object: nil, queue: nil) { [unowned self] n in
                 guard let userInfo = n.userInfo else { return }
-                if userInfo["NSApplicationBundleIdentifier"] as? String == MusicPlayerName.audirvana.bundleID {
+                if let bundleID = userInfo["NSApplicationBundleIdentifier"] as? String,
+                    MusicPlayerName.audirvana.candidateBundleID.contains(bundleID) {
                     self._audirvana.setEventTypesReported?(.trackChanged)
                 }
             }

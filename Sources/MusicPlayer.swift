@@ -144,12 +144,12 @@ extension MusicPlaybackState {
 
 extension MusicPlayerName {
     
-    public var bundleID: String {
+    public var candidateBundleID: [String] {
         switch self {
-        case .itunes:    return "com.apple.iTunes"
-        case .spotify:   return "com.spotify.client"
-        case .vox:       return "com.coppertino.Vox"
-        case .audirvana: return "com.audirvana.Audirvana-Plus"
+        case .itunes:    return ["com.apple.Music", "com.apple.iTunes"]
+        case .spotify:   return ["com.spotify.client"]
+        case .vox:       return ["com.coppertino.Vox"]
+        case .audirvana: return ["com.audirvana.Audirvana", "com.audirvana.Audirvana-Plus"]
         }
     }
     
@@ -171,6 +171,15 @@ extension MusicPlayer {
     
     public func activate() {
         originalPlayer.activate()
+    }
+    
+    static func makeScriptingApplication() -> SBApplication? {
+        for bundleID in Self.name.candidateBundleID {
+            if let app = SBApplication(bundleIdentifier: bundleID) {
+                return app
+            }
+        }
+        return nil
     }
 }
 

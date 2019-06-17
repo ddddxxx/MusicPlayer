@@ -139,7 +139,8 @@ public class MusicPlayerManager: MusicPlayerDelegate {
         let workspaceNC = NSWorkspace.shared.notificationCenter
         let callback: (Notification) -> Void = { [unowned self] n in
             guard let userInfo = n.userInfo, let player = self.player else { return }
-            if userInfo["NSApplicationBundleIdentifier"] as? String == type(of: player).name.bundleID {
+            if let bundleID = userInfo["NSApplicationBundleIdentifier"] as? String,
+                type(of: player).name.candidateBundleID.contains(bundleID) {
                 switch n.name {
                 case NSWorkspace.didTerminateApplicationNotification:
                     self.delegate?.runningStateChanged(isRunning: false)

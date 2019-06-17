@@ -7,12 +7,12 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		BB3520D222ACF5BE0005178D /* MusicBridge.swift in Sources */ = {isa = PBXBuildFile; fileRef = BB3520D122ACF5BE0005178D /* MusicBridge.swift */; };
 		BBBB6FB621E5AB7B007C2D92 /* MusicPlayerManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = FR_45A439C5C32FF62FCD7A52DB3A8E21CE /* MusicPlayerManager.swift */; };
 		BF_083EAA44F7514A4C4B1D61E12F3ADF90 /* ScriptingBridge.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = FR_30F744835115BF17E9C29FB97DF8C689 /* ScriptingBridge.framework */; };
 		BF_0867655C4007BA4669B839AADC65C878 /* MusicPlayer.swift in Sources */ = {isa = PBXBuildFile; fileRef = FR_CB29141DC39F40FA114AC0D7B210B3C2 /* MusicPlayer.swift */; };
 		BF_11D7A44AB4A39F1BCCC913FD2AAA1293 /* AppleMusic.swift in Sources */ = {isa = PBXBuildFile; fileRef = FR_61BC62FA01E27DC86EF705B8569EB0FB /* AppleMusic.swift */; };
 		BF_346D63D8788ABB890A2EEC78CC9A041D /* MusicPlayerManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = FR_45A439C5C32FF62FCD7A52DB3A8E21CE /* MusicPlayerManager.swift */; };
-		BF_42860D1598D8EF8E8CF79EB1FC64E787 /* iTunesBridge.swift in Sources */ = {isa = PBXBuildFile; fileRef = FR_3524A448DBF7F856BA193318DD388505 /* iTunesBridge.swift */; };
 		BF_477D2AFCE19B0C9AAF4296608B06D554 /* MediaPlayer.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = FR_A5DAE222C0506C180F82590F2D57B3CA /* MediaPlayer.framework */; };
 		BF_6031D7254188AF71C1AC2596FCDA18D2 /* MusicPlayer-Bridging-Header.h in Headers */ = {isa = PBXBuildFile; fileRef = FR_061FAB01B1BCBF67C3E6BDC91EDA2EE4 /* MusicPlayer-Bridging-Header.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		BF_6D6CC77A05A59C90FC8CC7683BE01FBD /* Global.swift in Sources */ = {isa = PBXBuildFile; fileRef = FR_0F53334A5C5A0D72EE6CD8EEDB6583F6 /* Global.swift */; };
@@ -33,11 +33,11 @@
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
+		BB3520D122ACF5BE0005178D /* MusicBridge.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = MusicBridge.swift; sourceTree = "<group>"; };
 		FR_061FAB01B1BCBF67C3E6BDC91EDA2EE4 /* MusicPlayer-Bridging-Header.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "MusicPlayer-Bridging-Header.h"; sourceTree = "<group>"; };
 		FR_0F53334A5C5A0D72EE6CD8EEDB6583F6 /* Global.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Global.swift; sourceTree = "<group>"; };
 		FR_11D19D26543CFDF3A4C46272832902F5 /* Audirvana.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Audirvana.swift; sourceTree = "<group>"; };
 		FR_30F744835115BF17E9C29FB97DF8C689 /* ScriptingBridge.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = ScriptingBridge.framework; path = System/Library/Frameworks/ScriptingBridge.framework; sourceTree = SDKROOT; };
-		FR_3524A448DBF7F856BA193318DD388505 /* iTunesBridge.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = iTunesBridge.swift; sourceTree = "<group>"; };
 		FR_3CB0DD50E6D97EDF6B1CF98A69CA2A92 /* iTunes.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = iTunes.swift; sourceTree = "<group>"; };
 		FR_45A439C5C32FF62FCD7A52DB3A8E21CE /* MusicPlayerManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MusicPlayerManager.swift; sourceTree = "<group>"; };
 		FR_4623C42515BA744738BB0586DD0996F9 /* MusicPlayerManagerDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MusicPlayerManagerDelegate.swift; sourceTree = "<group>"; };
@@ -91,7 +91,7 @@
 			isa = PBXGroup;
 			children = (
 				FR_72A6D4AEF90210266BF9312C4AD2FB7A /* AudirvanaBridge.swift */,
-				FR_3524A448DBF7F856BA193318DD388505 /* iTunesBridge.swift */,
+				BB3520D122ACF5BE0005178D /* MusicBridge.swift */,
 				FR_4654036A5E4417882DDA71F7161B7750 /* SpotifyBridge.swift */,
 				FR_5D8176856DE66D267E7FB1687DA50F1A /* VoxBridge.swift */,
 			);
@@ -257,6 +257,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				BF_BFB93A079CAB45D71DB222723AD95EED /* Audirvana.swift in Sources */,
+				BB3520D222ACF5BE0005178D /* MusicBridge.swift in Sources */,
 				BF_8993748B129A94BF7070BEC2683A1E2B /* AudirvanaBridge.swift in Sources */,
 				BF_6D6CC77A05A59C90FC8CC7683BE01FBD /* Global.swift in Sources */,
 				BF_0867655C4007BA4669B839AADC65C878 /* MusicPlayer.swift in Sources */,
@@ -267,7 +268,6 @@
 				BF_9DBAD352E8AF0A3835B8BF2E09239CAF /* Vox.swift in Sources */,
 				BF_934C62C31ACEB6F27EC5D2702EBF913F /* VoxBridge.swift in Sources */,
 				BF_EF6A0DBB22525876F0C91C652DEE74B5 /* iTunes.swift in Sources */,
-				BF_42860D1598D8EF8E8CF79EB1FC64E787 /* iTunesBridge.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

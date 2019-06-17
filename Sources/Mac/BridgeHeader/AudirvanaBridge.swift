@@ -26,15 +26,17 @@ import ScriptingBridge
     case stopped = 0x6b505353 /* Playback Stopped */
     case playing = 0x6b505350 /* Playing */
     case paused = 0x6b505370 /* Playback Paused */
-};
+}
 
 
 @objc enum AudirvanaPlayerControlType: AEKeyword {
-    case standalone = 0x6b435374 /* Standalone mode no external control */
     case library = 0x6b434c62 /* Library mode no external control */
     case iTunesIntegrated = 0x6b436954 /* iTunes integrated mode fully controlled by iTunes */
+    
+    // removed in Audirvana 3.5
+    case standalone = 0x6b435374 /* Standalone mode no external control */
     case slave = 0x6b43536c /* Slave mode fully controlled by Apple Events */
-};
+}
 
 @objc enum AudirvanaPlayerStatusEventTypesReported: AEKeyword {
     case none = 0x6b45764e
@@ -47,13 +49,17 @@ import ScriptingBridge
     case trackAndPosition = 0x6b457650
     /* Tracks playback status and play position (every second) pushed as events
     Play position is reported in notification com.audirvana.audirvana-plus.playerPosition as a double (posInSec key) */
-};
+}
 
 
 @objc enum AudirvanaTrackType: AEKeyword {
     case audioFile = 0x6b54466c /* Audio file locally (file://) or http (http://) readable */
     case qobuzTrack = 0x6b545142 /* Qobuz track streamed from qobuz.com */
-};
+    
+    // added in Audirvana 3.5
+    case tidalTrack = 0x6b545444 /* Tidal track, streamed from tidal.com */
+    case hraTrack = 0x6b544852 /* Qobuz track, streamed from highresaudio.com */
+}
 
 
 /*
