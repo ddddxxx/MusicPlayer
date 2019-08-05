@@ -44,11 +44,16 @@ public final class AppleMusic {
         musicPlayer.beginGeneratingPlaybackNotifications()
         
         nc.addObserver(forName: .MPMusicPlayerControllerPlaybackStateDidChange, object: musicPlayer, queue: nil) { [weak self] _ in
-            self?.updatePlaybackState()
-            self?.updatePlayerPosition()
+            self?.updateFullPlayerState()
         }
         nc.addObserver(forName: .MPMusicPlayerControllerNowPlayingItemDidChange, object: musicPlayer, queue: nil) { [weak self] _ in
-            self?.updatePlayerState()
+            self?.updateFullPlayerState()
+        }
+        nc.addObserver(forName: UIApplication.didBecomeActiveNotification, object: nil, queue: nil) { [weak self] _ in
+            self?.updateFullPlayerState()
+        }
+        nc.addObserver(forName: UIApplication.willEnterForegroundNotification, object: nil, queue: nil) { [weak self] _ in
+            self?.updateFullPlayerState()
         }
     }
     
@@ -144,7 +149,7 @@ extension AppleMusic: MusicPlayer {
     
     public func updatePlayerState() {
         guard isAuthorized else { return }
-        updatePlayerPosition()
+        updateFullPlayerState()
     }
     
     public func resume() {
