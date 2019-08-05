@@ -33,12 +33,22 @@ public final class SpotifyiOS: NSObject, SPTAppRemoteDelegate, SPTAppRemotePlaye
     private var _pausePosition: Double?
     
     public init(clientID: String, redirectURL: URL) {
-        let accessToken = UserDefaults.standard.string(forKey: SpotifyiOS.accessTokenDefaultsKey)
         let configuration = SPTConfiguration(clientID: clientID, redirectURL: redirectURL)
-        appRemote = SPTAppRemote(configuration: configuration, logLevel: .debug)
-        appRemote.connectionParameters.accessToken = accessToken
+        appRemote = SPTAppRemote(configuration: configuration, logLevel: .info)
         super.init()
         appRemote.delegate = self
+        
+        let accessToken = UserDefaults.standard.string(forKey: SpotifyiOS.accessTokenDefaultsKey)
+        appRemote.connectionParameters.accessToken = accessToken
+        attemptConnect()
+    }
+    
+    func addObserver() {
+        NotificationCenter.default.addObserver(self, selector: #selector(applicationDidBecomeActiveNotification), name: UIApplication.didBecomeActiveNotification, object: nil)
+        NotificationCenter.default.addObserver(self, selector: #selector(applicationDidBecomeActiveNotification), name: UIApplication.willResignActiveNotification, object: nil)
+    }
+    
+    func attemptConnect() {
         SPTAppRemote.checkIfSpotifyAppIsActive { active in
             if active {
                 self.appRemote.connect()
@@ -46,11 +56,32 @@ public final class SpotifyiOS: NSObject, SPTAppRemoteDelegate, SPTAppRemotePlaye
         }
     }
     
+    public func getAccessTokenAndConnect(from url: URL) -> Bool {
+        if let token = appRemote.authorizationParameters(from: url)?[SPTAppRemoteAccessTokenKey] {
+            appRemote.connectionParameters.accessToken = token
+            appRemote.connect()
+            UserDefaults.standard.set(token, forKey: SpotifyiOS.accessTokenDefaultsKey)
+            return true
+        }
+        return false
+    }
+    
+    // MARK: -
+    
+    @objc func applicationDidBecomeActiveNotification(_ n: Notification) {
+        attemptConnect()
+    }
+    
+    @objc func applicationWillResignActiveNotification(_ n: Notification) {
+        appRemote.disconnect()
+    }
+    
     // MARK: - SPTAppRemoteDelegate
     
     public func appRemoteDidEstablishConnection(_ appRemote: SPTAppRemote) {
         appRemote.playerAPI?.delegate = self
         appRemote.playerAPI?.subscribe(toPlayerState: nil)
+        delegate?.playbackStateChanged(state: .playing, from: self)
     }
     
     public func appRemote(_ appRemote: SPTAppRemote, didFailConnectionAttemptWithError error: Error?) {
@@ -64,9 +95,13 @@ public final class SpotifyiOS: NSObject, SPTAppRemoteDelegate, SPTAppRemotePlaye
     // MARK: SPTAppRemotePlayerStateDelegate
     
     public func playerStateDidChange(_ playerState: SPTAppRemotePlayerState) {
-        if playerState.track.uri != self.playerState?.track.uri {
+        let oldState = self.playerState
+        self.playerState = playerState
+        if playerState.track.uri != oldState?.track.uri {
             delegate?.currentTrackChanged(track: playerState.track.track, from: self)
-        } else if playerState.isPaused != self.playerState?.isPaused {
+            _startTime = nil
+            _pausePosition = nil
+        } else if playerState.isPaused != oldState?.isPaused {
             if playbackState.isPlaying {
                 let startTimeNew = playerState.startTime
                 if let _startTime = _startTime,
@@ -86,10 +121,9 @@ public final class SpotifyiOS: NSObject, SPTAppRemoteDelegate, SPTAppRemotePlaye
                     self._pausePosition = pausePositionNew
                 }
             }
-        } else if playerState.startTime != self.playerState?.startTime {
+        } else if playerState.startTime != oldState?.startTime {
             delegate?.playerPositionMutated(position: playerState.position, from: self)
         }
-        self.playerState = playerState
     }
 }
 
@@ -106,16 +140,6 @@ extension SpotifyiOS: MusicPlayer {
         appRemote.authorizeAndPlayURI("")
     }
     
-    public func getAccessTokenAndConnect(from url: URL) -> Bool {
-        if let token = appRemote.authorizationParameters(from: url)?[SPTAppRemoteAccessTokenKey] {
-            appRemote.connectionParameters.accessToken = token
-            appRemote.connect()
-            UserDefaults.standard.set(token, forKey: SpotifyiOS.accessTokenDefaultsKey)
-            return true
-        }
-        return false
-    }
-    
     public var currentTrack: MusicTrack? {
         return playerState?.track.track
     }
@@ -126,9 +150,17 @@ extension SpotifyiOS: MusicPlayer {
     
     public var playerPosition: TimeInterval {
         get {
-            guard playbackState.isPlaying else { return _pausePosition ?? 0 }
-            guard let _startTime = _startTime else { return 0 }
-            return -_startTime.timeIntervalSinceNow
+            if playbackState.isPlaying, let pos = _pausePosition {
+                return pos
+            }
+            if let _startTime = _startTime {
+                return -_startTime.timeIntervalSinceNow
+            }
+            if let time = playerState?.startTime {
+                _startTime = time
+                return -time.timeIntervalSinceNow
+            }
+            return 0
         }
         set {
             guard isAuthorized else { return }
@@ -228,6 +260,7 @@ extension SPTAppRemotePlaybackOptionsRepeatMode {
         case .off: return .off
         case .track: return .one
         case .context: return .all
+        @unknown default: return .off
         }
     }
     

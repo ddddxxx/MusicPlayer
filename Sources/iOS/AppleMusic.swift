@@ -133,6 +133,8 @@ extension AppleMusic: MusicPlayer {
 //            }
         case .authorized:
             break
+        @unknown default:
+            break
         }
     }
     
@@ -219,6 +221,7 @@ private extension MPMusicPlayerController {
         case .interrupted: return .paused
         case .seekingForward: return .fastForwarding
         case .seekingBackward: return .rewinding
+        @unknown default: return .stopped
         }
     }
     
@@ -252,6 +255,7 @@ private extension MPMusicRepeatMode {
         case .all:  return .all
         // FIXME: What Mode?
         case .default: return .off
+        @unknown default: return .off
         }
     }
     
@@ -273,6 +277,7 @@ private extension MPMusicShuffleMode {
         case .albums: return .albums
         // FIXME: What Mode?
         case .default: return .off
+        @unknown default: return .off
         }
     }
     
