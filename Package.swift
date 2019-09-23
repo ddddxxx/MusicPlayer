@@ -55,8 +55,10 @@ let package = Package(
     targets: [
         .target(
             name: "MusicPlayer",
-            dependencies: [] + combineTargetDependencies,
-            swiftSettings: combineSwiftSetting
-        ),
+            dependencies: ["MusicPlayerBridge"] + combineTargetDependencies,
+            swiftSettings: combineSwiftSetting),
+        .target(
+            name: "MusicPlayerBridge",
+            dependencies: []),
     ]
 )

@@ -1,0 +1,4 @@
+module MusicPlayerBridge {
+    header "MusicPlayerBridge.h"
+    export *
+}
