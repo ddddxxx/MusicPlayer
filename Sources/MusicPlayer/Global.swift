@@ -29,10 +29,17 @@ let workspaceNC = NSWorkspace.shared.notificationCenter
 
 extension Notification.Name {
     static let iTunesPlayerInfo = Notification.Name("com.apple.iTunes.playerInfo")
+    
     static let spotifyPlayerInfo = Notification.Name("com.spotify.client.PlaybackStateChanged")
+    
     static let voxTrackChanged = Notification.Name("com.coppertino.Vox.trackChanged")
+    
     static let audirvanaPlayerInfo = Notification.Name("com.audirvana.audirvana-plus.playerStatus")
     static let audirvanaPlayerPosition = Notification.Name("com.audirvana.audirvana-plus.playerPosition")
+    
+    static let swinsianPlaying = Notification.Name("com.swinsian.Swinsian-Track-Playing")
+    static let swinsianPaused = Notification.Name("com.swinsian.Swinsian-Track-Paused")
+    static let swinsianStopped = Notification.Name("com.swinsian.Swinsian-Track-Stopped")
 }
 
 #endif
