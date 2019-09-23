@@ -22,12 +22,7 @@
 
 import AppKit
 import ScriptingBridge
-
-#if USE_COMBINEX
-import CXFoundation
-#else
-import CXCompatible
-#endif
+import MusicPlayerBridge
 
 public final class Spotify: MusicPlayerController {
     
@@ -36,7 +31,7 @@ public final class Spotify: MusicPlayerController {
     }
     
     private var _app: SpotifyApplication {
-        return originalPlayer
+        return originalPlayer as! SpotifyApplication
     }
     
     public override var currentTrack: MusicTrack? {
@@ -92,29 +87,29 @@ public final class Spotify: MusicPlayerController {
         }
         set {
             guard isRunning else { return }
-            originalPlayer.setValue(newValue, forKey: "playerPosition")
+            _app.playerPosition = newValue
             playbackState.time = newValue
         }
     }
     
     override public func resume() {
-        _app.play?()
+        _app.play()
     }
     
     override public func pause() {
-        _app.pause?()
+        _app.pause()
     }
     
     override public func playPause() {
-        _app.playpause?()
+        _app.playpause()
     }
     
     override public func skipToNextItem() {
-        _app.nextTrack?()
+        _app.nextTrack()
     }
     
     override public func skipToPreviousItem() {
-        _app.previousTrack?()
+        _app.previousTrack()
     }
 }
 
@@ -129,7 +124,7 @@ extension Spotify: PlaybackModeSettable {
             return _app.repeating == true ? .all : .off
         }
         set {
-            originalPlayer.setValue(newValue != .off, forKey: "repeating")
+            _app.repeating = newValue != .off
         }
     }
     
@@ -138,7 +133,7 @@ extension Spotify: PlaybackModeSettable {
             return _app.shuffling == true ? .on : .off
         }
         set {
-            originalPlayer.setValue(newValue.isEnabled, forKey: "shuffling")
+            _app.shuffling = newValue.isEnabled
         }
     }
 }
@@ -147,25 +142,23 @@ extension SpotifyApplication {
     
     var _currentTrack: MusicTrack? {
         guard let track = currentTrack else { return nil }
-        let originalTrack = (track as! SBObject).get() as? SBObject
-        return MusicTrack(id: track.id?() ?? "",
-                          title: track.name ?? nil,
-                          album: track.album ?? nil,
-                          artist: track.artist ?? nil,
-                          duration: track.duration.map(TimeInterval.init),
+        let originalTrack = track.get() as? SBObject
+        return MusicTrack(id: track.id() ?? "",
+                          title: track.name,
+                          album: track.album,
+                          artist: track.artist,
+                          duration: TimeInterval(track.duration),
                           url: nil,
                           artwork: nil,
                           originalTrack: originalTrack)
     }
     
     var _playbackState: PlaybackState {
-        guard let state = playerState, let position = playerPosition else {
-            return .stopped
-        }
-        switch state {
+        switch playerState {
         case .stopped: return .stopped
-        case .playing: return .playing(time: position)
-        case .paused:  return .paused(time: position)
+        case .playing: return .playing(time: playerPosition)
+        case .paused:  return .paused(time: playerPosition)
+        @unknown default: return .stopped
         }
     }
 }

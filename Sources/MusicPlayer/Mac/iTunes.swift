@@ -23,12 +23,6 @@
 import AppKit
 import ScriptingBridge
 
-#if USE_COMBINEX
-import CXFoundation
-#else
-import CXCompatible
-#endif
-
 public final class iTunes: MusicPlayerController {
     
     override public class var name: MusicPlayerName {

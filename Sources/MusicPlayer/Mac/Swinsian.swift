@@ -26,8 +26,8 @@ import MusicPlayerBridge
 
 public final class Swinsian: MusicPlayerController {
     
-    private var _app: MusicPlayerBridge.SwinsianApplication {
-        return originalPlayer as! MusicPlayerBridge.SwinsianApplication
+    private var _app: SwinsianApplication {
+        return originalPlayer as! SwinsianApplication
     }
 }
 

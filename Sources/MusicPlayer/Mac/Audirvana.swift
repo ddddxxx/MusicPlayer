@@ -22,12 +22,7 @@
 
 import AppKit
 import ScriptingBridge
-
-#if USE_COMBINEX
-import CXFoundation
-#else
-import CXCompatible
-#endif
+import MusicPlayerBridge
 
 public final class Audirvana: MusicPlayerController {
     
@@ -36,7 +31,7 @@ public final class Audirvana: MusicPlayerController {
     }
     
     private var _app: AudirvanaApplication {
-        return originalPlayer
+        return originalPlayer as! AudirvanaApplication
     }
     
     public override var currentTrack: MusicTrack? {
@@ -54,7 +49,7 @@ public final class Audirvana: MusicPlayerController {
             playbackState = _app._playbackState
             currentTrack = _app._currentTrack
             
-            _app.setEventTypesReported?(.trackChanged)
+            _app.eventTypesReported = .trackChanged
         }
         
         updatePlaybackTime = { [unowned self] in
@@ -68,7 +63,7 @@ public final class Audirvana: MusicPlayerController {
             }.store(in: &cancelBag)
         $isRunning.filter { $0 == true }
             .sink { [unowned self] _ in
-                self._app.setEventTypesReported?(.trackChanged)
+                self._app.eventTypesReported = .trackChanged
             }.store(in: &cancelBag)
     }
     
@@ -93,61 +88,60 @@ public final class Audirvana: MusicPlayerController {
         }
         set {
             guard isRunning else { return }
-            originalPlayer.setValue(newValue, forKey: "playerPosition")
+            _app.playerPosition = newValue
             playbackState.time = newValue
         }
     }
     
     override public func resume() {
-        _app.resume?()
+        _app.resume()
     }
     
     override public func pause() {
-        _app.pause?()
+        _app.pause()
     }
     
     override public func playPause() {
-        _app.playpause?()
+        _app.playpause()
     }
     
     override public func skipToNextItem() {
-        _app.nextTrack?()
+        _app.nextTrack()
     }
     
     override public func skipToPreviousItem() {
-        _app.previousTrack?()
+        _app.previousTrack()
     }
 }
 
 extension AudirvanaApplication {
     
     var _currentTrackID: String? {
-        guard let title = playingTrackTitle ?? nil else { return nil }
-        let album = (playingTrackAlbum ?? nil) ?? ""
-        let duration = playingTrackDuration?.description ?? ""
+        guard let title = playingTrackTitle else { return nil }
+        let album = playingTrackAlbum ?? ""
+        let duration = playingTrackDuration.description
         return "Audirvana-" + title + "-" + album + "-" + duration
     }
     
     var _currentTrack: MusicTrack? {
         guard let id = _currentTrackID else { return nil }
+        let artwork = playingTrackAirfoillogo.flatMap(NSImage.init(data:))
         return MusicTrack(id: id,
-                          title: playingTrackTitle ?? nil,
-                          album: playingTrackAlbum ?? nil,
-                          artist: playingTrackArtist ?? nil,
-                          duration: playingTrackDuration.map(TimeInterval.init),
+                          title: playingTrackTitle,
+                          album: playingTrackAlbum,
+                          artist: playingTrackArtist,
+                          duration: TimeInterval(playingTrackDuration),
                           url: nil,
-                          artwork: playingTrackAirfoillogo ?? nil,
+                          artwork: artwork,
                           originalTrack: nil)
     }
     
     var _playbackState: PlaybackState {
-        guard let state = playerState, let position = playerPosition else {
-            return .stopped
-        }
-        switch state {
+        switch playerState {
         case .stopped: return .stopped
-        case .playing: return .playing(time: position)
-        case .paused:  return .paused(time: position)
+        case .playing: return .playing(time: playerPosition)
+        case .paused:  return .paused(time: playerPosition)
+        @unknown default: return .stopped
         }
     }
 }
