@@ -141,16 +141,15 @@ extension Spotify: PlaybackModeSettable {
 extension SpotifyApplication {
     
     var _currentTrack: MusicTrack? {
-        guard let track = currentTrack else { return nil }
-        let originalTrack = track.get() as? SBObject
-        return MusicTrack(id: track.id() ?? "",
+        guard let track = currentTrack.evaluated() else { return nil }
+        return MusicTrack(id: track.id(),
                           title: track.name,
                           album: track.album,
                           artist: track.artist,
                           duration: TimeInterval(track.duration),
                           url: nil,
                           artwork: nil,
-                          originalTrack: originalTrack)
+                          originalTrack: track)
     }
     
     var _playbackState: PlaybackState {

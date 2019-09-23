@@ -101,17 +101,16 @@ public final class Swinsian: MusicPlayerController {
 extension SwinsianApplication {
     
     var _currentTrack: MusicTrack? {
-        guard let track = currentTrack else { return nil }
-        let originalTrack = track.get() as? SBObject
+        guard let track = currentTrack.evaluated() else { return nil }
         let url = track.path.flatMap(URL.init(string:))
-        return MusicTrack(id: track.id() ?? "",
+        return MusicTrack(id: track.id(),
                           title: track.name,
                           album: track.album,
                           artist: track.artist,
                           duration: track.duration,
                           url: url,
                           artwork: track.albumArt,
-                          originalTrack: originalTrack)
+                          originalTrack: track)
     }
     
     var _playbackState: PlaybackState {

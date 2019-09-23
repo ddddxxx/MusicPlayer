@@ -67,8 +67,7 @@ public final class Vox: MusicPlayerController {
     
     func trackChangeNotification(_ n: Notification) {
         guard isRunning else { return }
-        let id = _app.uniqueID ?? nil
-        guard id == currentTrack?.id else {
+        guard currentTrack?.id == _app.uniqueID else {
             currentTrack = _app._currentTrack
             playbackState = _app._playbackState
             return
@@ -144,7 +143,7 @@ extension Vox: PlaybackModeSettable {
 extension VoxApplication {
     
     var _currentTrack: MusicTrack? {
-        guard let id = uniqueID ?? nil else {
+        guard let id = uniqueID else {
             return nil
         }
         let url = trackUrl.flatMap(URL.init(string:))

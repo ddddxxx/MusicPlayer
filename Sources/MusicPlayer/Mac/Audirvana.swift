@@ -69,7 +69,7 @@ public final class Audirvana: MusicPlayerController {
     
     func playerInfoNotification(_ n: Notification) {
         guard isRunning else { return }
-        let id = _app._currentTrackID ?? nil
+        let id = _app._currentTrackID
         guard id == currentTrack?.id else {
             var track = _app._currentTrack
             if let path = n.userInfo?["PlayingTrackURL"] as? String {

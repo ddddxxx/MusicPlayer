@@ -134,26 +134,26 @@ extension iTunes: PlaybackModeSettable {
 extension MusicApplication {
     
     var _currentTrack: MusicTrack? {
-        guard let track = currentTrack,
-            let originalTrack = track.get() as? SBObject,
+        guard let track = currentTrack.evaluated(),
             track.mediaKind == .song || track.mediaKind == .musicVideo || track.mediaKind.rawValue == 0,
-            currentStreamURL ?? nil == nil else {
+            currentStreamURL == nil else {
                 return nil
         }
         // conditional casting originalTrack to iTunesFileTrack causes crash.
-        var url: URL?
-        if originalTrack.responds(to: #selector(getter: NSTextTab.location)) {
-            url = originalTrack.perform(#selector(getter: NSTextTab.location))?.takeUnretainedValue() as? URL
-        }
+//        var url: URL?
+//        if originalTrack.responds(to: #selector(getter: NSTextTab.location)) {
+//            url = originalTrack.perform(#selector(getter: NSTextTab.location))?.takeUnretainedValue() as? URL
+//        }
+        let url = (track as? MusicFileTrack)?.location
         let artwork = (track.artworks()?.firstObject as! MusicArtwork?)?.data
-        return MusicTrack(id: track.persistentID ?? "",
+        return MusicTrack(id: track.persistentID,
                           title: track.name,
                           album: track.album,
                           artist: track.artist,
                           duration: track.duration,
                           url: url,
                           artwork: artwork,
-                          originalTrack: originalTrack)
+                          originalTrack: track)
     }
     
     var _playbackState: PlaybackState {

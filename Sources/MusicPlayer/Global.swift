@@ -23,6 +23,7 @@ import Foundation
 #if os(macOS)
 
 import AppKit
+import ScriptingBridge
 
 let distributedNC = DistributedNotificationCenter.default()
 let workspaceNC = NSWorkspace.shared.notificationCenter
@@ -40,6 +41,13 @@ extension Notification.Name {
     static let swinsianPlaying = Notification.Name("com.swinsian.Swinsian-Track-Playing")
     static let swinsianPaused = Notification.Name("com.swinsian.Swinsian-Track-Paused")
     static let swinsianStopped = Notification.Name("com.swinsian.Swinsian-Track-Stopped")
+}
+
+extension SBObject {
+    
+    func evaluated() -> Self? {
+        return get() as? Self
+    }
 }
 
 #endif
