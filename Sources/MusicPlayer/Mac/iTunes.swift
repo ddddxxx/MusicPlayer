@@ -22,6 +22,7 @@
 
 import AppKit
 import ScriptingBridge
+import MusicPlayerBridge
 
 public final class iTunes: MusicPlayerController {
     
@@ -30,7 +31,7 @@ public final class iTunes: MusicPlayerController {
     }
     
     private var _app: MusicApplication {
-        return originalPlayer
+        return originalPlayer as! MusicApplication
     }
     
     public override var currentTrack: MusicTrack? {
@@ -83,29 +84,29 @@ public final class iTunes: MusicPlayerController {
         }
         set {
             guard isRunning else { return }
-            originalPlayer.setValue(newValue, forKey: "playerPosition")
+            _app.playerPosition = newValue
             playbackState.time = newValue
         }
     }
     
     override public func resume() {
-        _app.resume?()
+        _app.resume()
     }
     
     override public func pause() {
-        _app.pause?()
+        _app.pause()
     }
     
     override public func playPause() {
-        _app.playpause?()
+        _app.playpause()
     }
     
     override public func skipToNextItem() {
-        _app.nextTrack?()
+        _app.nextTrack()
     }
     
     override public func skipToPreviousItem() {
-        _app.previousTrack?()
+        _app.previousTrack()
     }
 }
 
@@ -113,19 +114,19 @@ extension iTunes: PlaybackModeSettable {
     
     public var repeatMode: RepeatMode {
         get {
-            return _app.songRepeat?.mode ?? .off
+            return _app.songRepeat.mode
         }
         set {
-            originalPlayer.setValue(MusicERpt(newValue), forKey: "songRepeat")
+            _app.songRepeat = MusicERpt(newValue)
         }
     }
     
     public var shuffleMode: ShuffleMode {
         get {
-            return _app.shuffleEnabled == true ? .on : .off
+            return _app.shuffleEnabled ? .on : .off
         }
         set {
-            originalPlayer.setValue(newValue.isEnabled, forKey: "shuffleEnabled")
+            _app.shuffleEnabled = newValue.isEnabled
         }
     }
 }
@@ -134,8 +135,8 @@ extension MusicApplication {
     
     var _currentTrack: MusicTrack? {
         guard let track = currentTrack,
-            let originalTrack = (track as! SBObject).get() as? SBObject,
-            track.mediaKind == .song || track.mediaKind == .musicVideo || track.mediaKind?.rawValue == 0,
+            let originalTrack = track.get() as? SBObject,
+            track.mediaKind == .song || track.mediaKind == .musicVideo || track.mediaKind.rawValue == 0,
             currentStreamURL ?? nil == nil else {
                 return nil
         }
@@ -144,27 +145,25 @@ extension MusicApplication {
         if originalTrack.responds(to: #selector(getter: NSTextTab.location)) {
             url = originalTrack.perform(#selector(getter: NSTextTab.location))?.takeUnretainedValue() as? URL
         }
-        let artwork = track.artworks?().first?.data
-        return MusicTrack(id: (track.persistentID ?? "") ?? "",
-                          title: track.name ?? nil,
-                          album: track.album ?? nil,
-                          artist: track.artist ?? nil,
+        let artwork = (track.artworks()?.firstObject as! MusicArtwork?)?.data
+        return MusicTrack(id: track.persistentID ?? "",
+                          title: track.name,
+                          album: track.album,
+                          artist: track.artist,
                           duration: track.duration,
                           url: url,
-                          artwork: artwork ?? nil,
+                          artwork: artwork,
                           originalTrack: originalTrack)
     }
     
     var _playbackState: PlaybackState {
-        guard let state = playerState, let position = playerPosition else {
-            return .stopped
-        }
-        switch state {
+        switch playerState {
         case .stopped: return .stopped
-        case .playing: return .playing(time: position)
-        case .paused:  return .paused(time: position)
-        case .fastForwarding: return .fastForwarding(time: position)
-        case .rewinding: return .playing(time: position)
+        case .playing: return .playing(time: playerPosition)
+        case .paused:  return .paused(time: playerPosition)
+        case .fastForwarding: return .fastForwarding(time: playerPosition)
+        case .rewinding: return .playing(time: playerPosition)
+        @unknown default: return .stopped
         }
     }
 }
@@ -176,6 +175,7 @@ private extension MusicERpt {
         case .off: return .off
         case .one: return .one
         case .all: return .all
+        @unknown default: return .off
         }
     }
     
