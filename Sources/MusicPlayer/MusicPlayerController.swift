@@ -94,7 +94,7 @@ public class MusicPlayerController {
 
 extension MusicPlayerController {
     
-    static let playbackTimeMutateThreshold = 0.1
+    static let playbackTimeMutateThreshold = 1.5
     
     func setPlaybackState(_ state: PlaybackState, tolerate: TimeInterval = MusicPlayerController.playbackTimeMutateThreshold) {
         func setWithDiff(_ diff: TimeInterval) {
