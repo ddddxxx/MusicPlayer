@@ -98,7 +98,7 @@ extension MusicPlayerController {
     
     func setPlaybackState(_ state: PlaybackState, tolerate: TimeInterval = MusicPlayerController.playbackTimeMutateThreshold) {
         func setWithDiff(_ diff: TimeInterval) {
-            if diff.magnitude < tolerate {
+            if diff.magnitude > tolerate {
                 playbackState = state
             }
         }
