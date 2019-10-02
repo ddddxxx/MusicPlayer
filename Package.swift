@@ -1,10 +1,10 @@
 // swift-tools-version:5.1
 
 import PackageDescription
+import Foundation
 
-//import Foundation
-//let useCombineX = ProcessInfo.processInfo.environment["USE_COMBINEX"] != nil
-let useCombineX = true
+let useCombineX = ProcessInfo.processInfo.environment["SWIFT_PACKAGE_USE_COMBINEX"] != nil
+//let useCombineX = true
 
 let supportedPlatform: [SupportedPlatform]
 let combinePackageDependencies: [Package.Dependency]

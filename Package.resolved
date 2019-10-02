@@ -6,7 +6,7 @@
         "repositoryURL": "https://github.com/cx-org/CombineX",
         "state": {
           "branch": "master",
-          "revision": "95056aaa02a13caa55263ce44368633936af9a1a",
+          "revision": "6239d172a1c900a2438d3fbec91b3999a5d6d9f2",
           "version": null
         }
       },
@@ -15,7 +15,7 @@
         "repositoryURL": "https://github.com/cx-org/CXFoundation",
         "state": {
           "branch": "master",
-          "revision": "705dbecc745ecd10b96193cde50c9b87d90b4bfb",
+          "revision": "0878bb1bdfacfd4f74fe6c0329efec1a245392cf",
           "version": null
         }
       },
