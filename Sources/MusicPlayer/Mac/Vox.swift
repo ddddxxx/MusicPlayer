@@ -22,12 +22,7 @@
 
 import AppKit
 import ScriptingBridge
-
-#if USE_COMBINEX
-import CXFoundation
-#else
-import CXCompatible
-#endif
+import CXShim
 
 public final class Vox: MusicPlayerController {
     

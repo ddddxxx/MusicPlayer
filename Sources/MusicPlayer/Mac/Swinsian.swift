@@ -22,6 +22,7 @@
 
 import AppKit
 import ScriptingBridge
+import CXShim
 
 public final class Swinsian: MusicPlayerController {
     

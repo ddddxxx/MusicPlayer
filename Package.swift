@@ -7,9 +7,6 @@ let useCombineX = ProcessInfo.processInfo.environment["SWIFT_PACKAGE_USE_COMBINE
 //let useCombineX = true
 
 let supportedPlatform: [SupportedPlatform]
-let combinePackageDependencies: [Package.Dependency]
-let combineTargetDependencies: [PackageDescription.Target.Dependency]
-let combineSwiftSetting: [SwiftSetting]?
 
 if useCombineX {
     supportedPlatform = [
@@ -18,15 +15,6 @@ if useCombineX {
         .tvOS(.v9),
         .watchOS(.v2),
     ]
-    combinePackageDependencies = [
-        .package(url: "https://github.com/cx-org/CXFoundation", .branch("master")),
-    ]
-    combineTargetDependencies = [
-        .product(name: "CXFoundation"),
-    ]
-    combineSwiftSetting = [
-        .define("USE_COMBINEX")
-    ]
 } else {
     supportedPlatform = [
         .macOS("10.15"),
@@ -34,13 +22,6 @@ if useCombineX {
         .tvOS("13.0"),
         .watchOS("6.0"),
     ]
-    combinePackageDependencies = [
-        .package(url: "https://github.com/cx-org/CXCompatible", .branch("master")),
-    ]
-    combineTargetDependencies = [
-        .product(name: "CXCompatible"),
-    ]
-    combineSwiftSetting = nil
 }
 
 let package = Package(
@@ -51,12 +32,16 @@ let package = Package(
             name: "MusicPlayer",
             targets: ["MusicPlayer"]),
     ],
-    dependencies: [] + combinePackageDependencies,
+    dependencies: [
+        .package(url: "https://github.com/cx-org/CXCompatible", .branch("master")),
+    ],
     targets: [
         .target(
             name: "MusicPlayer",
-            dependencies: [] + combineTargetDependencies,
-            swiftSettings: combineSwiftSetting
+            dependencies: [
+                .product(name: "CXShim")
+            ],
+            swiftSettings: useCombineX ? [.define("USE_COMBINEX")] : nil
         ),
     ]
 )

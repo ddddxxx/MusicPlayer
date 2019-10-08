@@ -19,16 +19,11 @@
 //
 
 import Foundation
+import CXShim
 
 #if os(macOS)
 import AppKit
 import ScriptingBridge
-#endif
-
-#if USE_COMBINEX
-import CXFoundation
-#else
-import CXCompatible
 #endif
 
 public class MusicPlayerController {

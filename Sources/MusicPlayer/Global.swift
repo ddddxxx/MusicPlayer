@@ -19,6 +19,9 @@
 //
 
 import Foundation
+import CXShim
+
+public typealias Published = CXShim.Published
 
 #if os(macOS)
 
@@ -42,12 +45,4 @@ extension Notification.Name {
     static let swinsianStopped = Notification.Name("com.swinsian.Swinsian-Track-Stopped")
 }
 
-#endif
-
-#if USE_COMBINEX
-import CombineX
-public typealias Published = CombineX.Published
-#else
-import Combine
-public typealias Published = Combine.Published
 #endif
