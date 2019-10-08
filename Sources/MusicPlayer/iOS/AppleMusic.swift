@@ -239,7 +239,7 @@ private extension MPMusicPlayerController {
                           album: track.albumTitle,
                           artist: track.artist,
                           duration: track.playbackDuration,
-                          url: nil,
+                          fileURL: nil,
                           artwork: artwork)
     }
     

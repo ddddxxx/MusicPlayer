@@ -102,13 +102,13 @@ extension SwinsianApplication {
     var _currentTrack: MusicTrack? {
         guard let track = currentTrack ?? nil else { return nil }
         let originalTrack = (track as! SBObject).get() as? SBObject
-        let url = (track.path ?? nil).flatMap(URL.init(string:))
+        let url = (track.path ?? nil).map(URL.init(fileURLWithPath:))
         return MusicTrack(id: track.id?() ?? "",
                           title: track.name ?? nil,
                           album: track.album ?? nil,
                           artist: track.artist ?? nil,
                           duration: track.duration ?? nil,
-                          url: url,
+                          fileURL: url,
                           artwork: track.albumArt ?? nil,
                           originalTrack: originalTrack)
     }

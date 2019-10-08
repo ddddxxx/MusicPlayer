@@ -159,7 +159,7 @@ extension VoxApplication {
                           album: album ?? nil,
                           artist: artist ?? nil,
                           duration: totalTime,
-                          url: url,
+                          fileURL: url,
                           artwork: artworkImage ?? nil,
                           originalTrack: nil)
     }

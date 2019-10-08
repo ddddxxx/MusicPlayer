@@ -78,7 +78,7 @@ public final class Audirvana: MusicPlayerController {
         guard id == currentTrack?.id else {
             var track = _app._currentTrack
             if let path = n.userInfo?["PlayingTrackURL"] as? String {
-                track?.url = URL(fileURLWithPath: path)
+                track?.fileURL = URL(fileURLWithPath: path)
             }
             currentTrack = track
             playbackState = _app._playbackState
@@ -135,7 +135,7 @@ extension AudirvanaApplication {
                           album: playingTrackAlbum ?? nil,
                           artist: playingTrackArtist ?? nil,
                           duration: playingTrackDuration.map(TimeInterval.init),
-                          url: nil,
+                          fileURL: nil,
                           artwork: playingTrackAirfoillogo ?? nil,
                           originalTrack: nil)
     }

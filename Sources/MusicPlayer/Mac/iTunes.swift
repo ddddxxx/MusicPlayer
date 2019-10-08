@@ -156,7 +156,7 @@ extension MusicApplication {
                           album: track.album ?? nil,
                           artist: track.artist ?? nil,
                           duration: track.duration,
-                          url: url,
+                          fileURL: url,
                           artwork: artwork ?? nil,
                           originalTrack: originalTrack)
     }

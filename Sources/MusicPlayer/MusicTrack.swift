@@ -34,12 +34,12 @@ public typealias Image = UIImage
 
 public struct MusicTrack {
     
-    public var id:     String
-    public var title:   String?
-    public var album:  String?
+    public var id: String
+    public var title: String?
+    public var album: String?
     public var artist: String?
     public var duration: TimeInterval?
-    public var url:    URL?
+    public var fileURL: URL?
     public var artwork: Image?
     
     #if os(macOS)
