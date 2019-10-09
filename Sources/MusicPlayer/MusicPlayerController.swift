@@ -84,8 +84,6 @@ public class MusicPlayerController {
         }
     }
     
-    var updatePlaybackTime: (() -> Void)?
-    
     public var playbackTime: TimeInterval {
         get { fatalError() }
         set { fatalError() }
@@ -97,6 +95,10 @@ public class MusicPlayerController {
     
     public func skipToNextItem() {}
     public func skipToPreviousItem() {}
+}
+
+protocol PlaybackTimeUpdating {
+    func updatePlaybackTime()
 }
 
 extension MusicPlayerController {

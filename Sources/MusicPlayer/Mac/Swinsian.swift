@@ -24,7 +24,7 @@ import AppKit
 import ScriptingBridge
 import CXShim
 
-public final class Swinsian: MusicPlayerController {
+public final class Swinsian: MusicPlayerController, PlaybackTimeUpdating {
     
     override public class var name: MusicPlayerName {
         return .swinsian
@@ -55,6 +55,11 @@ public final class Swinsian: MusicPlayerController {
                 self.playbackState = .stopped
                 self.currentTrack = nil
             }.store(in: &cancelBag)
+    }
+    
+    func updatePlaybackTime() {
+        guard isRunning else { return }
+        setPlaybackState(_app._playbackState)
     }
     
     override public var playbackTime: TimeInterval {

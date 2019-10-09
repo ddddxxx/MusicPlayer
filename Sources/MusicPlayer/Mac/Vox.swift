@@ -24,7 +24,7 @@ import AppKit
 import ScriptingBridge
 import CXShim
 
-public final class Vox: MusicPlayerController {
+public final class Vox: MusicPlayerController, PlaybackTimeUpdating {
     
     override public class var name: MusicPlayerName {
         return .spotify
@@ -41,11 +41,6 @@ public final class Vox: MusicPlayerController {
             currentTrack = _app._currentTrack
         }
         
-        updatePlaybackTime = { [unowned self] in
-            guard self.isRunning else { return }
-            self.setPlaybackState(self._app._playbackState)
-        }
-        
         distributedNC.cx.publisher(for: .voxTrackChanged)
             .sink { [unowned self] n in
                 self.trackChangeNotification(n)
@@ -54,6 +49,11 @@ public final class Vox: MusicPlayerController {
         q.schedule(after: q.now.advanced(by: 1), interval: 1, tolerance: 0.1, options: nil) {
             self.updatePlayerState()
         }.store(in: &cancelBag)
+    }
+    
+    func updatePlaybackTime() {
+        guard isRunning else { return }
+        setPlaybackState(_app._playbackState)
     }
     
     func trackChangeNotification(_ n: Notification) {

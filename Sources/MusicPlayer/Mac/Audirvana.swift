@@ -24,7 +24,7 @@ import AppKit
 import ScriptingBridge
 import CXShim
 
-public final class Audirvana: MusicPlayerController {
+public final class Audirvana: MusicPlayerController, PlaybackTimeUpdating {
     
     override public class var name: MusicPlayerName {
         return .audirvana
@@ -51,15 +51,15 @@ public final class Audirvana: MusicPlayerController {
             _app.setEventTypesReported?(.trackChanged)
         }
         
-        updatePlaybackTime = { [unowned self] in
-            guard self.isRunning else { return }
-            self.setPlaybackState(self._app._playbackState)
-        }
-        
         distributedNC.cx.publisher(for: .audirvanaPlayerInfo)
             .sink { [unowned self] n in
                 self.playerInfoNotification(n)
             }.store(in: &cancelBag)
+    }
+    
+    func updatePlaybackTime() {
+        guard isRunning else { return }
+        setPlaybackState(_app._playbackState)
     }
     
     func playerInfoNotification(_ n: Notification) {

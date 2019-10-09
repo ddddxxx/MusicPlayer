@@ -24,7 +24,7 @@ import AppKit
 import ScriptingBridge
 import CXShim
 
-public final class iTunes: MusicPlayerController {
+public final class iTunes: MusicPlayerController, PlaybackTimeUpdating {
     
     override public class var name: MusicPlayerName {
         return .itunes
@@ -41,15 +41,15 @@ public final class iTunes: MusicPlayerController {
             currentTrack = _app._currentTrack
         }
         
-        updatePlaybackTime = { [unowned self] in
-            guard self.isRunning else { return }
-            self.setPlaybackState(self._app._playbackState)
-        }
-        
         distributedNC.cx.publisher(for: .iTunesPlayerInfo)
             .sink { [unowned self] n in
                 self.playerInfoNotification(n)
             }.store(in: &cancelBag)
+    }
+    
+    func updatePlaybackTime() {
+        guard isRunning else { return }
+        setPlaybackState(_app._playbackState)
     }
     
     func playerInfoNotification(_ n: Notification) {
