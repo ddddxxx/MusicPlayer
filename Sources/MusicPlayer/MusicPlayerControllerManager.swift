@@ -57,12 +57,18 @@ public final class MusicPlayerControllerManager {
             .sink { [unowned self] _ in
                 self.selectNewPlayer()
             }.store(in: &cancelBag)
+        
         defaultNC.cx.publisher(for: MusicPlayerController.playbackStateDidChangeNotification)
             .filter { [unowned self] n in self.player === (n.object as AnyObject?) }
             .sink {
                 defaultNC.post(name: $0.name, object: self)
             }.store(in: &cancelBag)
-        defaultNC.cx.publisher(for: MusicPlayerController.playbackStateDidChangeNotification)
+        defaultNC.cx.publisher(for: MusicPlayerController.currentTrackDidChangeNotification)
+            .filter { [unowned self] n in self.player === (n.object as AnyObject?) }
+            .sink {
+                defaultNC.post(name: $0.name, object: self)
+            }.store(in: &cancelBag)
+        defaultNC.cx.publisher(for: MusicPlayerController.runningStateDidChangeNotification)
             .filter { [unowned self] n in self.player === (n.object as AnyObject?) }
             .sink {
                 defaultNC.post(name: $0.name, object: self)
