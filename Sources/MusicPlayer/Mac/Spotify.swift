@@ -34,15 +34,6 @@ public final class Spotify: MusicPlayerController {
         return originalPlayer
     }
     
-    public override var currentTrack: MusicTrack? {
-        get { super.currentTrack }
-        set { super.currentTrack = newValue }
-    }
-    public override var playbackState: PlaybackState {
-        get { super.playbackState }
-        set { super.playbackState = newValue }
-    }
-    
     required init?() {
         super.init()
         if isRunning {

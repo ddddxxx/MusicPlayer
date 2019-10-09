@@ -36,8 +36,11 @@ public class MusicPlayerController {
     
     public let playerBundleID: String
     
-    @Published
-    public var isRunning: Bool
+    public var isRunning: Bool {
+        didSet {
+            defaultNC.post(name: MusicPlayerController.runningStateDidChangeNotification, object: self)
+        }
+    }
     
     var cancelBag = Set<AnyCancellable>()
     
@@ -69,8 +72,17 @@ public class MusicPlayerController {
     #endif
     
     // not settable outside the class
-    @Published public var currentTrack: MusicTrack? = nil
-    @Published public var playbackState: PlaybackState = .stopped
+    public var currentTrack: MusicTrack? = nil {
+        didSet {
+            defaultNC.post(name: MusicPlayerController.currentTrackDidChangeNotification, object: self)
+        }
+    }
+    
+    public var playbackState: PlaybackState = .stopped {
+        didSet {
+            defaultNC.post(name: MusicPlayerController.playbackStateDidChangeNotification, object: self)
+        }
+    }
     
     var updatePlaybackTime: (() -> Void)?
     

@@ -34,13 +34,12 @@ public final class Audirvana: MusicPlayerController {
         return originalPlayer
     }
     
-    public override var currentTrack: MusicTrack? {
-        get { super.currentTrack }
-        set { super.currentTrack = newValue }
-    }
-    public override var playbackState: PlaybackState {
-        get { super.playbackState }
-        set { super.playbackState = newValue }
+    public override var isRunning: Bool {
+        didSet {
+            if isRunning {
+                _app.setEventTypesReported?(.trackChanged)
+            }
+        }
     }
     
     required init?() {
@@ -60,10 +59,6 @@ public final class Audirvana: MusicPlayerController {
         distributedNC.cx.publisher(for: .audirvanaPlayerInfo)
             .sink { [unowned self] n in
                 self.playerInfoNotification(n)
-            }.store(in: &cancelBag)
-        $isRunning.filter { $0 == true }
-            .sink { [unowned self] _ in
-                self._app.setEventTypesReported?(.trackChanged)
             }.store(in: &cancelBag)
     }
     

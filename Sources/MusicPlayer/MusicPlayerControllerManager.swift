@@ -24,9 +24,14 @@ import CXShim
 public final class MusicPlayerControllerManager {
 
     public let players: [MusicPlayerController]
-
-    @Published
-    public private(set) var player: MusicPlayerController?
+    
+    public private(set) var player: MusicPlayerController? {
+        didSet {
+            defaultNC.post(name: MusicPlayerControllerManager.currentPlayerDidChangeNotification, object: self)
+            defaultNC.post(name: MusicPlayerController.currentTrackDidChangeNotification, object: self)
+            defaultNC.post(name: MusicPlayerController.playbackStateDidChangeNotification, object: self)
+        }
+    }
     
     public var manualUpdateInterval: TimeInterval = 1.0 {
         didSet {
@@ -46,11 +51,21 @@ public final class MusicPlayerControllerManager {
     public init(players: [MusicPlayerController]) {
         self.players = players
         selectNewPlayer()
-        players.cx.publisher
-            .flatMap { $0.$playbackState }
+        defaultNC.cx.publisher(for: MusicPlayerController.playbackStateDidChangeNotification)
+            .filter { n in players.contains { $0 === (n.object as AnyObject?) } }
             .throttle(for: .seconds(0.1), scheduler: DispatchQueue.global().cx, latest: true)
             .sink { [unowned self] _ in
                 self.selectNewPlayer()
+            }.store(in: &cancelBag)
+        defaultNC.cx.publisher(for: MusicPlayerController.playbackStateDidChangeNotification)
+            .filter { [unowned self] n in self.player === (n.object as AnyObject?) }
+            .sink {
+                defaultNC.post(name: $0.name, object: self)
+            }.store(in: &cancelBag)
+        defaultNC.cx.publisher(for: MusicPlayerController.playbackStateDidChangeNotification)
+            .filter { [unowned self] n in self.player === (n.object as AnyObject?) }
+            .sink {
+                defaultNC.post(name: $0.name, object: self)
             }.store(in: &cancelBag)
         scheduleManualUpdate()
     }
