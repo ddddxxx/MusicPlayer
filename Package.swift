@@ -24,13 +24,31 @@ if useCombineX {
     ]
 }
 
+var LXMusicPlayerTarget: [Target] = []
+var LXMusicPlayerDependency: [Target.Dependency] = []
+
+#if os(macOS)
+
+LXMusicPlayerTarget += [
+    .target(
+        name: "LXMusicPlayer",
+        cSettings: [
+            .headerSearchPath("private"),
+            .headerSearchPath("BridgingHeader"),
+        ]),
+]
+//LXMusicPlayerDependency += [
+//    .target(name: "LXMusicPlayer")
+//]
+
+#endif
+
 let package = Package(
     name: "MusicPlayer",
     platforms: supportedPlatform,
     products: [
-        .library(
-            name: "MusicPlayer",
-            targets: ["MusicPlayer"]),
+        .library(name: "MusicPlayer", targets: ["MusicPlayer"]),
+        .library(name: "LXMusicPlayer", targets: ["LXMusicPlayer"]),
     ],
     dependencies: [
         .package(url: "https://github.com/cx-org/CXCompatible", .branch("master")),
@@ -40,8 +58,8 @@ let package = Package(
             name: "MusicPlayer",
             dependencies: [
                 .product(name: "CXShim")
-            ],
+            ] + LXMusicPlayerDependency,
             swiftSettings: useCombineX ? [.define("USE_COMBINEX")] : nil
         ),
-    ]
+    ] + LXMusicPlayerTarget
 )
