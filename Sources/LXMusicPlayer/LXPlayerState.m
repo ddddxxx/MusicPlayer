@@ -6,37 +6,29 @@
 //  Licensed under GPL v3 - https://www.gnu.org/licenses/gpl-3.0.html
 //
 
-#import "LXPlayerState.h"
-
-@interface LXPlayerState()
-
-@property (nonatomic) NSTimeInterval currentTime;
-@property (nonatomic, nullable) NSDate *startTime;
-
-- (instancetype)initWithState:(LXPlaybackState)state currentTime:(NSTimeInterval)time startTime:(nullable NSDate *)date NS_DESIGNATED_INITIALIZER;
-
-@end
+#import "LXPlayerState+Private.h"
 
 @implementation LXPlayerState
 
-- (nonnull id)copyWithZone:(nullable NSZone *)zone {
-    return [[[self class] allocWithZone:zone] initWithState:_state currentTime:_currentTime startTime:[_startTime copyWithZone:zone]];
+- (id)copyWithZone:(NSZone *)zone {
+    return [[[self class] allocWithZone:zone] initInternal];
 }
 
-- (instancetype)initWithState:(LXPlaybackState)state currentTime:(NSTimeInterval)time startTime:(NSDate *)date {
+- (instancetype)init {
+    return [LXStoppedPlayerState stopped];
+}
+
+- (instancetype)initInternal {
     self = [super init];
-    _state = state;
-    _currentTime = time;
-    _startTime = date;
     return self;
 }
 
 + (instancetype)stopped {
-    return [[self alloc] initWithState:LXPlaybackStateStopped currentTime:0 startTime:nil];
+    return [LXStoppedPlayerState stopped];
 }
 
 + (instancetype)playingWithStartTime:(NSDate *)date {
-    return [[self alloc] initWithState:LXPlaybackStatePlaying currentTime:0 startTime:date];
+    return [[LXStartTimePlayerState alloc] initWithStartTime:date];
 }
 
 + (instancetype)state:(LXPlaybackState)state playbackTime:(NSTimeInterval)time {
@@ -46,12 +38,24 @@
         case LXPlaybackStatePlaying:
             return [self playingWithStartTime:[NSDate.date dateByAddingTimeInterval:-time]];
         default:
-            return [[self alloc] initWithState:state currentTime:time startTime:nil];
+            return [[LXCurrentTimePlayerState alloc] initWithState:state playbackTime:time];
     }
 }
 
+- (LXPlaybackState)state {
+    [self doesNotRecognizeSelector:_cmd];
+}
+
+- (NSTimeInterval)playbackTime {
+    [self doesNotRecognizeSelector:_cmd];
+}
+
+- (nullable NSDate *)startTime {
+    return nil;
+}
+
 - (BOOL)isPlaying {
-    switch (_state) {
+    switch (self.state) {
         case LXPlaybackStatePaused:
         case LXPlaybackStateStopped:
             return NO;
@@ -64,17 +68,6 @@
     }
 }
 
-- (NSTimeInterval)playbackTime {
-    switch (_state) {
-        case LXPlaybackStateStopped:
-            return 0;
-        case LXPlaybackStatePlaying:
-            return -_startTime.timeIntervalSinceNow;
-        default:
-            return _currentTime;
-    }
-}
-
 - (BOOL)isEqual:(id)object {
     return [object isKindOfClass:LXPlayerState.class] && [self isEqualToState:object];
 }
@@ -84,17 +77,122 @@
 }
 
 - (BOOL)isApproximateEqualToState:(LXPlayerState *)state tolerate:(NSTimeInterval)tolerate {
-    if (_state != state.state) {
-        return NO;
-    }
-    switch (_state) {
-        case LXPlaybackStateStopped:
-            return YES;
-        case LXPlaybackStatePlaying:
-            return fabs([_startTime timeIntervalSinceDate:state.startTime]) < tolerate;
-        default:
-            return fabs(_currentTime - state.currentTime) < tolerate;
-    }
+    [self doesNotRecognizeSelector:_cmd];
+}
+
+@end
+
+@implementation LXStoppedPlayerState
+
++ (instancetype)stopped {
+    static LXStoppedPlayerState *stopped = nil;
+    static dispatch_once_t onceToken;
+    dispatch_once(&onceToken, ^{
+        stopped = [[super allocWithZone:nil] initInternal];
+    });
+    return stopped;
+}
+
++ (instancetype)allocWithZone:(struct _NSZone *)zone {
+    return [self stopped];
+}
+
++ (instancetype)alloc {
+    return [self stopped];
+}
+
+- (id)copyWithZone:(NSZone *)zone {
+    return [LXStoppedPlayerState stopped];
+}
+
+- (LXPlaybackState)state {
+    return LXPlaybackStateStopped;
+}
+
+- (NSTimeInterval)playbackTime {
+    return 0;
+}
+
+- (BOOL)isPlaying {
+    return NO;
+}
+
+- (BOOL)isEqual:(id)other {
+    return self == other;
+}
+
+- (BOOL)isEqualToState:(LXPlayerState *)state {
+    return self == state;
+}
+
+- (BOOL)isApproximateEqualToState:(LXPlayerState *)state tolerate:(NSTimeInterval)tolerate {
+    return self == state;
+}
+
+@end
+
+@implementation LXStartTimePlayerState
+
+- (id)copyWithZone:(NSZone *)zone {
+    LXStartTimePlayerState *obj = [super copyWithZone:zone];
+    obj->_startTime = [_startTime copyWithZone:zone];
+    return obj;
+}
+
+- (instancetype)initWithStartTime:(NSDate *)date {
+    self = [super initInternal];
+    _startTime = date;
+    return self;
+}
+
+- (LXPlaybackState)state {
+    return LXPlaybackStatePlaying;
+}
+
+- (NSTimeInterval)playbackTime {
+    return -_startTime.timeIntervalSinceNow;
+}
+
+- (BOOL)isPlaying {
+    return YES;
+}
+
+- (BOOL)isEqualToState:(LXPlayerState *)state {
+    return [state isMemberOfClass:[LXStartTimePlayerState class]] && [self.startTime isEqualToDate:state.startTime];
+}
+
+- (BOOL)isApproximateEqualToState:(LXPlayerState *)state tolerate:(NSTimeInterval)tolerate {
+    return [state isMemberOfClass:[LXStartTimePlayerState class]] && fabs([_startTime timeIntervalSinceDate:state.startTime]) < tolerate;
+}
+
+@end
+
+@implementation LXCurrentTimePlayerState
+
+- (id)copyWithZone:(NSZone *)zone {
+    LXCurrentTimePlayerState *obj = [super copyWithZone:zone];
+    obj->_state = _state;
+    obj->_currentTime = _currentTime;
+    return obj;
+}
+
+- (instancetype)initWithState:(LXPlaybackState)state playbackTime:(NSTimeInterval)time {
+    assert(state == LXPlaybackStatePaused || state == LXPlaybackStateFastForwarding || state == LXPlaybackStateRewinding);
+    self = [super initInternal];
+    _state = state;
+    _currentTime = time;
+}
+
+- (NSTimeInterval)playbackTime {
+    return _currentTime;
+}
+
+- (BOOL)isEqualToState:(LXPlayerState *)state {
+    return [state isMemberOfClass:[LXCurrentTimePlayerState class]] && (self.state == state.state) && self.currentTime == ((LXCurrentTimePlayerState*)state).currentTime;
+}
+
+- (BOOL)isApproximateEqualToState:(LXPlayerState *)state tolerate:(NSTimeInterval)tolerate {
+    return [state isMemberOfClass:[LXCurrentTimePlayerState class]] && (self.state == state.state) && fabs(self.currentTime-((LXCurrentTimePlayerState*)state).currentTime) < tolerate;
 }
 
 @end

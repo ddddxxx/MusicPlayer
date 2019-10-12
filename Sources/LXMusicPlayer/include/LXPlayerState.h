@@ -20,16 +20,15 @@ typedef NS_ENUM(NSInteger, LXPlaybackState) {
 
 @interface LXPlayerState : NSObject<NSCopying>
 
-@property (nonatomic) LXPlaybackState state;
-
 - (instancetype)init NS_UNAVAILABLE;
 + (instancetype)stopped;
 + (instancetype)playingWithStartTime:(NSDate *)date;
 + (instancetype)state:(LXPlaybackState)state playbackTime:(NSTimeInterval)time;
 
-- (BOOL)isPlaying;
+- (LXPlaybackState)state;
 - (NSTimeInterval)playbackTime;
 - (nullable NSDate *)startTime;
+- (BOOL)isPlaying;
 
 - (BOOL)isEqualToState:(LXPlayerState *)state;
 - (BOOL)isApproximateEqualToState:(LXPlayerState *)state tolerate:(NSTimeInterval)tolerate;
