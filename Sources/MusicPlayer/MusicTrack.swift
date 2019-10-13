@@ -46,3 +46,58 @@ public struct MusicTrack {
     public var originalTrack: SBObject?
     #endif
 }
+
+#if os(macOS)
+
+extension MusicTrack: Equatable, Hashable {
+    
+}
+
+import LXMusicPlayer
+
+extension MusicTrack: ReferenceConvertible {
+    
+    public typealias ReferenceType = LXMusicTrack
+    
+    public var debugDescription: String {
+        return description
+    }
+    
+    public var description: String {
+        return "MusicTrack name: \(title ?? "-")"
+    }
+    
+    public func _bridgeToObjectiveC() -> LXMusicTrack {
+        let t = LXMusicTrack(persistentID: id)
+        t.title = title
+        t.album = album
+        t.artist = artist
+        t.duration = duration as NSNumber?
+        t.fileURL = fileURL
+        t.artwork = artwork
+        return t
+    }
+    
+    public static func _forceBridgeFromObjectiveC(_ source: LXMusicTrack, result: inout MusicTrack?) {
+        result = _unconditionallyBridgeFromObjectiveC(source)
+    }
+    
+    public static func _conditionallyBridgeFromObjectiveC(_ source: LXMusicTrack, result: inout MusicTrack?) -> Bool {
+        result = _unconditionallyBridgeFromObjectiveC(source)
+        return true
+    }
+    
+    public static func _unconditionallyBridgeFromObjectiveC(_ source: LXMusicTrack?) -> MusicTrack {
+        guard let t = source else { fatalError() }
+        return MusicTrack(id: t.persistentID,
+                          title: t.title,
+                          album: t.album,
+                          artist: t.artist,
+                          duration: t.duration?.doubleValue,
+                          fileURL: t.fileURL,
+                          artwork: t.artwork,
+                          originalTrack: t.originalTrack)
+    }
+}
+
+#endif

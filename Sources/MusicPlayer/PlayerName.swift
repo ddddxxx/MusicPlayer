@@ -18,7 +18,9 @@
 //  along with this program.  If not, see <http://www.gnu.org/licenses/>.
 //
 
-public enum MusicPlayerName: String, CaseIterable {
+public enum MusicPlayerName: String {
+    
+    case nowPlaying    = "Now Playing"
     
     #if os(macOS)
     
@@ -38,27 +40,33 @@ public enum MusicPlayerName: String, CaseIterable {
 
 #if os(macOS)
 
+import LXMusicPlayer
+
 extension MusicPlayerName {
     
-    public var candidateBundleID: [String] {
-        switch self {
-        case .itunes:    return ["com.apple.Music", "com.apple.iTunes"]
-        case .spotify:   return ["com.spotify.client"]
-        case .vox:       return ["com.coppertino.Vox"]
-        case .audirvana: return ["com.audirvana.Audirvana", "com.audirvana.Audirvana-Plus"]
-        case .swinsian:  return ["com.swinsian.Swinsian"]
+    init?(lxName: LXScriptingMusicPlayer.Name) {
+        switch lxName {
+        case .appleMusic: self = .itunes
+        case .spotify: self = .spotify
+        case .vox: self = .vox
+        case .audirvana: self = .audirvana
+        case .swinsian: self = .swinsian
+        default: return nil
         }
     }
     
-    public var cls: MusicPlayerController.Type {
+    var lxName: LXScriptingMusicPlayer.Name? {
         switch self {
-        case .itunes:    return iTunes.self
-        case .spotify:   return Spotify.self
-        case .vox:       return Vox.self
-        case .audirvana: return Audirvana.self
-        case .swinsian:  return Swinsian.self
+        case .itunes: return .appleMusic
+        case .spotify: return .spotify
+        case .vox: return .vox
+        case .audirvana: return .audirvana
+        case .swinsian: return .swinsian
+        default: return nil
         }
     }
+    
+    static var scriptingPlayerNames: [MusicPlayerName] = [.itunes, .spotify, .vox, .audirvana, .swinsian]
 }
 
 #endif

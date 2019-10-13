@@ -1,5 +1,5 @@
 //
-//  Global.swift
+//  MusicPlayer.swift
 //
 //  This file is part of LyricsX - https://github.com/ddddxxx/LyricsX
 //  Copyright (C) 2017  Xander Deng
@@ -19,23 +19,24 @@
 //
 
 import Foundation
-import CXShim
 
-public typealias Published = CXShim.Published
-
-let defaultNC = NotificationCenter.default
-
-public extension MusicPlayers {
-    static let currentTrackDidChangeNotification = Notification.Name("ddddxxx.LyricsX.currentTrackDidChange")
-    static let playbackStateDidChangeNotification = Notification.Name("ddddxxx.LyricsX.playbackStateDidChange")
-    static let currentPlayerDidChangeNotification = Notification.Name("ddddxxx.LyricsX.currentPlayerDidChange")
+public protocol MusicPlayerProtocol: AnyObject {
+    
+    var name: MusicPlayerName { get }
+    var currentTrack: MusicTrack? { get }
+    var playbackState: PlaybackState { get }
+    var playbackTime: TimeInterval { get set }
+    
+    func resume()
+    func pause()
+    func playPause()
+    
+    func skipToNextItem()
+    func skipToPreviousItem()
 }
 
-#if os(macOS)
+protocol PlaybackTimeUpdating {
+    func updatePlaybackTime()
+}
 
-import AppKit
-
-let distributedNC = DistributedNotificationCenter.default()
-let workspaceNC = NSWorkspace.shared.notificationCenter
-
-#endif
+public enum MusicPlayers {}

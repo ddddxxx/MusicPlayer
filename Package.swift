@@ -37,9 +37,9 @@ LXMusicPlayerTarget += [
             .headerSearchPath("BridgingHeader"),
         ]),
 ]
-//LXMusicPlayerDependency += [
-//    .target(name: "LXMusicPlayer")
-//]
+LXMusicPlayerDependency += [
+    .target(name: "LXMusicPlayer")
+]
 
 #endif
 

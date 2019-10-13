@@ -112,7 +112,7 @@ public final class AppleMusic {
     }
 }
 
-extension AppleMusic: MusicPlayer {
+extension AppleMusic: MusicPlayerProtocol {
     
     public static let name = MusicPlayerName.appleMusic
     public static var needsUpdateIfNotSelected = false
