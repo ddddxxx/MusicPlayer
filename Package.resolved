@@ -6,26 +6,26 @@
         "repositoryURL": "https://github.com/cx-org/CombineX",
         "state": {
           "branch": "master",
-          "revision": "6239d172a1c900a2438d3fbec91b3999a5d6d9f2",
+          "revision": "d1e929b62fd66b5f8ab6bd03a48532bce5d430f0",
           "version": null
         }
       },
       {
-        "package": "CXCompatible",
-        "repositoryURL": "https://github.com/cx-org/CXCompatible",
+        "package": "CwlCatchException",
+        "repositoryURL": "https://github.com/mattgallagher/CwlCatchException.git",
         "state": {
-          "branch": "master",
-          "revision": "4096c2774f33e0820a2b2ce025819fba1fd94b33",
-          "version": null
+          "branch": null,
+          "revision": "7cd2f8cacc4d22f21bc0b2309c3b18acf7957b66",
+          "version": "1.2.0"
         }
       },
       {
-        "package": "CXFoundation",
-        "repositoryURL": "https://github.com/cx-org/CXFoundation",
+        "package": "CwlPreconditionTesting",
+        "repositoryURL": "https://github.com/mattgallagher/CwlPreconditionTesting.git",
         "state": {
-          "branch": "master",
-          "revision": "e46c844dcdfa37ae07a8c7a7d8dca31ccffb5643",
-          "version": null
+          "branch": null,
+          "revision": "c228db5d2ad1b01ebc84435e823e6cca4e3db98b",
+          "version": "1.2.0"
         }
       },
       {
@@ -33,8 +33,8 @@
         "repositoryURL": "https://github.com/Quick/Nimble.git",
         "state": {
           "branch": null,
-          "revision": "f8657642dfdec9973efc79cc68bcef43a653a2bc",
-          "version": "8.0.2"
+          "revision": "6abeb3f5c03beba2b9e4dbe20886e773b5b629b6",
+          "version": "8.0.4"
         }
       },
       {
