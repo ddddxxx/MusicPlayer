@@ -21,8 +21,6 @@
 import Foundation
 import CXShim
 
-public typealias Published = CXShim.Published
-
 #if os(macOS)
 
 import AppKit
