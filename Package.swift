@@ -11,16 +11,12 @@ let package = Package(
         .watchOS(.v2),
     ],
     products: [
-        .library(
-            name: "MusicPlayer",
-            targets: ["MusicPlayer"]),
+        .library(name: "MusicPlayer", targets: ["MusicPlayer"]),
     ],
     dependencies: [
-        .package(url: "https://github.com/cx-org/CombineX", .branch("master")),
+        .package(url: "https://github.com/cx-org/CombineX", .upToNextMinor(from: "0.1.0"))
     ],
     targets: [
-        .target(
-            name: "MusicPlayer",
-            dependencies: ["CXShim"]),
+        .target(name: "MusicPlayer", dependencies: ["CXShim"]),
     ]
 )
