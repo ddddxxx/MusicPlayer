@@ -62,12 +62,14 @@ public class MusicPlayerController {
     public var currentTrack: MusicTrack? = nil {
         didSet {
             defaultNC.post(name: MusicPlayerController.currentTrackDidChangeNotification, object: self)
+            rescheduleNextTrackUpdating()
         }
     }
     
     public var playbackState: PlaybackState = .stopped {
         didSet {
             defaultNC.post(name: MusicPlayerController.playbackStateDidChangeNotification, object: self)
+            rescheduleNextTrackUpdating()
         }
     }
     
@@ -82,10 +84,21 @@ public class MusicPlayerController {
     
     public func skipToNextItem() {}
     public func skipToPreviousItem() {}
-}
-
-protocol PlaybackTimeUpdating {
-    func updatePlaybackTime()
+    
+    public func updatePlaybackTime() {}
+    public func forceUpdate() {}
+    
+    private var nextTrackScheduleCanceller: Cancellable?
+    private func rescheduleNextTrackUpdating() {
+        nextTrackScheduleCanceller?.cancel()
+        if playbackState.isPlaying, let duration = currentTrack?.duration {
+            let timeRemains = duration - playbackState.time
+            let q = DispatchQueue.global().cx
+            nextTrackScheduleCanceller = DispatchQueue.global().cx.schedule(after: q.now.advanced(by: .seconds(timeRemains + 1)), interval: 42, tolerance: 1) { [unowned self] in
+                self.forceUpdate()
+            }
+        }
+    }
 }
 
 extension MusicPlayerController {

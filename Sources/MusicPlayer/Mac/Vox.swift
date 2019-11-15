@@ -11,7 +11,7 @@ import AppKit
 import ScriptingBridge
 import CXShim
 
-public final class Vox: MusicPlayerController, PlaybackTimeUpdating {
+public final class Vox: MusicPlayerController {
     
     override public class var name: MusicPlayerName {
         return .spotify
@@ -38,8 +38,17 @@ public final class Vox: MusicPlayerController, PlaybackTimeUpdating {
         }.store(in: &cancelBag)
     }
     
-    func updatePlaybackTime() {
+    override public func updatePlaybackTime() {
         guard isRunning else { return }
+        setPlaybackState(_app._playbackState)
+    }
+    
+    override public func forceUpdate() {
+        if let track = _app._currentTrack, track.id != currentTrack?.id {
+            currentTrack = track
+            playbackState = _app._playbackState
+            return
+        }
         setPlaybackState(_app._playbackState)
     }
     
