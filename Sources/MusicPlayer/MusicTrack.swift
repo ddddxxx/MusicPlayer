@@ -34,11 +34,18 @@ public struct MusicTrack {
     #endif
 }
 
-#if os(macOS)
-
 extension MusicTrack: Equatable, Hashable {
     
+    public static func == (lhs: Self, rhs: Self) -> Bool {
+        return lhs.id == rhs.id
+    }
+    
+    public func hash(into hasher: inout Hasher) {
+        hasher.combine(id)
+    }
 }
+
+#if os(macOS)
 
 import LXMusicPlayer
 

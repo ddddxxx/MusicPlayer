@@ -9,14 +9,7 @@ import Foundation
 import CXShim
 
 public typealias Published = CXShim.Published
-
-let defaultNC = NotificationCenter.default
-
-public extension MusicPlayers {
-    static let currentTrackDidChangeNotification = Notification.Name("ddddxxx.LyricsX.currentTrackDidChange")
-    static let playbackStateDidChangeNotification = Notification.Name("ddddxxx.LyricsX.playbackStateDidChange")
-    static let currentPlayerDidChangeNotification = Notification.Name("ddddxxx.LyricsX.currentPlayerDidChange")
-}
+public typealias ObservableObject = CXShim.ObservableObject
 
 #if os(macOS)
 

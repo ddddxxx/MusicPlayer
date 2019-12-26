@@ -22,25 +22,17 @@
 
 import Foundation
 import LXMusicPlayer
+import CXShim
 
 extension MusicPlayers {
     
-    public final class ScriptingBridged {
+    public final class ScriptingBridged: ObservableObject {
         
         private var player: LXScriptingMusicPlayer
         private var observations: [NSKeyValueObservation] = []
         
-        public private(set) var currentTrack: MusicTrack? {
-            didSet {
-                defaultNC.post(name: MusicPlayers.currentTrackDidChangeNotification, object: self)
-            }
-        }
-        
-        public private(set) var playbackState: PlaybackState {
-            didSet {
-                defaultNC.post(name: MusicPlayers.playbackStateDidChangeNotification, object: self)
-            }
-        }
+        @Published public private(set) var currentTrack: MusicTrack?
+        @Published public private(set) var playbackState: PlaybackState
         
         public init?(name: MusicPlayerName) {
             guard let lxNmae = name.lxName, let player = LXScriptingMusicPlayer(name: lxNmae) else {
@@ -61,7 +53,15 @@ extension MusicPlayers {
     }
 }
 
-extension MusicPlayers.ScriptingBridged: MusicPlayerProtocol {
+extension MusicPlayers.ScriptingBridged: MusicPlayerProtocol, PlaybackTimeUpdating {
+    
+    public var currentTrackWillChange: AnyPublisher<MusicTrack?, Never> {
+        return $currentTrack.eraseToAnyPublisher()
+    }
+    
+    public var playbackStateWillChange: AnyPublisher<PlaybackState, Never> {
+        return $playbackState.eraseToAnyPublisher()
+    }
     
     public var name: MusicPlayerName {
         return MusicPlayerName(lxName: player.playerName)!
@@ -90,6 +90,10 @@ extension MusicPlayers.ScriptingBridged: MusicPlayerProtocol {
     
     public func skipToPreviousItem() {
         player.skipToPreviousItem()
+    }
+    
+    public func updatePlaybackTime() {
+        player.updatePlaybackTime()
     }
 }
 

@@ -23,17 +23,11 @@ import CXShim
 
 extension MusicPlayers {
     
-    public final class NowPlaying {
+    public final class NowPlaying: ObservableObject {
         
         public let players: [MusicPlayerProtocol]
         
-        public private(set) var player: MusicPlayerProtocol? {
-            didSet {
-                defaultNC.post(name: MusicPlayers.currentPlayerDidChangeNotification, object: self)
-                defaultNC.post(name: MusicPlayers.currentTrackDidChangeNotification, object: self)
-                defaultNC.post(name: MusicPlayers.playbackStateDidChangeNotification, object: self)
-            }
-        }
+        @Published public private(set) var currentPlayer: MusicPlayerProtocol?
         
         public var manualUpdateInterval: TimeInterval = 1.0 {
             didSet {
@@ -46,21 +40,13 @@ extension MusicPlayers {
         public init(players: [MusicPlayerProtocol]) {
             self.players = players
             selectNewPlayer()
-            defaultNC.cx.publisher(for: MusicPlayers.playbackStateDidChangeNotification)
-                .filter { n in players.contains { $0 === (n.object as AnyObject?) } }
-                .sink { [unowned self] n in
-                    self.selectNewPlayer()
-                    if self.player === (n.object as AnyObject?) {
-                        defaultNC.post(name: n.name, object: self)
-                    }
-                }.store(in: &cancelBag)
-            defaultNC.cx.publisher(for: MusicPlayers.currentTrackDidChangeNotification)
-                .sink { [unowned self] n in
-                    if self.player === (n.object as AnyObject?) {
-                        defaultNC.post(name: n.name, object: self)
-                    }
-                }.store(in: &cancelBag)
             scheduleManualUpdate()
+            currentTrackWillChange.sink { [weak self] _ in
+                self?.objectWillChange.send()
+            }.store(in: &cancelBag)
+            playbackStateWillChange.sink { [weak self] _ in
+                self?.objectWillChange.send()
+            }.store(in: &cancelBag)
         }
         
         #if os(macOS)
@@ -79,21 +65,21 @@ extension MusicPlayers {
             let i: CXWrappers.DispatchQueue.SchedulerTimeType.Stride = .seconds(manualUpdateInterval)
             scheduleCanceller = q.schedule(after: q.now.advanced(by: i), interval: i, tolerance: i * 0.1, options: nil) { [unowned self] in
                 // TODO: disable timer if the player does not conforms to PlaybackTimeUpdating
-                (self.player as? PlaybackTimeUpdating)?.updatePlaybackTime()
+                (self.currentPlayer as? PlaybackTimeUpdating)?.updatePlaybackTime()
             }
         }
         
         func selectNewPlayer() {
             var newPlayer: MusicPlayerProtocol?
-            if player?.playbackState.isPlaying == true {
-                newPlayer = player
+            if currentPlayer?.playbackState.isPlaying == true {
+                newPlayer = currentPlayer
             } else if let playing = players.first(where: { $0.playbackState.isPlaying }) {
                 newPlayer = playing
             } else if let running = players.first(where: { $0.playbackState == .stopped }) {
                 newPlayer = running
             }
-            if newPlayer !== player {
-                player = newPlayer
+            if newPlayer !== currentPlayer {
+                currentPlayer = newPlayer
             }
         }
     }
@@ -106,35 +92,47 @@ extension MusicPlayers.NowPlaying: MusicPlayerProtocol {
     }
     
     public var currentTrack: MusicTrack? {
-        return player?.currentTrack
+        return currentPlayer?.currentTrack
     }
     
     public var playbackState: PlaybackState {
-        return player?.playbackState ?? .stopped
+        return currentPlayer?.playbackState ?? .stopped
     }
     
     public var playbackTime: TimeInterval {
-        get { return player?.playbackTime ?? 0 }
-        set { player?.playbackTime = newValue }
+        get { return currentPlayer?.playbackTime ?? 0 }
+        set { currentPlayer?.playbackTime = newValue }
+    }
+    
+    public var currentTrackWillChange: AnyPublisher<MusicTrack?, Never> {
+        return $currentPlayer.map { $0?.currentTrackWillChange ?? Just(nil).eraseToAnyPublisher() }
+            .switchToLatest()
+            .eraseToAnyPublisher()
+    }
+    
+    public var playbackStateWillChange: AnyPublisher<PlaybackState, Never> {
+        return $currentPlayer.map { $0?.playbackStateWillChange ?? Just(.stopped).eraseToAnyPublisher() }
+        .switchToLatest()
+        .eraseToAnyPublisher()
     }
     
     public func resume() {
-        player?.resume()
+        currentPlayer?.resume()
     }
     
     public func pause() {
-        player?.pause()
+        currentPlayer?.pause()
     }
     
     public func playPause() {
-        player?.playPause()
+        currentPlayer?.playPause()
     }
     
     public func skipToNextItem() {
-        player?.skipToNextItem()
+        currentPlayer?.skipToNextItem()
     }
     
     public func skipToPreviousItem() {
-        player?.skipToPreviousItem()
+        currentPlayer?.skipToPreviousItem()
     }
 }
