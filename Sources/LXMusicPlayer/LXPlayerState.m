@@ -181,6 +181,7 @@
     self = [super initInternal];
     _state = state;
     _currentTime = time;
+    return self;
 }
 
 - (NSTimeInterval)playbackTime {
