@@ -14,10 +14,8 @@ NSNotificationName const SwinsianPlayingNotification = @"com.swinsian.Swinsian-T
 NSNotificationName const SwinsianPausedNotification = @"com.swinsian.Swinsian-Track-Paused";
 NSNotificationName const SwinsianStoppedNotification = @"com.swinsian.Swinsian-Track-Stopped";
 
-@implementation SwinsianApplication (LXObject)
-
-- (LXMusicTrack *)_currentTrack {
-    SwinsianTrack *t = self.currentTrack;
+static LXMusicTrack* currentTrack(SwinsianApplication *app) {
+    SwinsianTrack *t = app.currentTrack;
     if (t) {
         return [[LXSwinsianTrack alloc] initWithSBTrack:t];
     } else {
@@ -25,8 +23,8 @@ NSNotificationName const SwinsianStoppedNotification = @"com.swinsian.Swinsian-T
     }
 }
 
-- (LXPlaybackState)_playbackState {
-    switch (self.playerState) {
+static LXPlaybackState playbackState(SwinsianApplication *app) {
+    switch (app.playerState) {
         case SwinsianPlayerStateStopped: return LXPlaybackStateStopped;
         case SwinsianPlayerStatePlaying: return LXPlaybackStatePlaying;
         case SwinsianPlayerStatePaused: return LXPlaybackStatePaused;
@@ -34,11 +32,9 @@ NSNotificationName const SwinsianStoppedNotification = @"com.swinsian.Swinsian-T
     }
 }
 
-- (LXPlayerState *)_playerState {
-    return [LXPlayerState state:self._playbackState playbackTime:self.playerPosition];
+static LXPlayerState* playerState(SwinsianApplication *app) {
+    return [LXPlayerState state:playbackState(app) playbackTime:app.playerPosition];
 }
-
-@end
 
 @implementation LXPlayerSwinsian
 
@@ -53,8 +49,8 @@ NSNotificationName const SwinsianStoppedNotification = @"com.swinsian.Swinsian-T
 - (instancetype)init {
     if ((self = [super init])) {
         if (self.isRunning) {
-            self.currentTrack = self.app._currentTrack;
-            self.playerState = self.app._playerState;
+            self.currentTrack = currentTrack(self.app);
+            self.playerState = playerState(self.app);
         }
         [NSDistributedNotificationCenter.defaultCenter addObserver:self selector:@selector(playerInfoNotification:) name:SwinsianPlayingNotification object:nil];
         [NSDistributedNotificationCenter.defaultCenter addObserver:self selector:@selector(playerInfoNotification:) name:SwinsianPausedNotification object:nil];
@@ -70,13 +66,13 @@ NSNotificationName const SwinsianStoppedNotification = @"com.swinsian.Swinsian-T
 - (void)playerInfoNotification:(NSNotification *)notification {
     if (!self.isRunning) { return; }
     if ([notification.name isEqualToString:SwinsianPlayingNotification]) {
-        LXMusicTrack *track = self.app._currentTrack;
+        LXMusicTrack *track = currentTrack(self.app);
         if (![self.currentTrack.persistentID isEqualToString:track.persistentID]) {
             self.currentTrack = track;
-            self.playerState = self.app._playerState;
+            self.playerState = playerState(self.app);
         }
     } else if ([notification.name isEqualToString:SwinsianPausedNotification]) {
-        self.playerState = self.app._playerState;
+        self.playerState = playerState(self.app);
     } else if ([notification.name isEqualToString:SwinsianStoppedNotification]) {
         self.currentTrack = nil;
         self.playerState = LXPlayerState.stopped;
@@ -91,8 +87,8 @@ NSNotificationName const SwinsianStoppedNotification = @"com.swinsian.Swinsian-T
 
 - (void)updatePlayerState {
     if (!self.isRunning) { return; }
-    LXMusicTrack *track = self.app._currentTrack;
-    LXPlayerState *state = self.app._playerState;
+    LXMusicTrack *track = currentTrack(self.app);
+    LXPlayerState *state = playerState(self.app);
     if ([self.currentTrack.persistentID isEqualToString:track.persistentID]) {
         [self setPlayerState:state tolerate:1.5];
     } else {

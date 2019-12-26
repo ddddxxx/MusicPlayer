@@ -10,10 +10,8 @@
 #import "LXMusicTrack+Private.h"
 #import "Spotify.h"
 
-@implementation SpotifyApplication (LXObject)
-
-- (LXMusicTrack *)_currentTrack {
-    SpotifyTrack *t = self.currentTrack;
+static LXMusicTrack* currentTrack(SpotifyApplication *app) {
+    SpotifyTrack *t = app.currentTrack;
     if (t) {
         return [[LXSpotifyTrack alloc] initWithSBTrack:t];
     } else {
@@ -21,8 +19,8 @@
     }
 }
 
-- (LXPlaybackState)_playbackState {
-    switch (self.playerState) {
+static LXPlaybackState playbackState(SpotifyApplication *app) {
+    switch (app.playerState) {
         case SpotifyEPlSStopped: return LXPlaybackStateStopped;
         case SpotifyEPlSPlaying: return LXPlaybackStatePlaying;
         case SpotifyEPlSPaused: return LXPlaybackStatePaused;
@@ -30,11 +28,9 @@
     }
 }
 
-- (LXPlayerState *)_playerState {
-    return [LXPlayerState state:self._playbackState playbackTime:self.playerPosition];
+static LXPlayerState* playerState(SpotifyApplication *app) {
+    return [LXPlayerState state:playbackState(app) playbackTime:app.playerPosition];
 }
-
-@end
 
 @implementation LXPlayerSpotify
 
@@ -49,8 +45,8 @@
 - (instancetype)init {
     if ((self = [super init])) {
         if (self.isRunning) {
-            self.currentTrack = self.app._currentTrack;
-            self.playerState = self.app._playerState;
+            self.currentTrack = currentTrack(self.app);
+            self.playerState = playerState(self.app);
         }
         [NSDistributedNotificationCenter.defaultCenter addObserver:self selector:@selector(playerInfoNotification:) name:@"com.spotify.client.PlaybackStateChanged" object:nil];
     }
@@ -65,7 +61,7 @@
     if (!self.isRunning) { return; }
     NSString *persistentID = notification.userInfo[@"Track ID"];
     if (![self.currentTrack.persistentID isEqualToString:persistentID]) {
-        self.currentTrack = self.app._currentTrack;
+        self.currentTrack = currentTrack(self.app);
     }
     LXPlaybackState playbackState;
     NSString *stateStr = notification.userInfo[@"Player State"];
@@ -89,8 +85,8 @@
 
 - (void)updatePlayerState {
     if (!self.isRunning) { return; }
-    LXMusicTrack *track = self.app._currentTrack;
-    LXPlayerState *state = self.app._playerState;
+    LXMusicTrack *track = currentTrack(self.app);
+    LXPlayerState *state = playerState(self.app);
     if ([self.currentTrack.persistentID isEqualToString:track.persistentID]) {
         [self setPlayerState:state tolerate:1.5];
     } else {

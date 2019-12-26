@@ -10,19 +10,17 @@
 #import "LXMusicTrack+Private.h"
 #import "Music.h"
 
-@implementation MusicApplication (LXObject)
-
-- (LXMusicTrack *)_currentTrack {
-    MusicTrack *t = self.currentTrack;
-    if (t && (t.mediaKind==MusicEMdKSong || t.mediaKind==MusicEMdKMusicVideo || t.mediaKind==0) && self.currentStreamURL==nil) {
+static LXMusicTrack* currentTrack(MusicApplication *app) {
+    MusicTrack *t = app.currentTrack;
+    if (t && (t.mediaKind==MusicEMdKSong || t.mediaKind==MusicEMdKMusicVideo || t.mediaKind==0) && app.currentStreamURL==nil) {
         return [[LXAppleMusicTrack alloc] initWithSBTrack:t];
     } else {
         return nil;
     }
 }
 
-- (LXPlaybackState)_playbackState {
-    switch (self.playerState) {
+static LXPlaybackState playbackState(MusicApplication *app) {
+    switch (app.playerState) {
         case MusicEPlSStopped: return LXPlaybackStateStopped;
         case MusicEPlSPlaying: return LXPlaybackStatePlaying;
         case MusicEPlSPaused: return LXPlaybackStatePaused;
@@ -32,11 +30,9 @@
     }
 }
 
-- (LXPlayerState *)_playerState {
-    return [LXPlayerState state:self._playbackState playbackTime:self.playerPosition];
+static LXPlayerState* playerState(MusicApplication *app) {
+    return [LXPlayerState state:playbackState(app) playbackTime:app.playerPosition];
 }
-
-@end
 
 @implementation LXPlayerAppleMusic
 
@@ -51,8 +47,8 @@
 - (instancetype)init {
     if ((self = [super init])) {
         if (self.isRunning) {
-            self.currentTrack = self.app._currentTrack;
-            self.playerState = self.app._playerState;
+            self.currentTrack = currentTrack(self.app);
+            self.playerState = playerState(self.app);
         }
         [NSDistributedNotificationCenter.defaultCenter addObserver:self selector:@selector(playerInfoNotification:) name:@"com.apple.iTunes.playerInfo" object:nil];
     }
@@ -67,9 +63,9 @@
     if (!self.isRunning) { return; }
     NSString *persistentID = [NSString stringWithFormat:@"%08lX", (unsigned long)[notification.userInfo[@"PersistentID"] unsignedIntegerValue]];
     if (![[self.currentTrack.persistentID substringFromIndex:8] isEqualToString:persistentID]) {
-        self.currentTrack = self.app._currentTrack;
+        self.currentTrack = currentTrack(self.app);
     }
-    LXPlayerState *state = [notification.userInfo[@"Player State"] isEqualToString:@"Stopped"] ? LXPlayerState.stopped : self.app._playerState;
+    LXPlayerState *state = [notification.userInfo[@"Player State"] isEqualToString:@"Stopped"] ? LXPlayerState.stopped : playerState(self.app);
     [self setPlayerState:state tolerate:1.5];
 }
 
@@ -81,8 +77,8 @@
 
 - (void)updatePlayerState {
     if (!self.isRunning) { return; }
-    LXMusicTrack *track = self.app._currentTrack;
-    LXPlayerState *state = self.app._playerState;
+    LXMusicTrack *track = currentTrack(self.app);
+    LXPlayerState *state = playerState(self.app);
     if ([self.currentTrack.persistentID isEqualToString:track.persistentID]) {
         [self setPlayerState:state tolerate:1.5];
     } else {

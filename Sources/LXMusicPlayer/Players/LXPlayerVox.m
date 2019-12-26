@@ -10,42 +10,38 @@
 #import "LXMusicTrack+Private.h"
 #import "Vox.h"
 
-@implementation VoxApplication (LXObject)
-
-- (LXMusicTrack *)_currentTrack {
-    NSString *persistentID = self.uniqueID;
+static LXMusicTrack* currentTrack(VoxApplication *app) {
+    NSString *persistentID = app.uniqueID;
     if (!persistentID) {
         return nil;
     }
     LXMusicTrack *track = [[LXMusicTrack alloc] initWithPersistentID:persistentID];
-    track.title = self.track;
-    track.album = self.album;
-    track.artist = self.artist;
-    track.duration = @(self.totalTime);
-    NSString *url = self.trackUrl;
+    track.title = app.track;
+    track.album = app.album;
+    track.artist = app.artist;
+    track.duration = @(app.totalTime);
+    NSString *url = app.trackUrl;
     if (url) {
         // TODO: is this file URL?
         track.fileURL = [NSURL URLWithString:url];
     }
-    track.artwork = self.artworkImage;
+    track.artwork = app.artworkImage;
     return track;
 }
 
-- (LXPlaybackState)_playbackState {
-    if (self.playerState) {
+static LXPlaybackState playbackState(VoxApplication *app) {
+    if (app.playerState) {
         return LXPlaybackStatePlaying;
-    } else if (self.uniqueID) {
+    } else if (app.uniqueID) {
         return LXPlaybackStatePaused;
     } else {
         return LXPlaybackStateStopped;
     }
 }
 
-- (LXPlayerState *)_playerState {
-    return [LXPlayerState state:self._playbackState playbackTime:self.currentTime];
+static LXPlayerState* playerState(VoxApplication *app) {
+    return [LXPlayerState state:playbackState(app) playbackTime:app.currentTime];
 }
-
-@end
 
 @implementation LXPlayerVox {
     dispatch_source_t _timer;
@@ -62,8 +58,8 @@
 - (instancetype)init {
     if ((self = [super init])) {
         if (self.isRunning) {
-            self.currentTrack = self.app._currentTrack;
-            self.playerState = self.app._playerState;
+            self.currentTrack = currentTrack(self.app);
+            self.playerState = playerState(self.app);
         }
         [NSDistributedNotificationCenter.defaultCenter addObserver:self selector:@selector(trackChangedNotification:) name:@"com.coppertino.Vox.trackChanged" object:nil];
         
@@ -74,7 +70,7 @@
         dispatch_source_set_event_handler(_timer, ^{
             LXPlayerVox *strongSelf = weakSelf;
             if (!strongSelf.isRunning) { return; }
-            [strongSelf setPlayerState:strongSelf.app._playerState tolerate:1.5];
+            [strongSelf setPlayerState:playerState(strongSelf.app) tolerate:1.5];
         });
         dispatch_resume(_timer);
     }
@@ -88,12 +84,12 @@
 
 - (void)trackChangedNotification:(NSNotification *)notification {
     if (!self.isRunning) { return; }
-    LXMusicTrack *track = self.app._currentTrack;
+    LXMusicTrack *track = currentTrack(self.app);
     if (![self.currentTrack.persistentID isEqualToString:track.persistentID]) {
         self.currentTrack = track;
-        self.playerState = self.app._playerState;
+        self.playerState = playerState(self.app);
     } else {
-        [self setPlayerState:self.app._playerState tolerate:1.5];
+        [self setPlayerState:playerState(self.app) tolerate:1.5];
     }
 }
 
@@ -105,8 +101,8 @@
 
 - (void)updatePlayerState {
     if (!self.isRunning) { return; }
-    LXMusicTrack *track = self.app._currentTrack;
-    LXPlayerState *state = self.app._playerState;
+    LXMusicTrack *track = currentTrack(self.app);
+    LXPlayerState *state = playerState(self.app);
     if ([self.currentTrack.persistentID isEqualToString:track.persistentID]) {
         [self setPlayerState:state tolerate:1.5];
     } else {

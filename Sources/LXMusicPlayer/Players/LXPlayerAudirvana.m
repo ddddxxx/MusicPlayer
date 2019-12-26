@@ -10,12 +10,10 @@
 #import "LXMusicTrack+Private.h"
 #import "Audirvana.h"
 
-@implementation AudirvanaApplication (LXObject)
-
-- (LXMusicTrack *)_currentTrack {
-    NSString *title = self.playingTrackTitle;
-    NSString *album = self.playingTrackAlbum;
-    NSInteger duration = self.playingTrackDuration;
+static LXMusicTrack* currentTrack(AudirvanaApplication *app) {
+    NSString *title = app.playingTrackTitle;
+    NSString *album = app.playingTrackAlbum;
+    NSInteger duration = app.playingTrackDuration;
     if (!title) {
         return nil;
     }
@@ -23,17 +21,17 @@
     LXMusicTrack *track = [[LXMusicTrack alloc] initWithPersistentID:persistentID];
     track.title = title;
     track.album = album;
-    track.artist = self.playingTrackArtist;
+    track.artist = app.playingTrackArtist;
     track.duration = @(duration);
-    NSData *artworkData = self.playingTrackAirfoillogo;
+    NSData *artworkData = app.playingTrackAirfoillogo;
     if (artworkData) {
         track.artwork = [[NSImage alloc] initWithData:artworkData];
     }
     return track;
 }
 
-- (LXPlaybackState)_playbackState {
-    switch (self.playerState) {
+static LXPlaybackState playbackState(AudirvanaApplication *app) {
+    switch (app.playerState) {
         case AudirvanaPlayerStatusStopped: return LXPlaybackStateStopped;
         case AudirvanaPlayerStatusPlaying: return LXPlaybackStatePlaying;
         case AudirvanaPlayerStatusPaused: return LXPlaybackStatePaused;
@@ -41,11 +39,9 @@
     }
 }
 
-- (LXPlayerState *)_playerState {
-    return [LXPlayerState state:self._playbackState playbackTime:self.playerPosition];
+static LXPlayerState* playerState(AudirvanaApplication *app) {
+    return [LXPlayerState state:playbackState(app) playbackTime:app.playerPosition];
 }
-
-@end
 
 @implementation LXPlayerAudirvana {
     dispatch_source_t _timer;
@@ -62,8 +58,8 @@
 - (instancetype)init {
     if ((self = [super init])) {
         if (self.isRunning) {
-            self.currentTrack = self.app._currentTrack;
-            self.playerState = self.app._playerState;
+            self.currentTrack = currentTrack(self.app);
+            self.playerState = playerState(self.app);
             [self.app setEventTypesReported:AudirvanaPlayerStatusEventTypesReportedTrackChanged];
         }
         [NSDistributedNotificationCenter.defaultCenter addObserver:self selector:@selector(playerInfoNotification:) name:@"com.audirvana.audirvana-plus.playerStatus" object:nil];
@@ -79,7 +75,7 @@
 
 - (void)playerInfoNotification:(NSNotification *)notification {
     if (!self.isRunning) { return; }
-    LXMusicTrack *track = self.app._currentTrack;
+    LXMusicTrack *track = currentTrack(self.app);
     if (![self.currentTrack.persistentID isEqualToString:track.persistentID]) {
         NSString *path = notification.userInfo[@"PlayingTrackURL"];
         if (path) {
@@ -87,9 +83,9 @@
             track.fileURL = [NSURL URLWithString:path];
         }
         self.currentTrack = track;
-        self.playerState = self.app._playerState;
+        self.playerState = playerState(self.app);
     } else {
-        [self setPlayerState:self.app._playerState tolerate:1.5];
+        [self setPlayerState:playerState(self.app) tolerate:1.5];
     }
 }
 
@@ -107,8 +103,8 @@
 
 - (void)updatePlayerState {
     if (!self.isRunning) { return; }
-    LXMusicTrack *track = self.app._currentTrack;
-    LXPlayerState *state = self.app._playerState;
+    LXMusicTrack *track = currentTrack(self.app);
+    LXPlayerState *state = playerState(self.app);
     if ([self.currentTrack.persistentID isEqualToString:track.persistentID]) {
         [self setPlayerState:state tolerate:1.5];
     } else {
