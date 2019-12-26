@@ -66,4 +66,28 @@
     }
 }
 
+- (void)updatePlayerState {}
+
+// Force update at the end of the track
+
+- (void)rescheduleNextTrackUpdating {
+    [self.nextTrackUpdatingTimer invalidate];
+    NSNumber *duration = self.currentTrack.duration;
+    if (self.playerState.isPlaying && duration) {
+        NSTimeInterval dt = duration.doubleValue - self.playerState.playbackTime;
+        self.nextTrackUpdatingTimer = [NSTimer scheduledTimerWithTimeInterval:dt target:self selector:@selector(updatePlayerState) userInfo:nil repeats:false];
+        self.nextTrackUpdatingTimer.tolerance = 1.5;
+    }
+}
+
+- (void)setCurrentTrack:(LXMusicTrack *)currentTrack {
+    _currentTrack = currentTrack;
+    [self rescheduleNextTrackUpdating];
+}
+
+- (void)setPlayerState:(LXPlayerState *)playerState {
+    _playerState = playerState;
+    [self rescheduleNextTrackUpdating];
+}
+
 @end

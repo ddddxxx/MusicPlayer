@@ -1,21 +1,8 @@
 //
-//  ScriptingBridgedPlayer.swift
+//  ScriptingBridged.swift
 //
 //  This file is part of LyricsX - https://github.com/ddddxxx/LyricsX
-//  Copyright (C) 2017  Xander Deng
-//
-//  This program is free software: you can redistribute it and/or modify
-//  it under the terms of the GNU General Public License as published by
-//  the Free Software Foundation, either version 3 of the License, or
-//  (at your option) any later version.
-//
-//  This program is distributed in the hope that it will be useful,
-//  but WITHOUT ANY WARRANTY; without even the implied warranty of
-//  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-//  GNU General Public License for more details.
-//
-//  You should have received a copy of the GNU General Public License
-//  along with this program.  If not, see <http://www.gnu.org/licenses/>.
+//  Copyright (C) 2017  Xander Deng. Licensed under GPLv3.
 //
 
 #if os(macOS)
@@ -53,7 +40,7 @@ extension MusicPlayers {
     }
 }
 
-extension MusicPlayers.ScriptingBridged: MusicPlayerProtocol, PlaybackTimeUpdating {
+extension MusicPlayers.ScriptingBridged: MusicPlayerProtocol {
     
     public var currentTrackWillChange: AnyPublisher<MusicTrack?, Never> {
         return $currentTrack.eraseToAnyPublisher()
@@ -63,7 +50,7 @@ extension MusicPlayers.ScriptingBridged: MusicPlayerProtocol, PlaybackTimeUpdati
         return $playbackState.eraseToAnyPublisher()
     }
     
-    public var name: MusicPlayerName {
+    public var name: MusicPlayerName? {
         return MusicPlayerName(lxName: player.playerName)!
     }
     
@@ -92,8 +79,8 @@ extension MusicPlayers.ScriptingBridged: MusicPlayerProtocol, PlaybackTimeUpdati
         player.skipToPreviousItem()
     }
     
-    public func updatePlaybackTime() {
-        player.updatePlaybackTime()
+    public func updatePlayerState() {
+        player.updatePlayerState()
     }
 }
 

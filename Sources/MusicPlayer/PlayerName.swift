@@ -7,8 +7,6 @@
 
 public enum MusicPlayerName: String {
     
-    case nowPlaying = "Now Playing"
-    
     #if os(macOS)
     
     case appleMusic = "Music"
@@ -49,7 +47,6 @@ extension MusicPlayerName {
         case .vox: return .vox
         case .audirvana: return .audirvana
         case .swinsian: return .swinsian
-        default: return nil
         }
     }
     

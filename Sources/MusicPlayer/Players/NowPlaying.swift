@@ -1,21 +1,8 @@
 //
-//  NowPlayingPlayer.swift
+//  NowPlaying.swift
 //
 //  This file is part of LyricsX - https://github.com/ddddxxx/LyricsX
-//  Copyright (C) 2017  Xander Deng
-//
-//  This program is free software: you can redistribute it and/or modify
-//  it under the terms of the GNU General Public License as published by
-//  the Free Software Foundation, either version 3 of the License, or
-//  (at your option) any later version.
-//
-//  This program is distributed in the hope that it will be useful,
-//  but WITHOUT ANY WARRANTY; without even the implied warranty of
-//  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-//  GNU General Public License for more details.
-//
-//  You should have received a copy of the GNU General Public License
-//  along with this program.  If not, see <http://www.gnu.org/licenses/>.
+//  Copyright (C) 2017  Xander Deng. Licensed under GPLv3.
 //
 
 import Foundation
@@ -25,28 +12,22 @@ extension MusicPlayers {
     
     public final class NowPlaying: ObservableObject {
         
+        public let objectWillChange = ObservableObjectPublisher()
+        
         public let players: [MusicPlayerProtocol]
         
         @Published public private(set) var currentPlayer: MusicPlayerProtocol?
         
-        public var manualUpdateInterval: TimeInterval = 1.0 {
-            didSet {
-                scheduleManualUpdate()
-            }
-        }
-        
-        var cancelBag = Set<AnyCancellable>()
+        private var cancelBag = Set<AnyCancellable>()
 
         public init(players: [MusicPlayerProtocol]) {
             self.players = players
             selectNewPlayer()
-            scheduleManualUpdate()
-            currentTrackWillChange.sink { [weak self] _ in
-                self?.objectWillChange.send()
-            }.store(in: &cancelBag)
-            playbackStateWillChange.sink { [weak self] _ in
-                self?.objectWillChange.send()
-            }.store(in: &cancelBag)
+            $currentPlayer
+                .map { $0?.objectWillChange.eraseToAnyPublisher() ?? Just(()).eraseToAnyPublisher() }
+                .switchToLatest()
+                .sink { [weak self] _ in self?.objectWillChange.send() }
+                .store(in: &cancelBag)
         }
         
         #if os(macOS)
@@ -58,18 +39,7 @@ extension MusicPlayers {
         
         #endif
         
-        private var scheduleCanceller: Cancellable?
-        func scheduleManualUpdate() {
-            scheduleCanceller?.cancel()
-            let q = DispatchQueue.global().cx
-            let i: CXWrappers.DispatchQueue.SchedulerTimeType.Stride = .seconds(manualUpdateInterval)
-            scheduleCanceller = q.schedule(after: q.now.advanced(by: i), interval: i, tolerance: i * 0.1, options: nil) { [unowned self] in
-                // TODO: disable timer if the player does not conforms to PlaybackTimeUpdating
-                (self.currentPlayer as? PlaybackTimeUpdating)?.updatePlaybackTime()
-            }
-        }
-        
-        func selectNewPlayer() {
+        private func selectNewPlayer() {
             var newPlayer: MusicPlayerProtocol?
             if currentPlayer?.playbackState.isPlaying == true {
                 newPlayer = currentPlayer
@@ -87,8 +57,8 @@ extension MusicPlayers {
 
 extension MusicPlayers.NowPlaying: MusicPlayerProtocol {
     
-    public var name: MusicPlayerName {
-        return .nowPlaying
+    public var name: MusicPlayerName? {
+        return currentPlayer?.name
     }
     
     public var currentTrack: MusicTrack? {
@@ -134,5 +104,9 @@ extension MusicPlayers.NowPlaying: MusicPlayerProtocol {
     
     public func skipToPreviousItem() {
         currentPlayer?.skipToPreviousItem()
+    }
+    
+    public func updatePlayerState() {
+        currentPlayer?.updatePlayerState()
     }
 }

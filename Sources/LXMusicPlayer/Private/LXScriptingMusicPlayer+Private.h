@@ -17,6 +17,8 @@ NS_ASSUME_NONNULL_BEGIN
 @property (nonatomic, readwrite, nullable) LXMusicTrack *currentTrack;
 @property (nonatomic, readwrite) LXPlayerState *playerState;
 
+@property (nonatomic) NSTimer *nextTrackUpdatingTimer;
+
 - (nullable instancetype)init NS_DESIGNATED_INITIALIZER;
 
 - (void)setPlayerState:(LXPlayerState *)playerState tolerate:(NSTimeInterval)tolerate;

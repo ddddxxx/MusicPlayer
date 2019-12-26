@@ -25,8 +25,6 @@ NS_ASSUME_NONNULL_BEGIN
 - (void)skipToNextItem;
 - (void)skipToPreviousItem;
 
-- (void)updatePlaybackTime;
-
 @end
 
 @interface LXScriptingMusicPlayer : NSObject<LXMusicPlayerPlaybackControl>
@@ -42,6 +40,8 @@ NS_ASSUME_NONNULL_BEGIN
 
 - (instancetype)init NS_UNAVAILABLE;
 + (nullable instancetype)playerWithName:(LXMusicPlayerName)name;
+
+- (void)updatePlayerState;
 
 @end
 

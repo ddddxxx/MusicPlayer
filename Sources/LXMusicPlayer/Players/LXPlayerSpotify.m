@@ -87,10 +87,16 @@
     self.playerState = [LXPlayerState state:self.playerState.state playbackTime:playbackTime];
 }
 
-- (void)updatePlaybackTime {
+- (void)updatePlayerState {
     if (!self.isRunning) { return; }
+    LXMusicTrack *track = self.app._currentTrack;
     LXPlayerState *state = self.app._playerState;
-    [self setPlayerState:state tolerate:1.5];
+    if ([self.currentTrack.persistentID isEqualToString:track.persistentID]) {
+        [self setPlayerState:state tolerate:1.5];
+    } else {
+        self.currentTrack = track;
+        self.playerState = state;
+    }
 }
 
 - (void)resume {
