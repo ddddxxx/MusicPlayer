@@ -21,6 +21,10 @@ extension MusicPlayers {
         @Published public private(set) var currentTrack: MusicTrack?
         @Published public private(set) var playbackState: PlaybackState
         
+        public var playerBundleID: String {
+            return player.playerBundleID
+        }
+        
         public init?(name: MusicPlayerName) {
             guard let lxNmae = name.lxName, let player = LXScriptingMusicPlayer(name: lxNmae) else {
                 return nil
