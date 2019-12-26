@@ -1,4 +1,4 @@
-// swift-tools-version:5.1
+// swift-tools-version:5.0
 
 import PackageDescription
 
@@ -14,12 +14,10 @@ let package = Package(
         .library(name: "MusicPlayer", targets: ["MusicPlayer"]),
     ],
     dependencies: [
-        .package(url: "https://github.com/cx-org/CombineX", .branch("master")),
+        .package(url: "https://github.com/cx-org/CombineX", .upToNextMinor(from: "0.1.0"))
     ],
     targets: [
-        .target(
-            name: "MusicPlayer",
-            dependencies: ["CXShim"]),
+        .target(name: "MusicPlayer", dependencies: ["CXShim"]),
     ]
 )
 
@@ -27,10 +25,10 @@ let package = Package(
 
 package.targets += [
     .target(
-    name: "LXMusicPlayer",
-    cSettings: [
-        .headerSearchPath("private"),
-        .headerSearchPath("BridgingHeader"),
+        name: "LXMusicPlayer",
+        cSettings: [
+            .headerSearchPath("private"),
+            .headerSearchPath("BridgingHeader"),
     ]),
 ]
 package.targets.first { $0.name == "MusicPlayer" }!.dependencies += ["LXMusicPlayer"]

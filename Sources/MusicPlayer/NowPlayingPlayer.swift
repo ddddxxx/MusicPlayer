@@ -76,7 +76,7 @@ extension MusicPlayers {
         func scheduleManualUpdate() {
             scheduleCanceller?.cancel()
             let q = DispatchQueue.global().cx
-            let i: DispatchQueue.DispatchQueueCXWrapper.SchedulerTimeType.Stride = .seconds(manualUpdateInterval)
+            let i: CXWrappers.DispatchQueue.SchedulerTimeType.Stride = .seconds(manualUpdateInterval)
             scheduleCanceller = q.schedule(after: q.now.advanced(by: i), interval: i, tolerance: i * 0.1, options: nil) { [unowned self] in
                 // TODO: disable timer if the player does not conforms to PlaybackTimeUpdating
                 (self.player as? PlaybackTimeUpdating)?.updatePlaybackTime()
