@@ -26,7 +26,12 @@ extension MusicPlayers {
             $currentPlayer
                 .map { $0?.objectWillChange.eraseToAnyPublisher() ?? Just(()).eraseToAnyPublisher() }
                 .switchToLatest()
-                .sink { [weak self] _ in self?.objectWillChange.send() }
+                .sink { [weak self] _ in
+                    self?.objectWillChange.send()
+                    DispatchQueue.global().async {
+                        self?.selectNewPlayer()
+                    }
+                }
                 .store(in: &cancelBag)
         }
         
@@ -45,7 +50,7 @@ extension MusicPlayers {
                 newPlayer = currentPlayer
             } else if let playing = players.first(where: { $0.playbackState.isPlaying }) {
                 newPlayer = playing
-            } else if let running = players.first(where: { $0.playbackState == .stopped }) {
+            } else if let running = players.first(where: { $0.playbackState != .stopped }) {
                 newPlayer = running
             }
             if newPlayer !== currentPlayer {
