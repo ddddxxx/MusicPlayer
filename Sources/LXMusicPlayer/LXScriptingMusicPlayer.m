@@ -31,7 +31,7 @@
 }
 
 - (instancetype)init {
-    assert([self isMemberOfClass:[LXScriptingMusicPlayer class]]);
+    assert(![self isMemberOfClass:[LXScriptingMusicPlayer class]]);
     self = [super init];
     _playerState = LXPlayerState.stopped;
     NSArray *ids = LXMusicPlayerNameGetCandidateBundleID(self.class.playerName);
