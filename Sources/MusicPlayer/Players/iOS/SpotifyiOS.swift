@@ -116,7 +116,7 @@ public final class SpotifyiOS: NSObject, SPTAppRemoteDelegate, SPTAppRemotePlaye
     }
 }
 
-extension SpotifyiOS: MusicPlayer {
+extension SpotifyiOS: MusicPlayerProtocol {
     
     public static let name: MusicPlayerName = .spotify
     public static var needsUpdateIfNotSelected = false

@@ -5,11 +5,11 @@
 //  Copyright (C) 2017  Xander Deng. Licensed under GPLv3.
 //
 
-public enum MusicPlayerName: String, CaseIterable {
+public enum MusicPlayerName: String {
     
     #if os(macOS)
     
-    case itunes     = "iTunes"
+    case appleMusic = "Music"
     case spotify    = "Spotify"
     case vox        = "Vox"
     case audirvana  = "Audirvana"
@@ -17,7 +17,7 @@ public enum MusicPlayerName: String, CaseIterable {
     
     #elseif os(iOS)
     
-    case appleMusic = "Apple Music"
+    case appleMusic = "Music"
     case spotify    = "Spotify"
     
     #endif
@@ -25,27 +25,32 @@ public enum MusicPlayerName: String, CaseIterable {
 
 #if os(macOS)
 
+import LXMusicPlayer
+
 extension MusicPlayerName {
     
-    public var candidateBundleID: [String] {
-        switch self {
-        case .itunes:    return ["com.apple.Music", "com.apple.iTunes"]
-        case .spotify:   return ["com.spotify.client"]
-        case .vox:       return ["com.coppertino.Vox"]
-        case .audirvana: return ["com.audirvana.Audirvana", "com.audirvana.Audirvana-Plus"]
-        case .swinsian:  return ["com.swinsian.Swinsian"]
+    init?(lxName: LXScriptingMusicPlayer.Name) {
+        switch lxName {
+        case .appleMusic: self = .appleMusic
+        case .spotify: self = .spotify
+        case .vox: self = .vox
+        case .audirvana: self = .audirvana
+        case .swinsian: self = .swinsian
+        default: return nil
         }
     }
     
-    public var cls: MusicPlayerController.Type {
+    var lxName: LXScriptingMusicPlayer.Name? {
         switch self {
-        case .itunes:    return iTunes.self
-        case .spotify:   return Spotify.self
-        case .vox:       return Vox.self
-        case .audirvana: return Audirvana.self
-        case .swinsian:  return Swinsian.self
+        case .appleMusic: return .appleMusic
+        case .spotify: return .spotify
+        case .vox: return .vox
+        case .audirvana: return .audirvana
+        case .swinsian: return .swinsian
         }
     }
+    
+    static var scriptingPlayerNames: [MusicPlayerName] = [.appleMusic, .spotify, .vox, .audirvana, .swinsian]
 }
 
 #endif
