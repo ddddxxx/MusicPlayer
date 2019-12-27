@@ -6,6 +6,8 @@
 //  Licensed under GPL v3 - https://www.gnu.org/licenses/gpl-3.0.html
 //
 
+#if TARGET_OS_MAC
+
 #import <Foundation/Foundation.h>
 
 NS_ASSUME_NONNULL_BEGIN
@@ -21,3 +23,5 @@ extern const LXMusicPlayerName LXMusicPlayerNameSwinsian;
 NSArray<NSString *> *LXMusicPlayerNameGetCandidateBundleID(LXMusicPlayerName name) NS_SWIFT_NAME(LXMusicPlayerName.candidateBundleID(self:));
 
 NS_ASSUME_NONNULL_END
+
+#endif

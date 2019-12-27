@@ -6,9 +6,7 @@ let package = Package(
     name: "MusicPlayer",
     platforms: [
         .macOS(.v10_10),
-        .iOS(.v8),
-        .tvOS(.v9),
-        .watchOS(.v2),
+        .iOS(.v10),
     ],
     products: [
         .library(name: "MusicPlayer", targets: ["MusicPlayer"]),

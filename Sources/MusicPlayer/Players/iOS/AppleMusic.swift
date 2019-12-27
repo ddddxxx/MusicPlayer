@@ -5,105 +5,42 @@
 //  Copyright (C) 2017  Xander Deng. Licensed under GPLv3.
 //
 
-#if false
+#if os(iOS)
 
 import UIKit
 import MediaPlayer
+import CXShim
 
-public final class AppleMusic {
-    
-    public weak var delegate: MusicPlayerDelegate?
+public final class AppleMusic: ObservableObject {
     
     private let musicPlayer = MPMusicPlayerController.systemMusicPlayer
     
-    public var currentTrack: MusicTrack?
-    public var playbackState: MusicPlaybackState = .stopped
-    
-    private var _startTime: Date?
-    private var _pausePosition: Double?
+    @Published public private(set) var currentTrack: MusicTrack?
+    @Published public private(set) var playbackState: PlaybackState = .stopped
     
     public init() {
-        let nc = NotificationCenter.default
-        
-        nc.addObserver(self, selector: #selector(updateFullPlayerState), name: UIApplication.didBecomeActiveNotification, object: nil)
-        nc.addObserver(self, selector: #selector(updateFullPlayerState), name: UIApplication.willEnterForegroundNotification, object: nil)
-        
         musicPlayer.beginGeneratingPlaybackNotifications()
         
+        let nc = NotificationCenter.default
         nc.addObserver(forName: .MPMusicPlayerControllerPlaybackStateDidChange, object: musicPlayer, queue: nil) { [weak self] _ in
-            self?.updateFullPlayerState()
+            self?.updatePlayerState()
         }
         nc.addObserver(forName: .MPMusicPlayerControllerNowPlayingItemDidChange, object: musicPlayer, queue: nil) { [weak self] _ in
-            self?.updateFullPlayerState()
+            self?.updatePlayerState()
         }
         nc.addObserver(forName: UIApplication.didBecomeActiveNotification, object: nil, queue: nil) { [weak self] _ in
-            self?.updateFullPlayerState()
+            self?.updatePlayerState()
         }
         nc.addObserver(forName: UIApplication.willEnterForegroundNotification, object: nil, queue: nil) { [weak self] _ in
-            self?.updateFullPlayerState()
+            self?.updatePlayerState()
         }
         
-        updateFullPlayerState()
+        updatePlayerState()
     }
     
     deinit {
         musicPlayer.endGeneratingPlaybackNotifications()
     }
-    
-    // MARK: - Update
-    
-    @objc private func updateFullPlayerState() {
-        guard isAuthorized else { return }
-        updateCurrentTrack()
-        updatePlaybackState()
-        updatePlayerPosition()
-    }
-    
-    private func updateCurrentTrack() {
-        guard isAuthorized else { return }
-        if currentTrack?.id != musicPlayer.nowPlayingItem?.idString {
-            currentTrack = musicPlayer.currentTrack
-            delegate?.currentTrackChanged(track: currentTrack, from: self)
-        }
-    }
-    
-    private func updatePlaybackState() {
-        guard isAuthorized else { return }
-        if musicPlayer._playbackState != playbackState {
-            playbackState = musicPlayer._playbackState
-            delegate?.playbackStateChanged(state: playbackState, from: self)
-        }
-    }
-    
-    private func updatePlayerPosition() {
-        guard isAuthorized else { return }
-        if playbackState.isPlaying {
-            let startTimeNew = musicPlayer.startTime
-            if let _startTime = _startTime,
-                abs(startTimeNew.timeIntervalSince(_startTime)) > positionMutateThreshold {
-                self._startTime = startTimeNew
-                delegate?.playerPositionMutated(position: playerPosition, from: self)
-            } else {
-                self._startTime = startTimeNew
-            }
-        } else {
-            let pausePositionNew = musicPlayer.currentPlaybackTime
-            if let _pausePosition = _pausePosition,
-                abs(_pausePosition - pausePositionNew) > positionMutateThreshold {
-                self._pausePosition = pausePositionNew
-                delegate?.playerPositionMutated(position: playerPosition, from: self)
-            } else {
-                self._pausePosition = pausePositionNew
-            }
-        }
-    }
-}
-
-extension AppleMusic: MusicPlayerProtocol {
-    
-    public static let name = MusicPlayerName.appleMusic
-    public static var needsUpdateIfNotSelected = false
-    
     
     public var isAuthorized: Bool {
         return MPMediaLibrary.authorizationStatus() == .authorized
@@ -113,47 +50,58 @@ extension AppleMusic: MusicPlayerProtocol {
         switch MPMediaLibrary.authorizationStatus() {
         case .notDetermined:
             MPMediaLibrary.requestAuthorization() { [weak self] _ in
-                self?.updateFullPlayerState()
+                self?.objectWillChange.send()
+                self?.updatePlayerState()
             }
         case .denied, .restricted:
-            break
-//            if let settingsURL = URL(string: UIApplication.openSettingsURLString) {
-//                UIApplication.shared.open(settingsURL)
-//            }
+            if let settingsURL = URL(string: UIApplication.openSettingsURLString) {
+                UIApplication.shared.open(settingsURL)
+            }
         case .authorized:
             break
         @unknown default:
             break
         }
     }
+}
+
+extension AppleMusic: MusicPlayerProtocol {
     
-    public var playerPosition: TimeInterval {
+    public var name: MusicPlayerName? {
+        return .appleMusic
+    }
+    
+    public var playbackTime: TimeInterval {
         get {
-            guard playbackState.isPlaying else { return _pausePosition ?? 0 }
-            guard let _startTime = _startTime else { return 0 }
-            return -_startTime.timeIntervalSinceNow
+            return playbackState.time
         }
         set {
             guard isAuthorized else { return }
             musicPlayer.currentPlaybackTime = newValue
-            _startTime = Date().addingTimeInterval(-newValue)
+            playbackState = playbackState.withTime(newValue)
         }
     }
     
-    public func updatePlayerState() {
-        guard isAuthorized else { return }
-        updateFullPlayerState()
+    public var currentTrackWillChange: AnyPublisher<MusicTrack?, Never> {
+        return $currentTrack.eraseToAnyPublisher()
+    }
+    
+    public var playbackStateWillChange: AnyPublisher<PlaybackState, Never> {
+        return $playbackState.eraseToAnyPublisher()
     }
     
     public func resume() {
+        guard isAuthorized else { return }
         musicPlayer.play()
     }
     
     public func pause() {
+        guard isAuthorized else { return }
         musicPlayer.pause()
     }
     
     public func playPause() {
+        guard isAuthorized else { return }
         if playbackState.isPlaying {
             musicPlayer.pause()
         } else {
@@ -162,14 +110,29 @@ extension AppleMusic: MusicPlayerProtocol {
     }
     
     public func skipToNextItem() {
+        guard isAuthorized else { return }
         musicPlayer.skipToNextItem()
     }
     
     public func skipToPreviousItem() {
+        guard isAuthorized else { return }
         musicPlayer.skipToPreviousItem()
+    }
+    
+    public func updatePlayerState() {
+        guard isAuthorized else { return }
+        let state = musicPlayer._playbackState
+        let track = musicPlayer.nowPlayingItem
+        if currentTrack?.id != track?.idString {
+            currentTrack = track?.musicTrack
+            playbackState = state
+        } else if !playbackState.approximateEqual(to: state) {
+            playbackState = state
+        }
     }
 }
 
+/*
 extension AppleMusic: PlaybackModeSettable {
     
     public var repeatMode: MusicRepeatMode {
@@ -190,6 +153,7 @@ extension AppleMusic: PlaybackModeSettable {
         }
     }
 }
+ */
 
 // MARK: - Extension
 
@@ -198,46 +162,42 @@ private extension MPMediaItem {
     var idString: String {
         return String(format: "%X", [persistentID])
     }
+    
+    var musicTrack: MusicTrack? {
+        guard MPMediaLibrary.authorizationStatus() == .authorized else {
+            return nil
+        }
+        let imageSize = CGSize(width: 600, height: 600)
+        let artworkImage = artwork?.image(at: imageSize)
+        return MusicTrack(id: idString,
+                          title: title,
+                          album: albumTitle,
+                          artist: artist,
+                          duration: playbackDuration,
+                          fileURL: nil,
+                          artwork: artworkImage)
+    }
 }
 
 private extension MPMusicPlayerController {
     
-    var _playbackState: MusicPlaybackState {
+    var _playbackState: PlaybackState {
         switch playbackState {
         case .stopped: return .stopped
-        case .playing: return .playing
-        case .paused: return .paused
-        case .interrupted: return .paused
-        case .seekingForward: return .fastForwarding
-        case .seekingBackward: return .rewinding
+        case .playing: return .playing(time: currentPlaybackTime)
+        case .paused: return .paused(time: currentPlaybackTime)
+        case .interrupted: return .paused(time: currentPlaybackTime)
+        case .seekingForward: return .fastForwarding(time: currentPlaybackTime)
+        case .seekingBackward: return .rewinding(time: currentPlaybackTime)
         @unknown default: return .stopped
         }
     }
-    
-    var currentTrack: MusicTrack? {
-        guard MPMediaLibrary.authorizationStatus() == .authorized,
-            let track = nowPlayingItem else {
-            return nil
-        }
-        let imageSize = CGSize(width: 600, height: 600)
-        let artwork = track.artwork?.image(at: imageSize)
-        return MusicTrack(id: track.idString,
-                          title: track.title,
-                          album: track.albumTitle,
-                          artist: track.artist,
-                          duration: track.playbackDuration,
-                          fileURL: nil,
-                          artwork: artwork)
-    }
-    
-    var startTime: Date {
-        return Date(timeIntervalSinceNow: -currentPlaybackTime)
-    }
 }
 
+/*
 private extension MPMusicRepeatMode {
     
-    var mode: MusicRepeatMode {
+    var mode: RepeatMode {
         switch self {
         case .none: return .off
         case .one:  return .one
@@ -248,7 +208,7 @@ private extension MPMusicRepeatMode {
         }
     }
     
-    init(_ mode: MusicRepeatMode) {
+    init(_ mode: RepeatMode) {
         switch mode {
         case .off: self = .none
         case .one: self = .one
@@ -259,7 +219,7 @@ private extension MPMusicRepeatMode {
 
 private extension MPMusicShuffleMode {
     
-    var mode: MusicShuffleMode {
+    var mode: ShuffleMode {
         switch self {
         case .off: return .off
         case .songs: return .songs
@@ -270,7 +230,7 @@ private extension MPMusicShuffleMode {
         }
     }
     
-    init(_ mode: MusicShuffleMode) {
+    init(_ mode: ShuffleMode) {
         switch mode {
         case .off: self = .off
         case .songs: self = .songs
@@ -279,5 +239,6 @@ private extension MPMusicShuffleMode {
         }
     }
 }
-
+*/
+ 
 #endif

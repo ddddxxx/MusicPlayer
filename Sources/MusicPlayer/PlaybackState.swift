@@ -48,6 +48,30 @@ public enum PlaybackState: Equatable, Hashable {
             }
         }
     }
+    
+    func withTime(_ time: TimeInterval) -> PlaybackState {
+        switch self {
+        case .stopped:  return .stopped
+        case .playing:  return .playing(time: time)
+        case .paused:   return .paused(time: time)
+        case .fastForwarding:   return .fastForwarding(time: time)
+        case .rewinding:        return .rewinding(time: time)
+        }
+    }
+    
+    func approximateEqual(to state: PlaybackState, tolerate: TimeInterval = 1.5) -> Bool {
+        switch (self, state) {
+        case (.stopped, .stopped):
+            return true
+        case (.playing, .playing),
+             (.paused, .paused),
+             (.fastForwarding, .fastForwarding),
+             (.rewinding, .rewinding):
+            return abs(time - state.time) < tolerate
+        default:
+            return false
+        }
+    }
 }
 
 #if os(macOS)

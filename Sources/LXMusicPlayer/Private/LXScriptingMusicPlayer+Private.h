@@ -6,6 +6,8 @@
 //  Licensed under GPL v3 - https://www.gnu.org/licenses/gpl-3.0.html
 //
 
+#if TARGET_OS_MAC
+
 #import "LXScriptingMusicPlayer.h"
 
 NS_ASSUME_NONNULL_BEGIN
@@ -41,3 +43,5 @@ NS_ASSUME_NONNULL_BEGIN
 @end
 
 NS_ASSUME_NONNULL_END
+
+#endif

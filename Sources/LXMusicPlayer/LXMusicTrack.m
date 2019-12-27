@@ -6,6 +6,8 @@
 //  Licensed under GPL v3 - https://www.gnu.org/licenses/gpl-3.0.html
 //
 
+#if TARGET_OS_MAC
+
 #import "LXMusicTrack+Private.h"
 
 @implementation LXMusicTrack
@@ -189,3 +191,5 @@ GenerateRefValueGetter(fileURL)
 GenerateRefValueGetter(artwork)
 
 @end
+
+#endif

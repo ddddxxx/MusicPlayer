@@ -6,6 +6,8 @@
 //  Licensed under GPL v3 - https://www.gnu.org/licenses/gpl-3.0.html
 //
 
+#if TARGET_OS_MAC
+
 #import "LXScriptingMusicPlayer+Private.h"
 #import "LXMusicTrack+Private.h"
 #import "Audirvana.h"
@@ -136,3 +138,5 @@ static LXPlayerState* playerState(AudirvanaApplication *app) {
 }
 
 @end
+
+#endif
