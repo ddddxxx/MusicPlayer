@@ -10,12 +10,3 @@ import CXShim
 
 public typealias Published = CXShim.Published
 public typealias ObservableObject = CXShim.ObservableObject
-
-#if os(macOS)
-
-import AppKit
-
-let distributedNC = DistributedNotificationCenter.default()
-let workspaceNC = NSWorkspace.shared.notificationCenter
-
-#endif
