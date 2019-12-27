@@ -20,3 +20,20 @@ let package = Package(
         .target(name: "MusicPlayer", dependencies: ["CXShim"]),
     ]
 )
+
+#if os(macOS)
+
+package.targets += [
+    .target(
+        name: "LXMusicPlayer",
+        cSettings: [
+            .headerSearchPath("private"),
+            .headerSearchPath("BridgingHeader"),
+    ]),
+]
+package.targets.first { $0.name == "MusicPlayer" }!.dependencies += ["LXMusicPlayer"]
+package.products += [
+    .library(name: "LXMusicPlayer", targets: ["LXMusicPlayer"]),
+]
+
+#endif

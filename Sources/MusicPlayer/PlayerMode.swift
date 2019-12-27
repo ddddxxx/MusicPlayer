@@ -5,6 +5,8 @@
 //  Copyright (C) 2017  Xander Deng. Licensed under GPLv3.
 //
 
+#if false // TODO: PlaybackModeSettable
+
 public enum RepeatMode: CaseIterable {
     case off
     case one
@@ -35,3 +37,5 @@ public extension PlaybackModeSettable {
         return ShuffleMode.allCases
     }
 }
+
+#endif
