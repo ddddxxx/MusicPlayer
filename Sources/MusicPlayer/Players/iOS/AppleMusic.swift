@@ -22,23 +22,16 @@ public final class AppleMusic: ObservableObject {
         musicPlayer.beginGeneratingPlaybackNotifications()
         
         let nc = NotificationCenter.default
-        nc.addObserver(forName: .MPMusicPlayerControllerPlaybackStateDidChange, object: musicPlayer, queue: nil) { [weak self] _ in
-            self?.updatePlayerState()
-        }
-        nc.addObserver(forName: .MPMusicPlayerControllerNowPlayingItemDidChange, object: musicPlayer, queue: nil) { [weak self] _ in
-            self?.updatePlayerState()
-        }
-        nc.addObserver(forName: UIApplication.didBecomeActiveNotification, object: nil, queue: nil) { [weak self] _ in
-            self?.updatePlayerState()
-        }
-        nc.addObserver(forName: UIApplication.willEnterForegroundNotification, object: nil, queue: nil) { [weak self] _ in
-            self?.updatePlayerState()
-        }
+        nc.addObserver(self, selector: #selector(updatePlayerState), name: .MPMusicPlayerControllerPlaybackStateDidChange, object: musicPlayer)
+        nc.addObserver(self, selector: #selector(updatePlayerState), name: .MPMusicPlayerControllerNowPlayingItemDidChange, object: musicPlayer)
+        nc.addObserver(self, selector: #selector(updatePlayerState), name: UIApplication.didBecomeActiveNotification, object: nil)
+        nc.addObserver(self, selector: #selector(updatePlayerState), name: UIApplication.willEnterForegroundNotification, object: nil)
         
         updatePlayerState()
     }
     
     deinit {
+        NotificationCenter.default.removeObserver(self)
         musicPlayer.endGeneratingPlaybackNotifications()
     }
     
@@ -119,7 +112,7 @@ extension AppleMusic: MusicPlayerProtocol {
         musicPlayer.skipToPreviousItem()
     }
     
-    public func updatePlayerState() {
+    @objc public func updatePlayerState() {
         guard isAuthorized else { return }
         let state = musicPlayer._playbackState
         let track = musicPlayer.nowPlayingItem
