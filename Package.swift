@@ -15,16 +15,22 @@ let package = Package(
         .package(url: "https://github.com/cx-org/CombineX", .upToNextMinor(from: "0.1.0"))
     ],
     targets: [
-        .target(name: "MusicPlayer", dependencies: ["CXShim"]),
+        .target(
+            name: "MusicPlayer",
+            dependencies: ["CXShim"],
+            cSettings: [
+                .define("OS_MACOS", .when(platforms: [.macOS]))
+        ]),
     ]
 )
 
-#if os(macOS)
+#if canImport(Darwin)
 
 package.targets += [
     .target(
         name: "LXMusicPlayer",
         cSettings: [
+            .define("OS_MACOS", .when(platforms: [.macOS])),
             .headerSearchPath("private"),
             .headerSearchPath("BridgingHeader"),
     ]),
