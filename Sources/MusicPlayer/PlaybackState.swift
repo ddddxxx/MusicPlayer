@@ -48,61 +48,28 @@ public enum PlaybackState: Equatable, Hashable {
             }
         }
     }
-}
-
-#if os(macOS)
-
-import LXMusicPlayer
-
-extension PlaybackState: ReferenceConvertible {
     
-    public typealias ReferenceType = LXPlayerState
-    
-    public var debugDescription: String {
-        return description
-    }
-    
-    public var description: String {
+    func withTime(_ time: TimeInterval) -> PlaybackState {
         switch self {
-        case .stopped: return "stopped"
-        case .playing(let start): return "playing start at \(start)"
-        case .paused(let time): return "paused at \(time)"
-        case .fastForwarding(let time): return "fastForwarding at \(time)"
-        case .rewinding(let time): return "rewinding at \(time)"
+        case .stopped:  return .stopped
+        case .playing:  return .playing(time: time)
+        case .paused:   return .paused(time: time)
+        case .fastForwarding:   return .fastForwarding(time: time)
+        case .rewinding:        return .rewinding(time: time)
         }
     }
     
-    public func _bridgeToObjectiveC() -> LXPlayerState {
-        switch self {
-        case .stopped: return .stopped()
-        case .playing(let start): return .playing(withStartTime: start)
-        case .paused(let time): return .init(.paused, playbackTime: time)
-        case .fastForwarding(let time): return .init(.fastForwarding, playbackTime: time)
-        case .rewinding(let time): return .init(.rewinding, playbackTime: time)
-        }
-    }
-    
-    public static func _forceBridgeFromObjectiveC(_ source: LXPlayerState, result: inout PlaybackState?) {
-        result = _unconditionallyBridgeFromObjectiveC(source)
-    }
-    
-    public static func _conditionallyBridgeFromObjectiveC(_ source: LXPlayerState, result: inout PlaybackState?) -> Bool {
-        result = _unconditionallyBridgeFromObjectiveC(source)
-        return true
-    }
-    
-    public static func _unconditionallyBridgeFromObjectiveC(_ source: LXPlayerState?) -> PlaybackState {
-        guard let source = source else { fatalError() }
-        switch source.state() {
-        case .stopped: return .stopped
-        case .playing: return .playing(start: source.startTime()!)
-        case .paused: return .paused(time: source.playbackTime())
-        case .fastForwarding: return .fastForwarding(time: source.playbackTime())
-        case .rewinding: return .rewinding(time: source.playbackTime())
-        @unknown default:
-            fatalError()
+    func approximateEqual(to state: PlaybackState, tolerate: TimeInterval = 1.5) -> Bool {
+        switch (self, state) {
+        case (.stopped, .stopped):
+            return true
+        case (.playing, .playing),
+             (.paused, .paused),
+             (.fastForwarding, .fastForwarding),
+             (.rewinding, .rewinding):
+            return abs(time - state.time) < tolerate
+        default:
+            return false
         }
     }
 }
-
-#endif

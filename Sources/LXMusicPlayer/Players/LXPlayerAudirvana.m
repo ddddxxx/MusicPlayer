@@ -6,6 +6,8 @@
 //  Licensed under GPL v3 - https://www.gnu.org/licenses/gpl-3.0.html
 //
 
+#if TARGET_OS_MAC
+
 #import "LXScriptingMusicPlayer+Private.h"
 #import "LXMusicTrack+Private.h"
 #import "Audirvana.h"
@@ -43,9 +45,7 @@ static LXPlayerState* playerState(AudirvanaApplication *app) {
     return [LXPlayerState state:playbackState(app) playbackTime:app.playerPosition];
 }
 
-@implementation LXPlayerAudirvana {
-    dispatch_source_t _timer;
-}
+@implementation LXPlayerAudirvana
 
 + (LXMusicPlayerName)playerName {
     return LXMusicPlayerNameAudirvana;
@@ -70,7 +70,6 @@ static LXPlayerState* playerState(AudirvanaApplication *app) {
 
 - (void)dealloc {
     [NSDistributedNotificationCenter.defaultCenter removeObserver:self];
-    dispatch_cancel(_timer);
 }
 
 - (void)playerInfoNotification:(NSNotification *)notification {
@@ -139,3 +138,5 @@ static LXPlayerState* playerState(AudirvanaApplication *app) {
 }
 
 @end
+
+#endif

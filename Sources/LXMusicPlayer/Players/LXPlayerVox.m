@@ -6,6 +6,8 @@
 //  Licensed under GPL v3 - https://www.gnu.org/licenses/gpl-3.0.html
 //
 
+#if TARGET_OS_MAC
+
 #import "LXScriptingMusicPlayer+Private.h"
 #import "LXMusicTrack+Private.h"
 #import "Vox.h"
@@ -63,6 +65,22 @@ static LXPlayerState* playerState(VoxApplication *app) {
         }
         [NSDistributedNotificationCenter.defaultCenter addObserver:self selector:@selector(trackChangedNotification:) name:@"com.coppertino.Vox.trackChanged" object:nil];
         
+        [NSDistributedNotificationCenter.defaultCenter addObserver:self selector:@selector(updateTimer) name:NSWorkspaceDidLaunchApplicationNotification object:nil];
+        [NSDistributedNotificationCenter.defaultCenter addObserver:self selector:@selector(updateTimer) name:NSWorkspaceDidTerminateApplicationNotification object:nil];
+        [self updateTimer];
+    }
+    return self;
+}
+
+- (void)dealloc {
+    [NSDistributedNotificationCenter.defaultCenter removeObserver:self];
+    if (_timer) {
+        dispatch_cancel(_timer);
+    }
+}
+
+- (void)updateTimer {
+    if (self.isRunning && !_timer) {
         dispatch_queue_global_t globalQueue = dispatch_get_global_queue(QOS_CLASS_UTILITY, 0);
         _timer = dispatch_source_create(DISPATCH_SOURCE_TYPE_TIMER, 0, 0, globalQueue);
         dispatch_source_set_timer(_timer, DISPATCH_TIME_NOW, 1 * NSEC_PER_SEC, 0.1 * NSEC_PER_SEC);
@@ -73,13 +91,10 @@ static LXPlayerState* playerState(VoxApplication *app) {
             [strongSelf setPlayerState:playerState(strongSelf.app) tolerate:1.5];
         });
         dispatch_resume(_timer);
+    } else if (!self.isRunning && _timer) {
+        dispatch_source_cancel(_timer);
+        _timer = nil;
     }
-    return self;
-}
-
-- (void)dealloc {
-    [NSDistributedNotificationCenter.defaultCenter removeObserver:self];
-    dispatch_cancel(_timer);
 }
 
 - (void)trackChangedNotification:(NSNotification *)notification {
@@ -137,3 +152,5 @@ static LXPlayerState* playerState(VoxApplication *app) {
 }
 
 @end
+
+#endif

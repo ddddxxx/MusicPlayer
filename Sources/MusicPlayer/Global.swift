@@ -11,11 +11,16 @@ import CXShim
 public typealias Published = CXShim.Published
 public typealias ObservableObject = CXShim.ObservableObject
 
-#if os(macOS)
+#if canImport(AppKit)
 
 import AppKit
 
-let distributedNC = DistributedNotificationCenter.default()
-let workspaceNC = NSWorkspace.shared.notificationCenter
+public typealias Image = NSImage
+
+#elseif canImport(UIKit)
+
+import UIKit
+
+public typealias Image = UIImage
 
 #endif
