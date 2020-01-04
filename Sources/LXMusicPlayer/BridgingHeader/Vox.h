@@ -2,7 +2,7 @@
  * Vox.h
  */
 
-#if TARGET_OS_MAC
+#if OS_MACOS
 
 #import <AppKit/AppKit.h>
 #import <ScriptingBridge/ScriptingBridge.h>
