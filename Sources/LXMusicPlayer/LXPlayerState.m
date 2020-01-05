@@ -1,9 +1,8 @@
 //
 //  LXPlayerState.m
-//  This file is part of LyricsX - https://github.com/ddddxxx/LyricsX
 //
-//  Copyright (C) 2017  Xander Deng
-//  Licensed under GPL v3 - https://www.gnu.org/licenses/gpl-3.0.html
+//  This file is part of LyricsX - https://github.com/ddddxxx/LyricsX
+//  Copyright (C) 2019  Xander Deng. Licensed under LGPLv3.
 //
 
 #import "LXPlayerState+Private.h"
