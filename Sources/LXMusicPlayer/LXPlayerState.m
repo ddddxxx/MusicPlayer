@@ -44,10 +44,12 @@
 
 - (LXPlaybackState)state {
     [self doesNotRecognizeSelector:_cmd];
+    return LXPlaybackStateStopped;
 }
 
 - (NSTimeInterval)playbackTime {
     [self doesNotRecognizeSelector:_cmd];
+    return 0;
 }
 
 - (nullable NSDate *)startTime {
@@ -78,6 +80,7 @@
 
 - (BOOL)isApproximateEqualToState:(LXPlayerState *)state tolerate:(NSTimeInterval)tolerate {
     [self doesNotRecognizeSelector:_cmd];
+    return NO;
 }
 
 @end

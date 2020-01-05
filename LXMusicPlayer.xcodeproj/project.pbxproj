@@ -1,0 +1,432 @@
+// !$*UTF8*$!
+{
+	archiveVersion = 1;
+	classes = {
+	};
+	objectVersion = 51;
+	objects = {
+
+/* Begin PBXBuildFile section */
+		0BD8C77403AFBB39821B8AB1 /* LXPlayerAppleMusic.m in Sources */ = {isa = PBXBuildFile; fileRef = 6BE0DB734BD0C333B53E3977 /* LXPlayerAppleMusic.m */; };
+		2752F3FE90B48A31DE50B1CA /* Vox.h in Headers */ = {isa = PBXBuildFile; fileRef = 2D1B802BC4DE1F6EFA3E13A5 /* Vox.h */; };
+		4627D3AAF7F4FC1058C5E337 /* LXMusicTrack+Private.h in Headers */ = {isa = PBXBuildFile; fileRef = 9DEEFD4F6EE6AE3B58CA1DB7 /* LXMusicTrack+Private.h */; };
+		58A42559CE1425B0DCA68804 /* LXPlayerVox.m in Sources */ = {isa = PBXBuildFile; fileRef = 06DD050143337377CE04EC9A /* LXPlayerVox.m */; };
+		69C1621B6A16543C3DC8D19F /* LXPlayerState.m in Sources */ = {isa = PBXBuildFile; fileRef = A7187B52C96E1BA6A81BD735 /* LXPlayerState.m */; };
+		6F55DC0FDE3F7B1B1132A5C9 /* LXPlayerSpotify.m in Sources */ = {isa = PBXBuildFile; fileRef = AFC3E268F34CFAD8C93E8A44 /* LXPlayerSpotify.m */; };
+		7AF9043413B3236880A0ACB1 /* LXMusicTrack.m in Sources */ = {isa = PBXBuildFile; fileRef = A63364652438A4109D5ECE76 /* LXMusicTrack.m */; };
+		7C5F2B0B396AE95252DFFCDA /* LXScriptingMusicPlayer+Private.h in Headers */ = {isa = PBXBuildFile; fileRef = 62D541EA91FAF15E6FF161D6 /* LXScriptingMusicPlayer+Private.h */; };
+		8261C86E3057C19393D81335 /* ScriptingBridge.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 3AE03DAA0FBE796F19A69EDE /* ScriptingBridge.framework */; };
+		8B4605BDF5A71C800EAD82AB /* LXPlayerAudirvana.m in Sources */ = {isa = PBXBuildFile; fileRef = 6E1E31939BD4136B8AFF5654 /* LXPlayerAudirvana.m */; };
+		92BBC10C6ABBBCC0254AA1B2 /* LXPlayerState+Private.h in Headers */ = {isa = PBXBuildFile; fileRef = 0D358CF0F8EE948E2E8E67C8 /* LXPlayerState+Private.h */; };
+		942C9CA8BC85D4CC1EFC14A0 /* Spotify.h in Headers */ = {isa = PBXBuildFile; fileRef = 1289E6B89C09D42CF9E42672 /* Spotify.h */; };
+		998684FE29A48A5785701FED /* Music.h in Headers */ = {isa = PBXBuildFile; fileRef = 6CC9A82DE43909E4CEF740C7 /* Music.h */; };
+		9A67E912CB66CFA73EFA5953 /* Swinsian.h in Headers */ = {isa = PBXBuildFile; fileRef = 26C78C0BAE9A8C5E77A73133 /* Swinsian.h */; };
+		AC8E5550EF41CB8D63CA68C3 /* LXMusicTrack.h in Headers */ = {isa = PBXBuildFile; fileRef = C43EC000CBEB1529CD876139 /* LXMusicTrack.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		AE1B72B9E8BBE161883AA990 /* LXMusicPlayerName.h in Headers */ = {isa = PBXBuildFile; fileRef = 0E225FB6AE503D458840C4C7 /* LXMusicPlayerName.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		AF2B36A7A9C6B18102E405F1 /* Audirvana.h in Headers */ = {isa = PBXBuildFile; fileRef = 40F580F5EF266D91A0352054 /* Audirvana.h */; };
+		B18C7982847D00A24672BE4A /* LXScriptingMusicPlayer.h in Headers */ = {isa = PBXBuildFile; fileRef = 75D4B938DB0DDE13EFDD8694 /* LXScriptingMusicPlayer.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		BAF1F79F8A57FBFD464CFCB1 /* LXMusicPlayerName.m in Sources */ = {isa = PBXBuildFile; fileRef = 08E9D5A189FA8FB9215C0937 /* LXMusicPlayerName.m */; };
+		D16D11E53F23EAAE0854362E /* LXScriptingMusicPlayer.m in Sources */ = {isa = PBXBuildFile; fileRef = 53AF343E6707C511B369D5FC /* LXScriptingMusicPlayer.m */; };
+		D48ECEDEACAD08164E473C6A /* LXPlayerSwinsian.m in Sources */ = {isa = PBXBuildFile; fileRef = 4EF98B82873E15E20F492ED0 /* LXPlayerSwinsian.m */; };
+		FC52A31E45A14A8BA410824A /* LXPlayerState.h in Headers */ = {isa = PBXBuildFile; fileRef = 1F460A3ABE606831AC8C0E87 /* LXPlayerState.h */; settings = {ATTRIBUTES = (Public, ); }; };
+/* End PBXBuildFile section */
+
+/* Begin PBXFileReference section */
+		06DD050143337377CE04EC9A /* LXPlayerVox.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = LXPlayerVox.m; sourceTree = "<group>"; };
+		08E9D5A189FA8FB9215C0937 /* LXMusicPlayerName.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = LXMusicPlayerName.m; sourceTree = "<group>"; };
+		0D358CF0F8EE948E2E8E67C8 /* LXPlayerState+Private.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "LXPlayerState+Private.h"; sourceTree = "<group>"; };
+		0E225FB6AE503D458840C4C7 /* LXMusicPlayerName.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = LXMusicPlayerName.h; sourceTree = "<group>"; };
+		1289E6B89C09D42CF9E42672 /* Spotify.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = Spotify.h; sourceTree = "<group>"; };
+		1F460A3ABE606831AC8C0E87 /* LXPlayerState.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = LXPlayerState.h; sourceTree = "<group>"; };
+		26C78C0BAE9A8C5E77A73133 /* Swinsian.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = Swinsian.h; sourceTree = "<group>"; };
+		2D1B802BC4DE1F6EFA3E13A5 /* Vox.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = Vox.h; sourceTree = "<group>"; };
+		3AE03DAA0FBE796F19A69EDE /* ScriptingBridge.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = ScriptingBridge.framework; path = System/Library/Frameworks/ScriptingBridge.framework; sourceTree = SDKROOT; };
+		40F580F5EF266D91A0352054 /* Audirvana.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = Audirvana.h; sourceTree = "<group>"; };
+		4EF98B82873E15E20F492ED0 /* LXPlayerSwinsian.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = LXPlayerSwinsian.m; sourceTree = "<group>"; };
+		53AF343E6707C511B369D5FC /* LXScriptingMusicPlayer.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = LXScriptingMusicPlayer.m; sourceTree = "<group>"; };
+		5D3163EF25DE545970B67943 /* LXMusicPlayer.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = LXMusicPlayer.framework; sourceTree = BUILT_PRODUCTS_DIR; };
+		62D541EA91FAF15E6FF161D6 /* LXScriptingMusicPlayer+Private.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "LXScriptingMusicPlayer+Private.h"; sourceTree = "<group>"; };
+		6BE0DB734BD0C333B53E3977 /* LXPlayerAppleMusic.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = LXPlayerAppleMusic.m; sourceTree = "<group>"; };
+		6CC9A82DE43909E4CEF740C7 /* Music.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = Music.h; sourceTree = "<group>"; };
+		6E1E31939BD4136B8AFF5654 /* LXPlayerAudirvana.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = LXPlayerAudirvana.m; sourceTree = "<group>"; };
+		75D4B938DB0DDE13EFDD8694 /* LXScriptingMusicPlayer.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = LXScriptingMusicPlayer.h; sourceTree = "<group>"; };
+		9DEEFD4F6EE6AE3B58CA1DB7 /* LXMusicTrack+Private.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "LXMusicTrack+Private.h"; sourceTree = "<group>"; };
+		A63364652438A4109D5ECE76 /* LXMusicTrack.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = LXMusicTrack.m; sourceTree = "<group>"; };
+		A7187B52C96E1BA6A81BD735 /* LXPlayerState.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = LXPlayerState.m; sourceTree = "<group>"; };
+		AFC3E268F34CFAD8C93E8A44 /* LXPlayerSpotify.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = LXPlayerSpotify.m; sourceTree = "<group>"; };
+		C43EC000CBEB1529CD876139 /* LXMusicTrack.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = LXMusicTrack.h; sourceTree = "<group>"; };
+/* End PBXFileReference section */
+
+/* Begin PBXFrameworksBuildPhase section */
+		8F2C25B8CF6B6C34A5003A21 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				8261C86E3057C19393D81335 /* ScriptingBridge.framework in Frameworks */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXFrameworksBuildPhase section */
+
+/* Begin PBXGroup section */
+		4274BB639301AEBB1B8003D6 /* LXMusicPlayer */ = {
+			isa = PBXGroup;
+			children = (
+				08E9D5A189FA8FB9215C0937 /* LXMusicPlayerName.m */,
+				A63364652438A4109D5ECE76 /* LXMusicTrack.m */,
+				A7187B52C96E1BA6A81BD735 /* LXPlayerState.m */,
+				53AF343E6707C511B369D5FC /* LXScriptingMusicPlayer.m */,
+				C7C91760696B53E03BBC4CA5 /* BridgingHeader */,
+				45403625FFCCE7EAB49216BB /* include */,
+				6871D3759FA2174A1B661389 /* Players */,
+				FDC01424D68D27B65A63F852 /* private */,
+			);
+			path = LXMusicPlayer;
+			sourceTree = "<group>";
+		};
+		45403625FFCCE7EAB49216BB /* include */ = {
+			isa = PBXGroup;
+			children = (
+				0E225FB6AE503D458840C4C7 /* LXMusicPlayerName.h */,
+				C43EC000CBEB1529CD876139 /* LXMusicTrack.h */,
+				1F460A3ABE606831AC8C0E87 /* LXPlayerState.h */,
+				75D4B938DB0DDE13EFDD8694 /* LXScriptingMusicPlayer.h */,
+			);
+			path = include;
+			sourceTree = "<group>";
+		};
+		47AAB4467FA41AC819FA17DD = {
+			isa = PBXGroup;
+			children = (
+				D3C0CFB99380EE2568941A82 /* Sources */,
+				997E3BB229915FF09E33E563 /* Frameworks */,
+				71164C5785B85C6A5876A01D /* Products */,
+			);
+			sourceTree = "<group>";
+		};
+		6871D3759FA2174A1B661389 /* Players */ = {
+			isa = PBXGroup;
+			children = (
+				6BE0DB734BD0C333B53E3977 /* LXPlayerAppleMusic.m */,
+				6E1E31939BD4136B8AFF5654 /* LXPlayerAudirvana.m */,
+				AFC3E268F34CFAD8C93E8A44 /* LXPlayerSpotify.m */,
+				4EF98B82873E15E20F492ED0 /* LXPlayerSwinsian.m */,
+				06DD050143337377CE04EC9A /* LXPlayerVox.m */,
+			);
+			path = Players;
+			sourceTree = "<group>";
+		};
+		71164C5785B85C6A5876A01D /* Products */ = {
+			isa = PBXGroup;
+			children = (
+				5D3163EF25DE545970B67943 /* LXMusicPlayer.framework */,
+			);
+			name = Products;
+			sourceTree = "<group>";
+		};
+		997E3BB229915FF09E33E563 /* Frameworks */ = {
+			isa = PBXGroup;
+			children = (
+				3AE03DAA0FBE796F19A69EDE /* ScriptingBridge.framework */,
+			);
+			name = Frameworks;
+			sourceTree = "<group>";
+		};
+		C7C91760696B53E03BBC4CA5 /* BridgingHeader */ = {
+			isa = PBXGroup;
+			children = (
+				40F580F5EF266D91A0352054 /* Audirvana.h */,
+				6CC9A82DE43909E4CEF740C7 /* Music.h */,
+				1289E6B89C09D42CF9E42672 /* Spotify.h */,
+				26C78C0BAE9A8C5E77A73133 /* Swinsian.h */,
+				2D1B802BC4DE1F6EFA3E13A5 /* Vox.h */,
+			);
+			path = BridgingHeader;
+			sourceTree = "<group>";
+		};
+		D3C0CFB99380EE2568941A82 /* Sources */ = {
+			isa = PBXGroup;
+			children = (
+				4274BB639301AEBB1B8003D6 /* LXMusicPlayer */,
+			);
+			path = Sources;
+			sourceTree = "<group>";
+		};
+		FDC01424D68D27B65A63F852 /* private */ = {
+			isa = PBXGroup;
+			children = (
+				9DEEFD4F6EE6AE3B58CA1DB7 /* LXMusicTrack+Private.h */,
+				0D358CF0F8EE948E2E8E67C8 /* LXPlayerState+Private.h */,
+				62D541EA91FAF15E6FF161D6 /* LXScriptingMusicPlayer+Private.h */,
+			);
+			path = private;
+			sourceTree = "<group>";
+		};
+/* End PBXGroup section */
+
+/* Begin PBXHeadersBuildPhase section */
+		956E7CA83181EC54800BA343 /* Headers */ = {
+			isa = PBXHeadersBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				AF2B36A7A9C6B18102E405F1 /* Audirvana.h in Headers */,
+				AE1B72B9E8BBE161883AA990 /* LXMusicPlayerName.h in Headers */,
+				4627D3AAF7F4FC1058C5E337 /* LXMusicTrack+Private.h in Headers */,
+				AC8E5550EF41CB8D63CA68C3 /* LXMusicTrack.h in Headers */,
+				92BBC10C6ABBBCC0254AA1B2 /* LXPlayerState+Private.h in Headers */,
+				FC52A31E45A14A8BA410824A /* LXPlayerState.h in Headers */,
+				7C5F2B0B396AE95252DFFCDA /* LXScriptingMusicPlayer+Private.h in Headers */,
+				B18C7982847D00A24672BE4A /* LXScriptingMusicPlayer.h in Headers */,
+				998684FE29A48A5785701FED /* Music.h in Headers */,
+				942C9CA8BC85D4CC1EFC14A0 /* Spotify.h in Headers */,
+				9A67E912CB66CFA73EFA5953 /* Swinsian.h in Headers */,
+				2752F3FE90B48A31DE50B1CA /* Vox.h in Headers */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXHeadersBuildPhase section */
+
+/* Begin PBXNativeTarget section */
+		83C80110B475315B481B8CEB /* LXMusicPlayer */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 8E950F553FC1E1E964C75D9B /* Build configuration list for PBXNativeTarget "LXMusicPlayer" */;
+			buildPhases = (
+				956E7CA83181EC54800BA343 /* Headers */,
+				3639CC40240E189D2DD31F7F /* Sources */,
+				8F2C25B8CF6B6C34A5003A21 /* Frameworks */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			name = LXMusicPlayer;
+			productName = LXMusicPlayer;
+			productReference = 5D3163EF25DE545970B67943 /* LXMusicPlayer.framework */;
+			productType = "com.apple.product-type.framework";
+		};
+/* End PBXNativeTarget section */
+
+/* Begin PBXProject section */
+		01429C219DF297167798AC37 /* Project object */ = {
+			isa = PBXProject;
+			attributes = {
+				LastUpgradeCheck = 1020;
+			};
+			buildConfigurationList = 13AD051B6642E5D84A038E21 /* Build configuration list for PBXProject "LXMusicPlayer" */;
+			compatibilityVersion = "Xcode 10.0";
+			developmentRegion = en;
+			hasScannedForEncodings = 0;
+			knownRegions = (
+				Base,
+				en,
+			);
+			mainGroup = 47AAB4467FA41AC819FA17DD;
+			projectDirPath = "";
+			projectRoot = "";
+			targets = (
+				83C80110B475315B481B8CEB /* LXMusicPlayer */,
+			);
+		};
+/* End PBXProject section */
+
+/* Begin PBXSourcesBuildPhase section */
+		3639CC40240E189D2DD31F7F /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				BAF1F79F8A57FBFD464CFCB1 /* LXMusicPlayerName.m in Sources */,
+				7AF9043413B3236880A0ACB1 /* LXMusicTrack.m in Sources */,
+				0BD8C77403AFBB39821B8AB1 /* LXPlayerAppleMusic.m in Sources */,
+				8B4605BDF5A71C800EAD82AB /* LXPlayerAudirvana.m in Sources */,
+				6F55DC0FDE3F7B1B1132A5C9 /* LXPlayerSpotify.m in Sources */,
+				69C1621B6A16543C3DC8D19F /* LXPlayerState.m in Sources */,
+				D48ECEDEACAD08164E473C6A /* LXPlayerSwinsian.m in Sources */,
+				58A42559CE1425B0DCA68804 /* LXPlayerVox.m in Sources */,
+				D16D11E53F23EAAE0854362E /* LXScriptingMusicPlayer.m in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXSourcesBuildPhase section */
+
+/* Begin XCBuildConfiguration section */
+		01DC7723F20B5CACDA1CBA92 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CODE_SIGN_IDENTITY = "";
+				COMBINE_HIDPI_IMAGES = YES;
+				CURRENT_PROJECT_VERSION = 1;
+				DEFINES_MODULE = YES;
+				DYLIB_COMPATIBILITY_VERSION = 1;
+				DYLIB_CURRENT_VERSION = 1;
+				DYLIB_INSTALL_NAME_BASE = "@rpath";
+				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Frameworks";
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/../Frameworks",
+				);
+				MACOSX_DEPLOYMENT_TARGET = 10.9;
+				PRODUCT_BUNDLE_IDENTIFIER = ddddxxx.LyricsX.LXMusicPlayer;
+				SDKROOT = macosx;
+				SKIP_INSTALL = YES;
+				VERSIONING_SYSTEM = "apple-generic";
+			};
+			name = Debug;
+		};
+		415C5184042F5FAD877DDE0E /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				CLANG_ANALYZER_NONNULL = YES;
+				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++14";
+				CLANG_CXX_LIBRARY = "libc++";
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_WARN_BLOCK_CAPTURE_AUTORELEASING = YES;
+				CLANG_WARN_BOOL_CONVERSION = YES;
+				CLANG_WARN_COMMA = YES;
+				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_DEPRECATED_OBJC_IMPLEMENTATIONS = YES;
+				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
+				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
+				CLANG_WARN_EMPTY_BODY = YES;
+				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_INFINITE_RECURSION = YES;
+				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN_NON_LITERAL_NULL_CONVERSION = YES;
+				CLANG_WARN_OBJC_IMPLICIT_RETAIN_SELF = YES;
+				CLANG_WARN_OBJC_LITERAL_CONVERSION = YES;
+				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_RANGE_LOOP_ANALYSIS = YES;
+				CLANG_WARN_STRICT_PROTOTYPES = YES;
+				CLANG_WARN_SUSPICIOUS_MOVE = YES;
+				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
+				CLANG_WARN_UNREACHABLE_CODE = YES;
+				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				COPY_PHASE_STRIP = NO;
+				DEBUG_INFORMATION_FORMAT = dwarf;
+				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				ENABLE_TESTABILITY = YES;
+				GCC_C_LANGUAGE_STANDARD = gnu11;
+				GCC_DYNAMIC_NO_PIC = NO;
+				GCC_NO_COMMON_BLOCKS = YES;
+				GCC_OPTIMIZATION_LEVEL = 0;
+				GCC_PREPROCESSOR_DEFINITIONS = (
+					"$(inherited)",
+					"DEBUG=1",
+				);
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+				GCC_WARN_UNDECLARED_SELECTOR = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				GCC_WARN_UNUSED_FUNCTION = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				MTL_ENABLE_DEBUG_INFO = YES;
+				ONLY_ACTIVE_ARCH = YES;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SDKROOT = macosx;
+				SWIFT_ACTIVE_COMPILATION_CONDITIONS = DEBUG;
+				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
+				SWIFT_VERSION = 5.0;
+			};
+			name = Debug;
+		};
+		91A8543067B31D07105E4E95 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CODE_SIGN_IDENTITY = "";
+				COMBINE_HIDPI_IMAGES = YES;
+				CURRENT_PROJECT_VERSION = 1;
+				DEFINES_MODULE = YES;
+				DYLIB_COMPATIBILITY_VERSION = 1;
+				DYLIB_CURRENT_VERSION = 1;
+				DYLIB_INSTALL_NAME_BASE = "@rpath";
+				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Frameworks";
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/../Frameworks",
+				);
+				MACOSX_DEPLOYMENT_TARGET = 10.9;
+				PRODUCT_BUNDLE_IDENTIFIER = ddddxxx.LyricsX.LXMusicPlayer;
+				SDKROOT = macosx;
+				SKIP_INSTALL = YES;
+				VERSIONING_SYSTEM = "apple-generic";
+			};
+			name = Release;
+		};
+		DAF34FEDB09A207BDDF65246 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				CLANG_ANALYZER_NONNULL = YES;
+				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++14";
+				CLANG_CXX_LIBRARY = "libc++";
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_WARN_BLOCK_CAPTURE_AUTORELEASING = YES;
+				CLANG_WARN_BOOL_CONVERSION = YES;
+				CLANG_WARN_COMMA = YES;
+				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_DEPRECATED_OBJC_IMPLEMENTATIONS = YES;
+				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
+				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
+				CLANG_WARN_EMPTY_BODY = YES;
+				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_INFINITE_RECURSION = YES;
+				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN_NON_LITERAL_NULL_CONVERSION = YES;
+				CLANG_WARN_OBJC_IMPLICIT_RETAIN_SELF = YES;
+				CLANG_WARN_OBJC_LITERAL_CONVERSION = YES;
+				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_RANGE_LOOP_ANALYSIS = YES;
+				CLANG_WARN_STRICT_PROTOTYPES = YES;
+				CLANG_WARN_SUSPICIOUS_MOVE = YES;
+				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
+				CLANG_WARN_UNREACHABLE_CODE = YES;
+				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				COPY_PHASE_STRIP = NO;
+				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
+				ENABLE_NS_ASSERTIONS = NO;
+				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				GCC_C_LANGUAGE_STANDARD = gnu11;
+				GCC_NO_COMMON_BLOCKS = YES;
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+				GCC_WARN_UNDECLARED_SELECTOR = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				GCC_WARN_UNUSED_FUNCTION = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SDKROOT = macosx;
+				SWIFT_COMPILATION_MODE = wholemodule;
+				SWIFT_VERSION = 5.0;
+				VALIDATE_PRODUCT = YES;
+			};
+			name = Release;
+		};
+/* End XCBuildConfiguration section */
+
+/* Begin XCConfigurationList section */
+		13AD051B6642E5D84A038E21 /* Build configuration list for PBXProject "LXMusicPlayer" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				415C5184042F5FAD877DDE0E /* Debug */,
+				DAF34FEDB09A207BDDF65246 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Debug;
+		};
+		8E950F553FC1E1E964C75D9B /* Build configuration list for PBXNativeTarget "LXMusicPlayer" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				01DC7723F20B5CACDA1CBA92 /* Debug */,
+				91A8543067B31D07105E4E95 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = "";
+		};
+/* End XCConfigurationList section */
+	};
+	rootObject = 01429C219DF297167798AC37 /* Project object */;
+}

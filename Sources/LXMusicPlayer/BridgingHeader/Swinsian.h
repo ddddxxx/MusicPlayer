@@ -2,7 +2,7 @@
  * Swinsian.h
  */
 
-#if OS_MACOS
+#if OS_MACOS || (TARGET_OS_MAC && !TARGET_OS_IPHONE)
 
 #import <AppKit/AppKit.h>
 #import <ScriptingBridge/ScriptingBridge.h>

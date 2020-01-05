@@ -6,7 +6,7 @@
 //  Licensed under GPL v3 - https://www.gnu.org/licenses/gpl-3.0.html
 //
 
-#if OS_MACOS
+#if OS_MACOS || (TARGET_OS_MAC && !TARGET_OS_IPHONE)
 
 #import "LXScriptingMusicPlayer.h"
 
