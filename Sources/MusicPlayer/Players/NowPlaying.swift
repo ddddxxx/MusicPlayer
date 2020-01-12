@@ -12,10 +12,15 @@ extension MusicPlayers {
     
     public final class NowPlaying: Delegate {
         
+        override public var currentPlayer: MusicPlayerProtocol? {
+            get { return super.currentPlayer }
+            set { preconditionFailure("setting currentPlayer for MusicPlayers.NowPlaying is forbidden") }
+        }
+        
         public let players: [MusicPlayerProtocol]
         
         private var selectNewPlayerCanceller: AnyCancellable?
-
+        
         public init(players: [MusicPlayerProtocol]) {
             self.players = players
             super.init()
@@ -37,7 +42,7 @@ extension MusicPlayers {
                 newPlayer = running
             }
             if newPlayer !== currentPlayer {
-                currentPlayer = newPlayer
+                super.currentPlayer = newPlayer
             }
         }
     }
