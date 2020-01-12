@@ -12,8 +12,8 @@ extension MusicPlayers {
     
     public final class NowPlaying: Delegate {
         
-        override public var currentPlayer: MusicPlayerProtocol? {
-            get { return super.currentPlayer }
+        override public var designatedPlayer: MusicPlayerProtocol? {
+            get { return super.designatedPlayer }
             set { preconditionFailure("setting currentPlayer for MusicPlayers.NowPlaying is forbidden") }
         }
         
@@ -34,15 +34,15 @@ extension MusicPlayers {
         
         private func selectNewPlayer() {
             var newPlayer: MusicPlayerProtocol?
-            if currentPlayer?.playbackState.isPlaying == true {
-                newPlayer = currentPlayer
+            if designatedPlayer?.playbackState.isPlaying == true {
+                newPlayer = designatedPlayer
             } else if let playing = players.first(where: { $0.playbackState.isPlaying }) {
                 newPlayer = playing
             } else if let running = players.first(where: { $0.playbackState != .stopped }) {
                 newPlayer = running
             }
-            if newPlayer !== currentPlayer {
-                super.currentPlayer = newPlayer
+            if newPlayer !== designatedPlayer {
+                super.designatedPlayer = newPlayer
             }
         }
     }
