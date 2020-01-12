@@ -1,5 +1,5 @@
 //
-//  ScriptingBridged.swift
+//  Scriptable.swift
 //
 //  This file is part of LyricsX - https://github.com/ddddxxx/LyricsX
 //  Copyright (C) 2017  Xander Deng. Licensed under GPLv3.
@@ -13,7 +13,7 @@ import CXShim
 
 extension MusicPlayers {
     
-    public final class ScriptingBridged: ObservableObject {
+    public final class Scriptable: ObservableObject {
         
         private var player: LXScriptingMusicPlayer
         private var observations: [NSKeyValueObservation] = []
@@ -44,7 +44,7 @@ extension MusicPlayers {
     }
 }
 
-extension MusicPlayers.ScriptingBridged: MusicPlayerProtocol {
+extension MusicPlayers.Scriptable: MusicPlayerProtocol {
     
     public var currentTrackWillChange: AnyPublisher<MusicTrack?, Never> {
         return $currentTrack.eraseToAnyPublisher()
@@ -86,6 +86,11 @@ extension MusicPlayers.ScriptingBridged: MusicPlayerProtocol {
     public func updatePlayerState() {
         player.updatePlayerState()
     }
+}
+
+extension MusicPlayerName {
+    
+    public static let scriptableCases: [MusicPlayerName] = [.appleMusic, .spotify, .vox, .audirvana, .swinsian]
 }
 
 #endif
