@@ -1,0 +1,24 @@
+name: LXMusicPlayer
+options:
+  bundleIdPrefix: ddddxxx.LyricsX
+  createIntermediateGroups: true
+targets:
+  LXMusicPlayer:
+    type: framework
+    platform: macOS
+    deploymentTarget: "10.9"
+    sources:
+      - path: Sources/LXMusicPlayer
+        excludes:
+          - "BridgingHeader/*"
+          - "private/*"
+      - path: Sources/LXMusicPlayer/BridgingHeader
+        # group: LXMusicPlayer
+        headerVisibility: project
+      - path: Sources/LXMusicPlayer/private
+        # group: LXMusicPlayer
+        headerVisibility: project
+    settings:
+      configs:
+    dependencies:
+      - sdk: ScriptingBridge.framework
