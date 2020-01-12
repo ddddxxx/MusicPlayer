@@ -2,6 +2,8 @@
 
 Music player submodule for [LyricsX](https://github.com/ddddxxx/LyricsX).
 
+Unified API for music players.
+
 ## Supported Player
 
 #### macOS
@@ -20,6 +22,18 @@ Music player submodule for [LyricsX](https://github.com/ddddxxx/LyricsX).
 #### Linux
 
 - [ ] [MPRIS](https://specifications.freedesktop.org/mpris-spec/latest/)
+
+## Usage
+
+### Quick Start
+
+```swift
+let player = MusicPlayers.Scriptable(name: .appleMusic)!
+let track = player.currentTrack.title
+if player.playbackState.isPlaying {
+    player.skipToNextItem()
+}
+```
 
 ## License
 
