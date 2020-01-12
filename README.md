@@ -19,7 +19,7 @@ Music player submodule for [LyricsX](https://github.com/ddddxxx/LyricsX).
 
 #### Linux
 
-[TBD]
+- [ ] [MPRIS](https://specifications.freedesktop.org/mpris-spec/latest/)
 
 ## License
 
