@@ -73,3 +73,20 @@ public enum PlaybackState: Equatable, Hashable {
         }
     }
 }
+
+extension PlaybackState: CustomStringConvertible, CustomDebugStringConvertible {
+    
+    public var description: String {
+        switch self {
+        case .stopped:  return "stopped"
+        case .playing:  return "playing at \(time)"
+        case .paused:   return "paused at \(time)"
+        case .fastForwarding:   return "fast forwarding at \(time)"
+        case .rewinding:        return "rewinding at \(time)"
+        }
+    }
+    
+    public var debugDescription: String {
+        return description
+    }
+}
