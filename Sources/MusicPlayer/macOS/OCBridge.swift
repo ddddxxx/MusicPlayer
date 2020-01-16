@@ -16,14 +16,6 @@ extension MusicTrack: ReferenceConvertible {
     
     public typealias ReferenceType = LXMusicTrack
     
-    public var debugDescription: String {
-        return description
-    }
-    
-    public var description: String {
-        return "MusicTrack name: \(title ?? "-")"
-    }
-    
     public func _bridgeToObjectiveC() -> LXMusicTrack {
         let t = LXMusicTrack(persistentID: id)
         t.title = title
@@ -62,20 +54,6 @@ extension MusicTrack: ReferenceConvertible {
 extension PlaybackState: ReferenceConvertible {
     
     public typealias ReferenceType = LXPlayerState
-    
-    public var debugDescription: String {
-        return description
-    }
-    
-    public var description: String {
-        switch self {
-        case .stopped: return "stopped"
-        case .playing(let start): return "playing start at \(start)"
-        case .paused(let time): return "paused at \(time)"
-        case .fastForwarding(let time): return "fastForwarding at \(time)"
-        case .rewinding(let time): return "rewinding at \(time)"
-        }
-    }
     
     public func _bridgeToObjectiveC() -> LXPlayerState {
         switch self {

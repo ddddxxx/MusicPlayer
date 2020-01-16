@@ -34,8 +34,13 @@ package.targets += [
             .headerSearchPath("private"),
             .headerSearchPath("BridgingHeader"),
     ]),
+    .target(
+        name: "MediaRemotePrivate",
+        cSettings: [
+            .define("OS_MACOS", .when(platforms: [.macOS])),
+    ]),
 ]
-package.targets.first { $0.name == "MusicPlayer" }!.dependencies += ["LXMusicPlayer"]
+package.targets.first { $0.name == "MusicPlayer" }!.dependencies += ["LXMusicPlayer", "MediaRemotePrivate"]
 package.products += [
     .library(name: "LXMusicPlayer", targets: ["LXMusicPlayer"]),
 ]

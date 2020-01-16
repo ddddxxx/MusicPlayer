@@ -36,3 +36,14 @@ extension MusicTrack: Equatable, Hashable {
         hasher.combine(id)
     }
 }
+
+extension MusicTrack: CustomStringConvertible, CustomDebugStringConvertible {
+    
+    public var description: String {
+        return "MusicTrack id: \(id), name: \(title ?? "-")"
+    }
+    
+    public var debugDescription: String {
+        return description
+    }
+}
