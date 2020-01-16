@@ -8,6 +8,7 @@ Unified API for music players.
 
 #### macOS
 
+- [x] System-wide Now Playing
 - [x] Apple Music (iTunes)
 - [x] Spotify
 - [x] Vox
