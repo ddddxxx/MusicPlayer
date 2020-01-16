@@ -10,7 +10,6 @@ let package = Package(
     ],
     products: [
         .library(name: "MusicPlayer", targets: ["MusicPlayer"]),
-        .executable(name: "MusicPlayerTest", targets: ["Test"])
     ],
     dependencies: [
         .package(url: "https://github.com/cx-org/CombineX", .upToNextMinor(from: "0.1.0"))

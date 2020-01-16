@@ -19,7 +19,6 @@ extension MusicPlayers {
         @Published public private(set) var currentTrack: MusicTrack?
         @Published public private(set) var playbackState: PlaybackState = .stopped
         
-        private var applicationDisplayName: String?
         private var systemPlaybackState: SystemPlaybackState?
         
         public init?() {
@@ -76,7 +75,6 @@ extension MusicPlayers {
             guard let info = n.userInfo as! [String: Any]? else {
                 playbackState = .stopped
                 currentTrack = nil
-                applicationDisplayName = nil
                 return
             }
             
