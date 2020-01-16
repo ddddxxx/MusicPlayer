@@ -10,6 +10,7 @@ let package = Package(
     ],
     products: [
         .library(name: "MusicPlayer", targets: ["MusicPlayer"]),
+        .executable(name: "MusicPlayerTest", targets: ["Test"])
     ],
     dependencies: [
         .package(url: "https://github.com/cx-org/CombineX", .upToNextMinor(from: "0.1.0"))
@@ -34,8 +35,13 @@ package.targets += [
             .headerSearchPath("private"),
             .headerSearchPath("BridgingHeader"),
     ]),
+    .target(
+        name: "MediaRemotePrivate",
+        cSettings: [
+            .define("OS_MACOS", .when(platforms: [.macOS])),
+    ]),
 ]
-package.targets.first { $0.name == "MusicPlayer" }!.dependencies += ["LXMusicPlayer"]
+package.targets.first { $0.name == "MusicPlayer" }!.dependencies += ["LXMusicPlayer", "MediaRemotePrivate"]
 package.products += [
     .library(name: "LXMusicPlayer", targets: ["LXMusicPlayer"]),
 ]
