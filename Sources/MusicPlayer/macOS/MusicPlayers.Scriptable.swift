@@ -33,11 +33,11 @@ extension MusicPlayers {
             self.currentTrack = player.currentTrack as MusicTrack?
             self.playbackState = player.playerState as PlaybackState
             observations += [
-                player.observe(\.currentTrack, options: [.new]) { [unowned self] (_, change) in
-                    self.currentTrack = change.newValue! as MusicTrack?
+                player.observe(\.currentTrack) { [weak self] (observed, _) in
+                    self?.currentTrack = observed.currentTrack as MusicTrack?
                 },
-                player.observe(\.playerState, options: [.new]) { [unowned self] (_, change) in
-                    self.playbackState = change.newValue! as PlaybackState
+                player.observe(\.playerState) { [weak self] (observed, _) in
+                    self?.playbackState = observed.playerState as PlaybackState
                 }
             ]
         }
