@@ -12,7 +12,7 @@ let package = Package(
         .library(name: "MusicPlayer", targets: ["MusicPlayer"]),
     ],
     dependencies: [
-        .package(url: "https://github.com/cx-org/CombineX", .upToNextMinor(from: "0.1.0"))
+        .package(url: "https://github.com/cx-org/CombineX", .upToNextMinor(from: "0.2.0"))
     ],
     targets: [
         .target(
@@ -72,13 +72,15 @@ enum CombineImplementation {
     }
 }
 
+extension ProcessInfo {
+
+    var combineImplementation: CombineImplementation {
+        return environment["CX_COMBINE_IMPLEMENTATION"].flatMap(CombineImplementation.init) ?? .default
+    }
+}
+
 import Foundation
 
-let env = ProcessInfo.processInfo.environment
-let impkey = "CX_COMBINE_IMPLEMENTATION"
-
-var combineImp = env[impkey].flatMap(CombineImplementation.init) ?? .default
-
-if combineImp == .combine {
+if ProcessInfo.processInfo.combineImplementation == .combine {
     package.platforms = [.macOS("10.15"), .iOS("13.0"), .tvOS("13.0"), .watchOS("6.0")]
 }
