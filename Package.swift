@@ -12,7 +12,7 @@ let package = Package(
         .library(name: "MusicPlayer", targets: ["MusicPlayer"]),
     ],
     dependencies: [
-        .package(url: "https://github.com/cx-org/CombineX", .upToNextMinor(from: "0.1.0"))
+        .package(url: "https://github.com/cx-org/CombineX", .upToNextMinor(from: "0.2.0"))
     ],
     targets: [
         .target(
@@ -46,3 +46,41 @@ package.products += [
 ]
 
 #endif
+
+enum CombineImplementation {
+    
+    case combine
+    case combineX
+    case openCombine
+    
+    static var `default`: CombineImplementation {
+        #if canImport(Combine)
+        return .combine
+        #else
+        return .combineX
+        #endif
+    }
+    
+    init?(_ description: String) {
+        let desc = description.lowercased().filter { $0.isLetter }
+        switch desc {
+        case "combine":     self = .combine
+        case "combinex":    self = .combineX
+        case "opencombine": self = .openCombine
+        default:            return nil
+        }
+    }
+}
+
+extension ProcessInfo {
+
+    var combineImplementation: CombineImplementation {
+        return environment["CX_COMBINE_IMPLEMENTATION"].flatMap(CombineImplementation.init) ?? .default
+    }
+}
+
+import Foundation
+
+if ProcessInfo.processInfo.combineImplementation == .combine {
+    package.platforms = [.macOS("10.15"), .iOS("13.0"), .tvOS("13.0"), .watchOS("6.0")]
+}

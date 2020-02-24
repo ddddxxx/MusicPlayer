@@ -1,5 +1,8 @@
 # MusicPlayer
 
+[![release](https://img.shields.io/github/v/tag/ddddxxx/MusicPlayer?sort=semver)](https://github.com/ddddxxx/MusicPlayer/releases)
+[![codebeat badge](https://codebeat.co/badges/1e88cb27-5d83-48d0-b50b-ad88593e2b5f)](https://codebeat.co/projects/github-com-ddddxxx-musicplayer-master)
+
 Music player submodule for [LyricsX](https://github.com/ddddxxx/LyricsX).
 
 Unified API for music players.
