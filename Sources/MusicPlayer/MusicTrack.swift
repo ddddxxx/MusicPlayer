@@ -21,8 +21,18 @@ public struct MusicTrack {
     public var fileURL: URL?
     public var artwork: Image?
     
+    public init(id: String, title: String?, album: String?, artist: String?, duration: TimeInterval, fileURL: URL? = nil, artwork: Image? = nil) {
+        self.id = id
+        self.title = title
+        self.album = album
+        self.artist = artist
+        self.duration = duration
+        self.fileURL = fileURL
+        self.artwork = artwork
+    }
+    
     #if os(macOS)
-    public var originalTrack: SBObject?
+    public var originalTrack: SBObject? = nil
     #endif
 }
 

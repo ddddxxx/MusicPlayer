@@ -59,7 +59,7 @@ public enum PlaybackState: Equatable, Hashable {
         }
     }
     
-    func approximateEqual(to state: PlaybackState, tolerate: TimeInterval = 1.5) -> Bool {
+    public func approximateEqual(to state: PlaybackState, tolerate: TimeInterval = 1.5) -> Bool {
         switch (self, state) {
         case (.stopped, .stopped):
             return true
