@@ -20,8 +20,9 @@ public struct MusicTrack {
     public var duration: TimeInterval?
     public var fileURL: URL?
     public var artwork: Image?
+    public var originalTrack: AnyObject? = nil
     
-    public init(id: String, title: String?, album: String?, artist: String?, duration: TimeInterval, fileURL: URL? = nil, artwork: Image? = nil) {
+    public init(id: String, title: String?, album: String?, artist: String?, duration: TimeInterval? = nil, fileURL: URL? = nil, artwork: Image? = nil, originalTrack: AnyObject? = nil) {
         self.id = id
         self.title = title
         self.album = album
@@ -29,10 +30,13 @@ public struct MusicTrack {
         self.duration = duration
         self.fileURL = fileURL
         self.artwork = artwork
+        self.originalTrack = originalTrack
     }
     
     #if os(macOS)
-    public var originalTrack: SBObject? = nil
+    public var originalSBTrack: SBObject? {
+        return originalTrack as? SBObject
+    }
     #endif
 }
 
