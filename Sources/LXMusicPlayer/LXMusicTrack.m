@@ -29,51 +29,6 @@
     return self;
 }
 
-- (instancetype)initWithMusicTrack:(MusicTrack *)track {
-    if ((track = [track get]) == nil) {
-        return nil;
-    }
-    self = [self initWithPersistentID:track.persistentID ?: [NSUUID UUID].UUIDString];
-    _title = track.name;
-    _album = track.album;
-    _artist = track.artist;
-    _duration = @(track.duration);
-    _artwork = track.artworks.firstObject.data;
-    if ([track respondsToSelector:@selector(location)]) {
-        _fileURL = [track performSelector:@selector(location)];
-    }
-    _originalTrack = track;
-}
-
-- (instancetype)initWithSpotifyTrack:(SpotifyTrack *)track {
-    if ((track = [track get]) == nil) {
-        return nil;
-    }
-    self = [self initWithPersistentID:track.id ?: [NSUUID UUID].UUIDString];
-    _title = track.name;
-    _album = track.album;
-    _artist = track.artist;
-    _duration = @(track.duration);
-    _artwork = track.artwork;
-    _originalTrack = track;
-}
-
-- (instancetype)initWithSwinsianTrack:(SwinsianTrack *)track {
-    if ((track = [track get]) == nil) {
-        return nil;
-    }
-    self = [self initWithPersistentID:track.id ?: [NSUUID UUID].UUIDString];
-    _title = track.name;
-    _album = track.album;
-    _artist = track.artist;
-    _duration = @(track.duration);
-    _artwork = track.albumArt;
-    if (track.path) {
-        _fileURL = [NSURL fileURLWithPath:track.path];
-    }
-    _originalTrack = track;
-}
-
 @end
 
 @implementation LXAppleMusicTrack
@@ -89,9 +44,18 @@
 @end
 
 @implementation LXSpotifyTrack
+
++ (NSString *)persistentIDKey {
+    return @"id";
+}
+
 @end
 
 @implementation LXSwinsianTrack
+
++ (NSString *)persistentIDKey {
+    return @"id";
+}
 
 + (NSString *)artworkKey {
     return @"albumArt";
@@ -140,6 +104,9 @@
     return nil;
 }
 
++ (NSString *)persistentIDForTrack:(SBObject *)sbTrack {
+    return nil;
+}
 
 - (instancetype)initWithSBTrack:(SBObject *)track {
     if ((track = [track get]) == nil) {
@@ -149,11 +116,11 @@
     NSString *key = self.class.persistentIDKey;
     if (key && [track respondsToSelector:NSSelectorFromString(key)]) {
         persistentID = [track valueForKey:key];
-    } else if ([track respondsToSelector:@selector(persistentIDGetter)]) {
-        persistentID = [track valueForKey:@"persistentIDGetter"];
+    } else {
+        persistentID = [self.class persistentIDForTrack:track];
     }
     if (persistentID == nil) {
-        persistentID = NSUUID.UUID.UUIDString;
+        return nil;
     }
     self = [super initWithPersistentID:persistentID];
     self.originalTrack = track;

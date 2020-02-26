@@ -14,14 +14,6 @@
 
 NS_ASSUME_NONNULL_BEGIN
 
-//@interface LXMusicTrack()
-//
-//- (nullable instancetype)initWithMusicTrack:(MusicTrack *)track;
-//- (nullable instancetype)initWithSpotifyTrack:(SpotifyTrack *)track;
-//- (nullable instancetype)initWithSwinsianTrack:(SwinsianTrack *)track;
-//
-//@end
-
 @interface LXScriptingTrack : LXMusicTrack
 
 + (nullable NSString *)persistentIDKey;
@@ -31,6 +23,8 @@ NS_ASSUME_NONNULL_BEGIN
 + (nullable NSString *)durationKey;
 + (nullable NSString *)fileURLKey;
 + (nullable NSString *)artworkKey;
+
++ (nullable NSString *)persistentIDForTrack:(SBObject *)sbTrack;
 
 - (instancetype)initWithPersistentID:(NSString *)persistentID NS_UNAVAILABLE;
 - (nullable instancetype)initWithSBTrack:(SBObject *)track NS_DESIGNATED_INITIALIZER;
