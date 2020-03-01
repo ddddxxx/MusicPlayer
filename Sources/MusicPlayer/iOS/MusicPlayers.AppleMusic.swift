@@ -11,54 +11,57 @@ import UIKit
 import MediaPlayer
 import CXShim
 
-public final class AppleMusic: ObservableObject {
-    
-    private let musicPlayer = MPMusicPlayerController.systemMusicPlayer
-    
-    @Published public private(set) var currentTrack: MusicTrack?
-    @Published public private(set) var playbackState: PlaybackState = .stopped
-    
-    public init() {
-        musicPlayer.beginGeneratingPlaybackNotifications()
+extension MusicPlayers {
+
+    public final class AppleMusic: ObservableObject {
         
-        let nc = NotificationCenter.default
-        nc.addObserver(self, selector: #selector(updatePlayerState), name: .MPMusicPlayerControllerPlaybackStateDidChange, object: musicPlayer)
-        nc.addObserver(self, selector: #selector(updatePlayerState), name: .MPMusicPlayerControllerNowPlayingItemDidChange, object: musicPlayer)
-        nc.addObserver(self, selector: #selector(updatePlayerState), name: UIApplication.didBecomeActiveNotification, object: nil)
-        nc.addObserver(self, selector: #selector(updatePlayerState), name: UIApplication.willEnterForegroundNotification, object: nil)
+        private let musicPlayer = MPMusicPlayerController.systemMusicPlayer
         
-        updatePlayerState()
-    }
-    
-    deinit {
-        NotificationCenter.default.removeObserver(self)
-        musicPlayer.endGeneratingPlaybackNotifications()
-    }
-    
-    public var isAuthorized: Bool {
-        return MPMediaLibrary.authorizationStatus() == .authorized
-    }
-    
-    public func requestAuthorizationIfNeeded() {
-        switch MPMediaLibrary.authorizationStatus() {
-        case .notDetermined:
-            MPMediaLibrary.requestAuthorization() { [weak self] _ in
-                self?.objectWillChange.send()
-                self?.updatePlayerState()
+        @Published public private(set) var currentTrack: MusicTrack?
+        @Published public private(set) var playbackState: PlaybackState = .stopped
+        
+        public init() {
+            musicPlayer.beginGeneratingPlaybackNotifications()
+            
+            let nc = NotificationCenter.default
+            nc.addObserver(self, selector: #selector(updatePlayerState), name: .MPMusicPlayerControllerPlaybackStateDidChange, object: musicPlayer)
+            nc.addObserver(self, selector: #selector(updatePlayerState), name: .MPMusicPlayerControllerNowPlayingItemDidChange, object: musicPlayer)
+            nc.addObserver(self, selector: #selector(updatePlayerState), name: UIApplication.didBecomeActiveNotification, object: nil)
+            nc.addObserver(self, selector: #selector(updatePlayerState), name: UIApplication.willEnterForegroundNotification, object: nil)
+            
+            updatePlayerState()
+        }
+        
+        deinit {
+            NotificationCenter.default.removeObserver(self)
+            musicPlayer.endGeneratingPlaybackNotifications()
+        }
+        
+        public var isAuthorized: Bool {
+            return MPMediaLibrary.authorizationStatus() == .authorized
+        }
+        
+        public func requestAuthorizationIfNeeded() {
+            switch MPMediaLibrary.authorizationStatus() {
+            case .notDetermined:
+                MPMediaLibrary.requestAuthorization() { [weak self] _ in
+                    self?.objectWillChange.send()
+                    self?.updatePlayerState()
+                }
+            case .denied, .restricted:
+                if let settingsURL = URL(string: UIApplication.openSettingsURLString) {
+                    UIApplication.shared.open(settingsURL)
+                }
+            case .authorized:
+                break
+            @unknown default:
+                break
             }
-        case .denied, .restricted:
-            if let settingsURL = URL(string: UIApplication.openSettingsURLString) {
-                UIApplication.shared.open(settingsURL)
-            }
-        case .authorized:
-            break
-        @unknown default:
-            break
         }
     }
 }
 
-extension AppleMusic: MusicPlayerProtocol {
+extension MusicPlayers.AppleMusic: MusicPlayerProtocol {
     
     public var name: MusicPlayerName? {
         return .appleMusic
@@ -126,7 +129,7 @@ extension AppleMusic: MusicPlayerProtocol {
 }
 
 /*
-extension AppleMusic: PlaybackModeSettable {
+extension MusicPlayers.AppleMusic: PlaybackModeSettable {
     
     public var repeatMode: MusicRepeatMode {
         get {

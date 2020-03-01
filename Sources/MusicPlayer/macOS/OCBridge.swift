@@ -2,7 +2,7 @@
 //  OCBridge.swift
 //
 //  This file is part of LyricsX - https://github.com/ddddxxx/LyricsX
-//  Copyright (C) 2017  Xander Deng. Licensed under GPLv3.
+//  Copyright (C) 2019  Xander Deng. Licensed under GPLv3.
 //
 
 #if os(macOS)
