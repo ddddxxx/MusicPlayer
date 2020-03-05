@@ -23,9 +23,9 @@
     } else if ([name isEqualToString:LXMusicPlayerNameVox]) {
         return [[LXPlayerVox alloc] init];
     } else if ([name isEqualToString:LXMusicPlayerNameAudirvana]) {
-        return nil;
+        return [[LXPlayerAudirvana alloc] init];
     } else if ([name isEqualToString:LXMusicPlayerNameSwinsian]) {
-        return nil;
+        return [[LXPlayerSwinsian alloc] init];
     } else {
         return nil;
     }
