@@ -69,9 +69,7 @@ struct MRNowPlayingInfo {
     }
     
     var startTime: Date? {
-        if let _startTime = _startTime {
-            return _startTime
-        } else if let _elapsedTime = _elapsedTime {
+        if let _elapsedTime = _elapsedTime {
             if let _timestamp = _timestamp {
                 return _timestamp.addingTimeInterval(-_elapsedTime)
             } else {
