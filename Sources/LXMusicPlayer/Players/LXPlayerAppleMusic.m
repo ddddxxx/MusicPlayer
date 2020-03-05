@@ -61,12 +61,27 @@ static LXPlayerState* playerState(MusicApplication *app) {
 }
 
 - (void)playerInfoNotification:(NSNotification *)notification {
-    if (!self.isRunning) { return; }
-    NSString *persistentID = [NSString stringWithFormat:@"%08lX", (unsigned long)[notification.userInfo[@"PersistentID"] unsignedIntegerValue]];
-    if (![[self.currentTrack.persistentID substringFromIndex:8] isEqualToString:persistentID]) {
-        self.currentTrack = currentTrack(self.app);
+    if (!self.isRunning) {
+        self.currentTrack = nil;
+        [self setPlayerState:LXPlayerState.stopped tolerate:1.5];
+        return;
     }
-    LXPlayerState *state = [notification.userInfo[@"Player State"] isEqualToString:@"Stopped"] ? LXPlayerState.stopped : playerState(self.app);
+    NSString *persistentID = [NSString stringWithFormat:@"%08lX", (unsigned long)[notification.userInfo[@"PersistentID"] unsignedIntegerValue]];
+    if (![self.currentTrack.persistentID isEqualToString:persistentID] &&
+        ![[self.currentTrack.persistentID substringFromIndex:8] isEqualToString:persistentID]) {
+        self.currentTrack = currentTrack(self.app);
+        self.playerState = playerState(self.app);
+        return;
+    }
+    NSString *stateDesc = notification.userInfo[@"Player State"];
+    LXPlayerState *state;
+    if ([stateDesc isEqualToString:@"Stopped"]) {
+        state = LXPlayerState.stopped;
+    } else if ([stateDesc isEqualToString:@"Paused"]) {
+        state = [LXPlayerState state:LXPlaybackStatePaused playbackTime:self.playerState.playbackTime];
+    } else {
+        state = playerState(self.app);
+    }
     [self setPlayerState:state tolerate:1.5];
 }
 
