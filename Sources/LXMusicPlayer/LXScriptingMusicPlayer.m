@@ -43,8 +43,8 @@
             _originalPlayer = app;
             _playerBundleID = bundleID;
             _running = app.isRunning;
-            [NSNotificationCenter.defaultCenter addObserver:self selector:@selector(didTerminateApplication) name:NSWorkspaceDidTerminateApplicationNotification object:nil];
-            [NSNotificationCenter.defaultCenter addObserver:self selector:@selector(didLaunchApplication) name:NSWorkspaceDidLaunchApplicationNotification object:nil];
+            [NSWorkspace.sharedWorkspace.notificationCenter addObserver:self selector:@selector(didTerminateApplication:) name:NSWorkspaceDidTerminateApplicationNotification object:nil];
+            [NSWorkspace.sharedWorkspace.notificationCenter addObserver:self selector:@selector(didLaunchApplication:) name:NSWorkspaceDidLaunchApplicationNotification object:nil];
             return self;
         }
     }
