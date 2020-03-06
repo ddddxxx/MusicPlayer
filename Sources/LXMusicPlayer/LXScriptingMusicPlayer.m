@@ -7,6 +7,7 @@
 
 #if OS_MACOS || (TARGET_OS_MAC && !TARGET_OS_IPHONE)
 
+#import <AppKit/AppKit.h>
 #import "LXScriptingMusicPlayer+Private.h"
 
 @implementation LXScriptingMusicPlayer
@@ -41,18 +42,37 @@
         if (app) {
             _originalPlayer = app;
             _playerBundleID = bundleID;
+            _running = app.isRunning;
+            [NSNotificationCenter.defaultCenter addObserver:self selector:@selector(didTerminateApplication) name:NSWorkspaceDidTerminateApplicationNotification object:nil];
+            [NSNotificationCenter.defaultCenter addObserver:self selector:@selector(didLaunchApplication) name:NSWorkspaceDidLaunchApplicationNotification object:nil];
             return self;
         }
     }
     return nil;
 }
 
-- (LXMusicPlayerName)playerName {
-    return self.class.playerName;
+- (void)dealloc {
+    [NSNotificationCenter.defaultCenter removeObserver:self];
 }
 
-- (BOOL)isRunning {
-    return self.originalPlayer.isRunning;
+- (void)didTerminateApplication:(NSNotification *)notification {
+    NSRunningApplication *app = notification.userInfo[NSWorkspaceApplicationKey];
+    if ([app.bundleIdentifier isEqualToString:self.playerBundleID]) {
+        self.running = false;
+        self.playerState = LXPlayerState.stopped;
+        self.currentTrack = nil;
+    }
+}
+
+- (void)didLaunchApplication:(NSNotification *)notification {
+    NSRunningApplication *app = notification.userInfo[NSWorkspaceApplicationKey];
+    if ([app.bundleIdentifier isEqualToString:self.playerBundleID]) {
+        self.running = true;
+    }
+}
+
+- (LXMusicPlayerName)playerName {
+    return self.class.playerName;
 }
 
 - (NSTimeInterval)playbackTime {

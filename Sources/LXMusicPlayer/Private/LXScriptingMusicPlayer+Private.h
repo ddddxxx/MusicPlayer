@@ -17,6 +17,7 @@ NS_ASSUME_NONNULL_BEGIN
 
 @property (nonatomic, readwrite, nullable) LXMusicTrack *currentTrack;
 @property (nonatomic, readwrite) LXPlayerState *playerState;
+@property (nonatomic, readwrite, getter=isRunning) BOOL running;
 
 @property (nonatomic) NSTimer *nextTrackUpdatingTimer;
 
