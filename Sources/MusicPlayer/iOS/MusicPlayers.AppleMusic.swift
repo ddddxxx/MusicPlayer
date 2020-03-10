@@ -156,7 +156,7 @@ extension MusicPlayers.AppleMusic: PlaybackModeSettable {
 private extension MPMediaItem {
     
     var idString: String {
-        return String(format: "%X", [persistentID])
+        return String(format: "%X", persistentID)
     }
     
     var musicTrack: MusicTrack? {
