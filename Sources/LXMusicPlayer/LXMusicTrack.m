@@ -109,9 +109,10 @@
 }
 
 - (instancetype)initWithSBTrack:(SBObject *)track {
-    if ((track = [track get]) == nil) {
-        return nil;
-    }
+    // The "real object" of Apple Music stream does not return anything 🤔
+//    if ((track = [track get]) == nil) {
+//        return nil;
+//    }
     NSString *persistentID;
     NSString *key = self.class.persistentIDKey;
     if (key && [track respondsToSelector:NSSelectorFromString(key)]) {
