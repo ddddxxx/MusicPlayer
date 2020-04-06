@@ -24,9 +24,11 @@ static LXMusicTrack* currentTrack(AudirvanaApplication *app) {
     track.album = album;
     track.artist = app.playingTrackArtist;
     track.duration = @(duration);
-    NSData *artworkData = app.playingTrackAirfoillogo;
-    if (artworkData) {
+    id artworkData = app.playingTrackAirfoillogo;
+    if ([artworkData isKindOfClass:[NSData class]]) {
         track.artwork = [[NSImage alloc] initWithData:artworkData];
+    } else if ([artworkData isKindOfClass:[NSImage class]]) {
+        track.artwork = artworkData;
     }
     return track;
 }
