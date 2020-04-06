@@ -64,7 +64,7 @@ static LXPlayerState* playerState(AudirvanaApplication *app) {
             [self.app setEventTypesReported:AudirvanaPlayerStatusEventTypesReportedTrackChanged];
         }
         [NSDistributedNotificationCenter.defaultCenter addObserver:self selector:@selector(playerInfoNotification:) name:@"com.audirvana.audirvana-plus.playerStatus" object:nil];
-        [NSWorkspace.sharedWorkspace.notificationCenter addObserver:self selector:@selector(appDidLaunchNotification) name:NSWorkspaceDidLaunchApplicationNotification object:nil];
+        [NSWorkspace.sharedWorkspace.notificationCenter addObserver:self selector:@selector(appDidLaunchNotification:) name:NSWorkspaceDidLaunchApplicationNotification object:nil];
     }
     return self;
 }
