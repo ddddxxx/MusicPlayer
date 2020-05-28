@@ -63,7 +63,8 @@ static LXPlayerState* playerState(MusicApplication *app) {
 - (void)playerInfoNotification:(NSNotification *)notification {
     if (!self.isRunning) { return; }
     NSString *persistentID = [NSString stringWithFormat:@"%08lX", (unsigned long)[notification.userInfo[@"PersistentID"] unsignedIntegerValue]];
-    if (![self.currentTrack.persistentID isEqualToString:persistentID] &&
+    if (notification.userInfo[@"PersistentID"] &&
+        ![self.currentTrack.persistentID isEqualToString:persistentID] &&
         ![[self.currentTrack.persistentID substringFromIndex:8] isEqualToString:persistentID]) {
         self.currentTrack = currentTrack(self.app);
         self.playerState = playerState(self.app);
