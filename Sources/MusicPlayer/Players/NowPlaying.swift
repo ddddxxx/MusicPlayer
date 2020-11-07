@@ -12,7 +12,7 @@ import CXShim
 
 extension MusicPlayers {
     
-    public final class NowPlaying: Delegate {
+    public final class NowPlaying: Agent {
         
         override public var designatedPlayer: MusicPlayerProtocol? {
             get { return super.designatedPlayer }

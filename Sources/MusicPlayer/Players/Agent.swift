@@ -1,5 +1,5 @@
 //
-//  Delegate.swift
+//  Agent.swift
 //  LyricsX - https://github.com/ddddxxx/LyricsX
 //
 //  This Source Code Form is subject to the terms of the Mozilla Public
@@ -13,7 +13,7 @@ import CXShim
 extension MusicPlayers {
     
     /// Delegate events to another player
-    open class Delegate: ObservableObject {
+    open class Agent: ObservableObject {
         
         @Published public var designatedPlayer: MusicPlayerProtocol?
         
@@ -30,7 +30,7 @@ extension MusicPlayers {
     }
 }
 
-extension MusicPlayers.Delegate: MusicPlayerProtocol {
+extension MusicPlayers.Agent: MusicPlayerProtocol {
     
     public var name: MusicPlayerName? {
         return designatedPlayer?.name
