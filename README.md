@@ -41,6 +41,4 @@ if player.playbackState.isPlaying {
 
 ## License
 
-MusicPlayer is part of LyricsX and licensed under GPLv3. See the [LICENSE file](https://github.com/ddddxxx/LyricsX/blob/master/LICENSE) of LyricsX.
-
-Additionally, LXMusicPlayer is available under LGPLv3. See the [LICENSE file](Sources/LXMusicPlayer/LICENSE).
+MusicPlayer is part of LyricsX and licensed under MPL 2.0. See the [LICENSE file](LICENSE).
