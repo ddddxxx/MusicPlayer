@@ -1,5 +1,5 @@
 //
-//  MusicPlayers.NowPlaying.swift
+//  NowPlaying.swift
 //  LyricsX - https://github.com/ddddxxx/LyricsX
 //
 //  This Source Code Form is subject to the terms of the Mozilla Public
