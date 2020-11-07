@@ -13,6 +13,8 @@ public enum PlaybackState: Equatable, Hashable {
     
     case stopped
     case playing(start: Date)
+    // TODO: buffering state
+    // case buffering(time: TimeInterval)
     case paused(time: TimeInterval)
     case fastForwarding(time: TimeInterval)
     case rewinding(time: TimeInterval)
