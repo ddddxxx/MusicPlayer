@@ -1,5 +1,5 @@
 //
-//  SystemNowPlaying.swift
+//  SystemMedia.swift
 //  LyricsX - https://github.com/ddddxxx/LyricsX
 //
 //  This Source Code Form is subject to the terms of the Mozilla Public
@@ -16,7 +16,7 @@ import CXShim
 
 extension MusicPlayers {
     
-    public final class SystemNowPlaying: ObservableObject {
+    public final class SystemMedia: ObservableObject {
         
         @Published public private(set) var currentTrack: MusicTrack?
         @Published public private(set) var playbackState: PlaybackState = .stopped
@@ -96,7 +96,7 @@ extension MusicPlayers {
     }
 }
 
-extension MusicPlayers.SystemNowPlaying: MusicPlayerProtocol {
+extension MusicPlayers.SystemMedia: MusicPlayerProtocol {
     
     public var currentTrackWillChange: AnyPublisher<MusicTrack?, Never> {
         return $currentTrack.eraseToAnyPublisher()
@@ -147,7 +147,7 @@ extension MusicPlayers.SystemNowPlaying: MusicPlayerProtocol {
     }
 }
 
-private extension MusicPlayers.SystemNowPlaying {
+private extension MusicPlayers.SystemMedia {
     
     enum SystemPlaybackState: Int {
         case terminated = 0
