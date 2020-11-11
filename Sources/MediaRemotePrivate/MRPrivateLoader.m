@@ -16,6 +16,8 @@
 
 #define kMediaRemotePath "/System/Library/PrivateFrameworks/MediaRemote.framework/MediaRemote"
 
+bool MRIsMediaRemoteLoaded = false;
+
 SLDefineFunction(MRMediaRemoteSendCommand, Boolean, MRCommand, _Nullable id);
 SLDefineFunction(MRMediaRemoteSetElapsedTime, void, double);
 
@@ -30,6 +32,8 @@ __attribute__((constructor)) static void loadMediaRemote() {
     if (handle == NULL) {
         return;
     }
+    
+    MRIsMediaRemoteLoaded = true;
     
     SLLoad(handle, MRMediaRemoteSendCommand);
     SLLoad(handle, MRMediaRemoteSetElapsedTime);

@@ -14,6 +14,8 @@
 
 NS_ASSUME_NONNULL_BEGIN
 
+extern bool MRIsMediaRemoteLoaded;
+
 typedef NS_ENUM(NSInteger, MRCommand) {
     /*
      * Use nil for userInfo.

@@ -18,16 +18,18 @@ extension MusicPlayers {
     
     public final class SystemMedia: ObservableObject {
         
+        public static var available: Bool {
+            return MRIsMediaRemoteLoaded
+        }
+        
         @Published public private(set) var currentTrack: MusicTrack?
         @Published public private(set) var playbackState: PlaybackState = .stopped
         
         private var systemPlaybackState: SystemPlaybackState?
         
         public init?() {
-            guard let register = MRMediaRemoteRegisterForNowPlayingNotifications_ else {
-                return nil
-            }
-            register(DispatchQueue.global())
+            guard Self.available else { return nil }
+            MRMediaRemoteRegisterForNowPlayingNotifications_?(DispatchQueue.global())
             
             let nc = NotificationCenter.default
             nc.addObserver(forName: .mediaRemoteNowPlayingApplicationPlaybackStateDidChange, object: nil, queue: nil) { [weak self] n in
