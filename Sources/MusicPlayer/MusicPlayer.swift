@@ -32,3 +32,13 @@ public protocol MusicPlayerProtocol: AnyObject {
 }
 
 public enum MusicPlayers {}
+
+public extension MusicPlayerProtocol {
+    func playPause() {
+        if playbackState.isPlaying {
+            pause()
+        } else {
+            resume()
+        }
+    }
+}

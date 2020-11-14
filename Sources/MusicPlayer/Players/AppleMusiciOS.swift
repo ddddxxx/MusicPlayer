@@ -98,15 +98,6 @@ extension MusicPlayers.AppleMusic: MusicPlayerProtocol {
         musicPlayer.pause()
     }
     
-    public func playPause() {
-        guard isAuthorized else { return }
-        if playbackState.isPlaying {
-            musicPlayer.pause()
-        } else {
-            musicPlayer.play()
-        }
-    }
-    
     public func skipToNextItem() {
         guard isAuthorized else { return }
         musicPlayer.skipToNextItem()

@@ -10,7 +10,6 @@
 #if os(macOS)
 
 import Foundation
-import AppKit
 import MediaRemotePrivate
 import CXShim
 

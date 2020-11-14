@@ -14,7 +14,7 @@ import CXShim
 
 extension MusicPlayers {
     
-    public class SpotifyiOS: NSObject, SPTAppRemoteDelegate, SPTAppRemotePlayerStateDelegate {
+    public final class SpotifyiOS: NSObject, SPTAppRemoteDelegate, SPTAppRemotePlayerStateDelegate {
         
         public static let accessTokenDefaultsKey = "ddddxxx.LyricsKit.SpotifyAccessToken"
         
@@ -146,14 +146,6 @@ extension MusicPlayers.SpotifyiOS: MusicPlayerProtocol, CXShim.ObservableObject 
     
     public func pause() {
         appRemote.playerAPI?.pause(nil)
-    }
-    
-    public func playPause() {
-        if playbackState.isPlaying {
-            pause()
-        } else {
-            resume()
-        }
     }
     
     public func skipToNextItem() {
