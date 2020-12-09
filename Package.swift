@@ -1,4 +1,4 @@
-// swift-tools-version:5.0
+// swift-tools-version:5.2
 
 import PackageDescription
 
@@ -12,12 +12,14 @@ let package = Package(
         .library(name: "MusicPlayer", targets: ["MusicPlayer"]),
     ],
     dependencies: [
-        .package(url: "https://github.com/cx-org/CombineX", .upToNextMinor(from: "0.2.0"))
+        .package(url: "https://github.com/cx-org/CombineX", .upToNextMinor(from: "0.3.0"))
     ],
     targets: [
         .target(
             name: "MusicPlayer",
-            dependencies: ["CXShim"],
+            dependencies: [
+                .product(name: "CXShim", package: "CombineX")
+            ],
             cSettings: [
                 .define("OS_MACOS", .when(platforms: [.macOS]))
         ]),
