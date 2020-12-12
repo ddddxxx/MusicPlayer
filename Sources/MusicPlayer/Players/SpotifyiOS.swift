@@ -7,10 +7,11 @@
 //  file, You can obtain one at https://mozilla.org/MPL/2.0/.
 //
 
-#if os(iOS) && false
+#if canImport(SpotifyiOSWrapper)
 
 import UIKit
 import CXShim
+import SpotifyiOSWrapper
 
 extension MusicPlayers {
     
@@ -157,6 +158,34 @@ extension MusicPlayers.SpotifyiOS: MusicPlayerProtocol, CXShim.ObservableObject 
     }
 }
 
+// MARK: - Extension
+
+extension SPTAppRemoteTrack {
+    
+    var track: MusicTrack {
+        let duration_ = TimeInterval(duration) / 1000
+        // TODO: Artwork
+        return MusicTrack(id: uri, title: name, album: album.name, artist: artist.name, duration: duration_, fileURL: nil, artwork: nil, originalTrack: nil)
+    }
+}
+
+extension SPTAppRemotePlayerState {
+    
+    var playbackState: PlaybackState {
+        return isPaused ? .paused(time: position) : .playing(start: startTime)
+    }
+    
+    var position: TimeInterval {
+        return TimeInterval(playbackPosition) / 1000
+    }
+    
+    var startTime: Date {
+        return Date(timeIntervalSinceNow: -position)
+    }
+}
+
+#if false
+
 extension MusicPlayers.SpotifyiOS: PlaybackModeSettable {
     
     public var repeatMode: MusicRepeatMode {
@@ -181,32 +210,6 @@ extension MusicPlayers.SpotifyiOS: PlaybackModeSettable {
     }
 }
 
-// MARK: - Extension
-
-extension SPTAppRemoteTrack {
-    
-    var track: MusicTrack {
-        let duration_ = TimeInterval(duration) / 1000
-        // TODO: Artwork
-        return MusicTrack(id: uri, title: name, album: album.name, artist: artist.name, duration: duration_, url: nil, artwork: nil)
-    }
-}
-
-extension SPTAppRemotePlayerState {
-    
-    var playbackState: MusicPlaybackState {
-        return isPaused ? .paused : .playing
-    }
-    
-    var position: TimeInterval {
-        return TimeInterval(playbackPosition) / 1000
-    }
-    
-    var startTime: Date {
-        return Date(timeIntervalSinceNow: -position)
-    }
-}
-
 extension SPTAppRemotePlaybackOptionsRepeatMode {
     
     var mode: MusicRepeatMode {
@@ -227,4 +230,6 @@ extension SPTAppRemotePlaybackOptionsRepeatMode {
     }
 }
 
- #endif
+#endif
+
+#endif // canImport(SpotifyiOSWrapper)

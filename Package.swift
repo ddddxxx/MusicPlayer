@@ -1,4 +1,4 @@
-// swift-tools-version:5.2
+// swift-tools-version:5.3
 
 import PackageDescription
 
@@ -10,44 +10,36 @@ let package = Package(
     ],
     products: [
         .library(name: "MusicPlayer", targets: ["MusicPlayer"]),
+        .library(name: "LXMusicPlayer", targets: ["LXMusicPlayer"]),
     ],
     dependencies: [
-        .package(url: "https://github.com/cx-org/CombineX", .upToNextMinor(from: "0.3.0"))
+        .package(url: "https://github.com/cx-org/CombineX", .upToNextMinor(from: "0.3.0")),
     ],
     targets: [
         .target(
             name: "MusicPlayer",
             dependencies: [
-                .product(name: "CXShim", package: "CombineX")
+                .target(name: "LXMusicPlayer", condition: .when(platforms: [.macOS])),
+                .target(name: "MediaRemotePrivate", condition: .when(platforms: [.macOS])),
+                .product(name: "CXShim", package: "CombineX"),
             ],
             cSettings: [
-                .define("OS_MACOS", .when(platforms: [.macOS]))
+                .define("OS_MACOS", .when(platforms: [.macOS])),
+            ]),
+        .target(
+            name: "LXMusicPlayer",
+            cSettings: [
+                .define("OS_MACOS", .when(platforms: [.macOS])),
+                .headerSearchPath("private"),
+                .headerSearchPath("BridgingHeader"),
+        ]),
+        .target(
+            name: "MediaRemotePrivate",
+            cSettings: [
+                .define("OS_MACOS", .when(platforms: [.macOS])),
         ]),
     ]
 )
-
-#if canImport(Darwin)
-
-package.targets += [
-    .target(
-        name: "LXMusicPlayer",
-        cSettings: [
-            .define("OS_MACOS", .when(platforms: [.macOS])),
-            .headerSearchPath("private"),
-            .headerSearchPath("BridgingHeader"),
-    ]),
-    .target(
-        name: "MediaRemotePrivate",
-        cSettings: [
-            .define("OS_MACOS", .when(platforms: [.macOS])),
-    ]),
-]
-package.targets.first { $0.name == "MusicPlayer" }!.dependencies += ["LXMusicPlayer", "MediaRemotePrivate"]
-package.products += [
-    .library(name: "LXMusicPlayer", targets: ["LXMusicPlayer"]),
-]
-
-#endif
 
 enum CombineImplementation {
     
@@ -79,10 +71,27 @@ extension ProcessInfo {
     var combineImplementation: CombineImplementation {
         return environment["CX_COMBINE_IMPLEMENTATION"].flatMap(CombineImplementation.init) ?? .default
     }
+    
+    var enableSpotifyiOS: Bool {
+        return environment["LX_ENABLE_SPOTIFYIOS"] != nil
+    }
 }
 
 import Foundation
 
-if ProcessInfo.processInfo.combineImplementation == .combine {
-    package.platforms = [.macOS("10.15"), .iOS("13.0"), .tvOS("13.0"), .watchOS("6.0")]
+let info = ProcessInfo.processInfo
+
+if info.combineImplementation == .combine {
+    package.platforms = [.macOS("10.15"), .iOS("13.0")]
+}
+
+// This breaks macOS build
+// error: While building for macOS, no library for this platform was found in 'SpotifyiOS.xcframework'.
+if info.enableSpotifyiOS {
+    package.dependencies += [
+        .package(url: "https://github.com/ddddxxx/SpotifyiOSWrapper", from: "1.2.2"),
+    ]
+    package.targets.first { $0.name == "MusicPlayer" }!.dependencies += [
+        .product(name: "SpotifyiOSWrapper", package: "SpotifyiOSWrapper", condition: .when(platforms: [.iOS]))
+    ]
 }

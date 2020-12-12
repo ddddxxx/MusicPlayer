@@ -21,7 +21,7 @@ Unified API for music players.
 #### iOS
 
 - [x] Music
-- [ ] Spotify (blocked by SE-0272)
+- [ ] Spotify (see [#5](https://github.com/ddddxxx/MusicPlayer/issues/5))
 
 #### Linux
 
