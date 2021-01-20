@@ -7,11 +7,10 @@ Music player submodule for [LyricsX](https://github.com/ddddxxx/LyricsX).
 
 Unified API for music players.
 
-## Supported Player
+## Supported Players
 
 #### macOS
 
-- [x] System-wide Now Playing
 - [x] Apple Music (iTunes)
 - [x] Spotify
 - [x] Vox
@@ -26,6 +25,18 @@ Unified API for music players.
 #### Linux
 
 - [ ] [MPRIS](https://specifications.freedesktop.org/mpris-spec/latest/)
+
+#### Universal
+
+- [x] SystemMedia (macOS): System-wide Now Playing
+- [] Spotify (Web API)
+
+#### Helper:
+
+- [x] Agent: Delegate events to another player.
+- [x] Now Playing: Automatically choose a playing player from given players.
+- [x] Virtual: A virtual player that allows you to manipulate its state.
+- [] Remote: Sync player state from other devices.
 
 ## Usage
 
