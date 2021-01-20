@@ -27,7 +27,12 @@ extension MusicPlayers {
             self.players = players
             super.init()
             selectNewPlayer()
-            selectNewPlayerCanceller = objectWillChange
+            selectNewPlayerCanceller = $designatedPlayer
+                .map {
+                    $0?.objectWillChange.eraseToAnyPublisher() ??
+                        Publishers.MergeMany(players.map { $0.objectWillChange }).eraseToAnyPublisher()
+                }
+                .switchToLatest()
                 .receive(on: DispatchQueue.global().cx)
                 .sink { [weak self] _ in
                     self?.selectNewPlayer()
