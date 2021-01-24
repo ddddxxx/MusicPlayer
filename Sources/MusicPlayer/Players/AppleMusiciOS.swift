@@ -19,6 +19,8 @@ extension MusicPlayers {
         
         private let musicPlayer = MPMusicPlayerController.systemMusicPlayer
         
+        @Published public var isAuthorized: Bool = MPMediaLibrary.authorizationStatus() == .authorized
+        
         @Published public private(set) var currentTrack: MusicTrack?
         @Published public private(set) var playbackState: PlaybackState = .stopped
         
@@ -38,27 +40,30 @@ extension MusicPlayers {
             NotificationCenter.default.removeObserver(self)
             musicPlayer.endGeneratingPlaybackNotifications()
         }
-        
-        public var isAuthorized: Bool {
-            return MPMediaLibrary.authorizationStatus() == .authorized
-        }
-        
-        public func requestAuthorizationIfNeeded() {
-            switch MPMediaLibrary.authorizationStatus() {
-            case .notDetermined:
-                MPMediaLibrary.requestAuthorization() { [weak self] _ in
-                    self?.objectWillChange.send()
-                    self?.updatePlayerState()
-                }
-            case .denied, .restricted:
-                if let settingsURL = URL(string: UIApplication.openSettingsURLString) {
-                    UIApplication.shared.open(settingsURL)
-                }
-            case .authorized:
-                break
-            @unknown default:
-                break
+    }
+}
+
+extension MusicPlayers.AppleMusic: MusicPlayerAuthorization {
+    
+    public var authorizationStatusWillChange: AnyPublisher<Bool, Never> {
+        return $isAuthorized.eraseToAnyPublisher()
+    }
+    
+    public func requestAuthorizationIfNeeded() {
+        switch MPMediaLibrary.authorizationStatus() {
+        case .notDetermined:
+            MPMediaLibrary.requestAuthorization() { [weak self] _ in
+                self?.objectWillChange.send()
+                self?.updatePlayerState()
             }
+        case .denied, .restricted:
+            if let settingsURL = URL(string: UIApplication.openSettingsURLString) {
+                UIApplication.shared.open(settingsURL)
+            }
+        case .authorized:
+            break
+        @unknown default:
+            break
         }
     }
 }
@@ -109,7 +114,12 @@ extension MusicPlayers.AppleMusic: MusicPlayerProtocol {
     }
     
     @objc public func updatePlayerState() {
-        guard isAuthorized else { return }
+        isAuthorized = MPMediaLibrary.authorizationStatus() == .authorized
+        guard isAuthorized else {
+            playbackState = .stopped
+            currentTrack = nil
+            return
+        }
         let state = musicPlayer._playbackState
         let track = musicPlayer.nowPlayingItem
         if currentTrack?.id != track?.idString {

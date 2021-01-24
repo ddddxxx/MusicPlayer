@@ -57,8 +57,8 @@ extension MusicPlayers.Agent: MusicPlayerProtocol {
     
     public var playbackStateWillChange: AnyPublisher<PlaybackState, Never> {
         return $designatedPlayer.map { $0?.playbackStateWillChange ?? Just(.stopped).eraseToAnyPublisher() }
-        .switchToLatest()
-        .eraseToAnyPublisher()
+            .switchToLatest()
+            .eraseToAnyPublisher()
     }
     
     public func resume() {
