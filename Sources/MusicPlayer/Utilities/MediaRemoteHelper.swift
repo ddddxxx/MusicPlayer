@@ -7,10 +7,9 @@
 //  file, You can obtain one at https://mozilla.org/MPL/2.0/.
 //
 
-#if os(macOS)
+#if os(macOS) || os(iOS)
 
 import Foundation
-import AppKit
 
 struct MRNowPlayingInfo {
     
@@ -82,11 +81,11 @@ struct MRNowPlayingInfo {
         }
     }
     
-    var artwork: NSImage? {
+    var artwork: Image? {
         guard let artworkData = _artworkData else {
             return nil
         }
-        return NSImage(data: artworkData)
+        return Image(data: artworkData)
     }
     
     var track: MusicTrack? {

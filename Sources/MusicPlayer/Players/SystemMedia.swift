@@ -7,7 +7,7 @@
 //  file, You can obtain one at https://mozilla.org/MPL/2.0/.
 //
 
-#if os(macOS)
+#if os(macOS) || os(iOS)
 
 import Foundation
 import MediaRemotePrivate

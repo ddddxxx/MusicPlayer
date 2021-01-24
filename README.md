@@ -28,15 +28,18 @@ Unified API for music players.
 
 #### Universal
 
-- [x] SystemMedia (macOS): System-wide Now Playing
-- [] Spotify (Web API)
+- SystemMedia: System-wide Now Playing
+  - [x] macOS
+  - [x] iOS (jailbroken device only) (test needed)
+  - [ ] Linux (is this possible?)
+- [ ] Spotify (Web API)
 
 #### Helper:
 
 - [x] Agent: Delegate events to another player.
 - [x] Now Playing: Automatically choose a playing player from given players.
 - [x] Virtual: A virtual player that allows you to manipulate its state.
-- [] Remote: Sync player state from other devices.
+- [ ] Remote: Sync player state from other devices.
 
 ## Usage
 

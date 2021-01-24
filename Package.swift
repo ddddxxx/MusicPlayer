@@ -20,11 +20,12 @@ let package = Package(
             name: "MusicPlayer",
             dependencies: [
                 .target(name: "LXMusicPlayer", condition: .when(platforms: [.macOS])),
-                .target(name: "MediaRemotePrivate", condition: .when(platforms: [.macOS])),
+                .target(name: "MediaRemotePrivate", condition: .when(platforms: [.macOS, .iOS])),
                 .product(name: "CXShim", package: "CombineX"),
             ],
             cSettings: [
                 .define("OS_MACOS", .when(platforms: [.macOS])),
+                .define("OS_DARWIN", .when(platforms: [.macOS, .iOS])),
             ]),
         .target(
             name: "LXMusicPlayer",
@@ -36,7 +37,7 @@ let package = Package(
         .target(
             name: "MediaRemotePrivate",
             cSettings: [
-                .define("OS_MACOS", .when(platforms: [.macOS])),
+                .define("OS_DARWIN", .when(platforms: [.macOS, .iOS])),
         ]),
     ]
 )
