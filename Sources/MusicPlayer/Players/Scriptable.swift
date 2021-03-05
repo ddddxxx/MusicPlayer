@@ -12,13 +12,14 @@
 import Foundation
 import LXMusicPlayer
 import CXShim
+import CXExtensions
 
 extension MusicPlayers {
     
     public final class Scriptable: ObservableObject {
         
         private var player: LXScriptingMusicPlayer
-        private var observations: [NSKeyValueObservation] = []
+        private var cancellers: Set<AnyCancellable> = []
         
         @Published public private(set) var currentTrack: MusicTrack?
         @Published public private(set) var playbackState: PlaybackState
@@ -34,14 +35,18 @@ extension MusicPlayers {
             self.player = player
             self.currentTrack = player.currentTrack as MusicTrack?
             self.playbackState = player.playerState as PlaybackState
-            observations += [
-                player.observe(\.currentTrack) { [weak self] (observed, _) in
-                    self?.currentTrack = observed.currentTrack as MusicTrack?
-                },
-                player.observe(\.playerState) { [weak self] (observed, _) in
-                    self?.playbackState = observed.playerState as PlaybackState
-                }
-            ]
+            player.cx
+                .publisher(for: \.currentTrack)
+                .map { $0 as MusicTrack? }
+                .receive(on: DispatchQueue.playerUpdate.cx)
+                .assign(to: \.currentTrack, weaklyOn: self)
+                .store(in: &cancellers)
+            player.cx
+                .publisher(for: \.playerState)
+                .map { $0 as PlaybackState }
+                .receive(on: DispatchQueue.playerUpdate.cx)
+                .assign(to: \.playbackState, weaklyOn: self)
+                .store(in: &cancellers)
         }
     }
 }

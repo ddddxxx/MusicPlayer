@@ -28,7 +28,7 @@ extension MusicPlayers {
         
         public init?() {
             guard Self.available else { return nil }
-            MRMediaRemoteRegisterForNowPlayingNotifications_?(DispatchQueue.global())
+            MRMediaRemoteRegisterForNowPlayingNotifications_?(DispatchQueue.playerUpdate)
             
             let nc = NotificationCenter.default
             nc.addObserver(forName: .mediaRemoteNowPlayingApplicationPlaybackStateDidChange, object: nil, queue: nil) { [weak self] n in
@@ -38,7 +38,7 @@ extension MusicPlayers {
                 self?.mediaRemoteNowPlayingInfoDidChange(n: n)
             }
             
-            MRMediaRemoteGetNowPlayingApplicationIsPlaying_?(DispatchQueue.global()) { [weak self] isPlaying in
+            MRMediaRemoteGetNowPlayingApplicationIsPlaying_?(DispatchQueue.playerUpdate) { [weak self] isPlaying in
                 self?.systemPlaybackState = isPlaying.boolValue ? .playing : .paused
                 self?.updatePlayerState()
             }
@@ -142,7 +142,7 @@ extension MusicPlayers.SystemMedia: MusicPlayerProtocol {
     }
     
     public func updatePlayerState() {
-        MRMediaRemoteGetNowPlayingInfo_?(DispatchQueue.global()) { [weak self] info in
+        MRMediaRemoteGetNowPlayingInfo_?(DispatchQueue.playerUpdate) { [weak self] info in
             self?.getNowPlayingInfoCallback(info)
         }
     }

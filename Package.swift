@@ -14,6 +14,7 @@ let package = Package(
     ],
     dependencies: [
         .package(url: "https://github.com/cx-org/CombineX", .upToNextMinor(from: "0.3.0")),
+        .package(url: "https://github.com/cx-org/CXExtensions", .upToNextMinor(from: "0.3.0")),
     ],
     targets: [
         .target(
@@ -21,6 +22,7 @@ let package = Package(
             dependencies: [
                 .target(name: "LXMusicPlayer", condition: .when(platforms: [.macOS])),
                 .target(name: "MediaRemotePrivate", condition: .when(platforms: [.macOS, .iOS])),
+                "CXExtensions",
                 .product(name: "CXShim", package: "CombineX"),
             ],
             cSettings: [

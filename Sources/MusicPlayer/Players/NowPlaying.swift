@@ -33,7 +33,7 @@ extension MusicPlayers {
                         Publishers.MergeMany(players.map { $0.objectWillChange }).eraseToAnyPublisher()
                 }
                 .switchToLatest()
-                .receive(on: DispatchQueue.global().cx)
+                .receive(on: DispatchQueue.playerUpdate.cx)
                 .sink { [weak self] _ in
                     self?.selectNewPlayer()
                 }
