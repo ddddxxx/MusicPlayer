@@ -11,6 +11,7 @@
 
 #import <AppKit/AppKit.h>
 #import "LXScriptingMusicPlayer+Private.h"
+#import "LXWeakProxy.h"
 
 @implementation LXScriptingMusicPlayer
 
@@ -55,6 +56,7 @@
 
 - (void)dealloc {
     [NSNotificationCenter.defaultCenter removeObserver:self];
+    [self.nextTrackUpdatingTimer invalidate];
 }
 
 - (void)didTerminateApplication:(NSNotification *)notification {
@@ -98,7 +100,7 @@
     NSNumber *duration = self.currentTrack.duration;
     if (self.playerState.isPlaying && duration) {
         NSTimeInterval dt = duration.doubleValue - self.playerState.playbackTime;
-        self.nextTrackUpdatingTimer = [NSTimer scheduledTimerWithTimeInterval:dt target:self selector:@selector(updatePlayerState) userInfo:nil repeats:false];
+        self.nextTrackUpdatingTimer = [NSTimer scheduledTimerWithTimeInterval:dt target:[[LXWeakProxy alloc] initWithObject:self] selector:@selector(updatePlayerState) userInfo:nil repeats:false];
         self.nextTrackUpdatingTimer.tolerance = 1.5;
     }
 }
