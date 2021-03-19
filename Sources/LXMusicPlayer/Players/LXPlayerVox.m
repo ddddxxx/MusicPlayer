@@ -12,6 +12,9 @@
 #import "LXScriptingMusicPlayer+Private.h"
 #import "LXMusicTrack+Private.h"
 #import "Vox.h"
+#import "LXWeakProxy.h"
+
+#define VOX_INTERNAL_UPDATE_INTERVAL 2.0
 
 static LXMusicTrack* currentTrack(VoxApplication *app) {
     NSString *persistentID = app.uniqueID;
@@ -47,7 +50,7 @@ static LXPlayerState* playerState(VoxApplication *app) {
 }
 
 @implementation LXPlayerVox {
-    dispatch_source_t _timer;
+    NSTimer *_timer;
 }
 
 + (LXMusicPlayerName)playerName {
@@ -66,35 +69,27 @@ static LXPlayerState* playerState(VoxApplication *app) {
         }
         [NSDistributedNotificationCenter.defaultCenter addObserver:self selector:@selector(trackChangedNotification:) name:@"com.coppertino.Vox.trackChanged" object:nil];
         
-        [NSDistributedNotificationCenter.defaultCenter addObserver:self selector:@selector(updateTimer) name:NSWorkspaceDidLaunchApplicationNotification object:nil];
-        [NSDistributedNotificationCenter.defaultCenter addObserver:self selector:@selector(updateTimer) name:NSWorkspaceDidTerminateApplicationNotification object:nil];
-        [self updateTimer];
+        _timer = [NSTimer scheduledTimerWithTimeInterval:VOX_INTERNAL_UPDATE_INTERVAL target:[[LXWeakProxy alloc] initWithObject:self] selector:@selector(updatePlayback) userInfo:nil repeats:YES];
+        [self rescheduleInternalUpdate];
     }
     return self;
 }
 
 - (void)dealloc {
     [NSDistributedNotificationCenter.defaultCenter removeObserver:self];
-    if (_timer) {
-        dispatch_cancel(_timer);
-    }
+    [_timer invalidate];
 }
 
-- (void)updateTimer {
-    if (self.isRunning && !_timer) {
-        dispatch_queue_global_t globalQueue = dispatch_get_global_queue(QOS_CLASS_UTILITY, 0);
-        _timer = dispatch_source_create(DISPATCH_SOURCE_TYPE_TIMER, 0, 0, globalQueue);
-        dispatch_source_set_timer(_timer, DISPATCH_TIME_NOW, 1 * NSEC_PER_SEC, 0.1 * NSEC_PER_SEC);
-        __weak LXPlayerVox *weakSelf = self;
-        dispatch_source_set_event_handler(_timer, ^{
-            LXPlayerVox *strongSelf = weakSelf;
-            if (!strongSelf.isRunning) { return; }
-            [strongSelf setPlayerState:playerState(strongSelf.app) tolerate:1.5];
-        });
-        dispatch_resume(_timer);
-    } else if (!self.isRunning && _timer) {
-        dispatch_source_cancel(_timer);
-        _timer = nil;
+- (void)setRunning:(BOOL)running {
+    [super setRunning:running];
+    [self rescheduleInternalUpdate];
+}
+
+- (void)rescheduleInternalUpdate {
+    if (self.isRunning) {
+        _timer.fireDate = [NSDate dateWithTimeIntervalSinceNow:VOX_INTERNAL_UPDATE_INTERVAL];
+    } else {
+        _timer.fireDate = NSDate.distantFuture;
     }
 }
 
@@ -125,6 +120,13 @@ static LXPlayerState* playerState(VoxApplication *app) {
         self.currentTrack = track;
         self.playerState = state;
     }
+    [self rescheduleInternalUpdate];
+}
+
+- (void)updatePlayback {
+    if (!self.isRunning) { return; }
+    LXPlayerState *state = playerState(self.app);
+    [self setPlayerState:state tolerate:1.5];
 }
 
 - (void)resume {
