@@ -7,8 +7,6 @@
 //  file, You can obtain one at https://mozilla.org/MPL/2.0/.
 //
 
-#if OS_MACOS || (TARGET_OS_MAC && !TARGET_OS_IPHONE)
-
 #import "LXScriptingMusicPlayer+Private.h"
 #import "LXMusicTrack+Private.h"
 #import "Vox.h"
@@ -155,5 +153,3 @@ static LXPlayerState* playerState(VoxApplication *app) {
 }
 
 @end
-
-#endif

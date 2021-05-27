@@ -7,8 +7,6 @@
 //  file, You can obtain one at https://mozilla.org/MPL/2.0/.
 //
 
-#if OS_DARWIN || TARGET_OS_MAC
-
 #import <Foundation/Foundation.h>
 #import "SymbolLoader.h"
 
@@ -57,5 +55,3 @@ SLDeclareFunction(MRMediaRemoteRegisterForNowPlayingNotifications, void, dispatc
 SLDeclareFunction(MRMediaRemoteUnregisterForNowPlayingNotifications, void);
 
 NS_ASSUME_NONNULL_END
-
-#endif

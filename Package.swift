@@ -24,23 +24,15 @@ let package = Package(
                 .target(name: "MediaRemotePrivate", condition: .when(platforms: [.macOS, .iOS])),
                 "CXExtensions",
                 .product(name: "CXShim", package: "CombineX"),
-            ],
-            cSettings: [
-                .define("OS_MACOS", .when(platforms: [.macOS])),
-                .define("OS_DARWIN", .when(platforms: [.macOS, .iOS])),
             ]),
         .target(
             name: "LXMusicPlayer",
             cSettings: [
-                .define("OS_MACOS", .when(platforms: [.macOS])),
                 .headerSearchPath("private"),
                 .headerSearchPath("BridgingHeader"),
         ]),
         .target(
-            name: "MediaRemotePrivate",
-            cSettings: [
-                .define("OS_DARWIN", .when(platforms: [.macOS, .iOS])),
-        ]),
+            name: "MediaRemotePrivate"),
     ]
 )
 

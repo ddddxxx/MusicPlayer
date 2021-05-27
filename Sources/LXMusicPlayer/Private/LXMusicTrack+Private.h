@@ -7,8 +7,6 @@
 //  file, You can obtain one at https://mozilla.org/MPL/2.0/.
 //
 
-#if OS_MACOS || (TARGET_OS_MAC && !TARGET_OS_IPHONE)
-
 #import "LXMusicTrack.h"
 #import "Music.h"
 #import "Spotify.h"
@@ -43,5 +41,3 @@ NS_ASSUME_NONNULL_BEGIN
 @end
 
 NS_ASSUME_NONNULL_END
-
-#endif

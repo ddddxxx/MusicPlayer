@@ -7,8 +7,6 @@
 //  file, You can obtain one at https://mozilla.org/MPL/2.0/.
 //
 
-#if OS_DARWIN || TARGET_OS_MAC
-
 #import <Foundation/Foundation.h>
 #import <dlfcn.h>
 #import "MediaRemotePrivate.h"
@@ -46,5 +44,3 @@ __attribute__((constructor)) static void loadMediaRemote() {
     
     dlclose(handle);
 }
-
-#endif
