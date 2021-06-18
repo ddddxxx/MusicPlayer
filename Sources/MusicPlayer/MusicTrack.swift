@@ -21,10 +21,7 @@ public struct MusicTrack {
     public var artist: String?
     public var duration: TimeInterval?
     public var fileURL: URL?
-    
-    #if canImport(Darwin)
     public var artwork: Image?
-    #endif
     
     public var originalTrack: AnyObject? = nil
     

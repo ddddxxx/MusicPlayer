@@ -25,4 +25,8 @@ import UIKit
 
 public typealias Image = UIImage
 
+#else
+
+public typealias Image = Void
+
 #endif

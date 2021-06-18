@@ -22,5 +22,10 @@ public enum MusicPlayerName: String {
     case appleMusic = "Music"
     case spotify    = "Spotify"
     
+    #elseif os(Linux)
+    
+    // FIXME: dynamically create player application with name and identifier
+    case mpris = "mpris"
+    
     #endif
 }
