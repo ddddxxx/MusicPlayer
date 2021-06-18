@@ -21,7 +21,11 @@ public struct MusicTrack {
     public var artist: String?
     public var duration: TimeInterval?
     public var fileURL: URL?
+    
+    #if canImport(Darwin)
     public var artwork: Image?
+    #endif
+    
     public var originalTrack: AnyObject? = nil
     
     public init(id: String, title: String?, album: String?, artist: String?, duration: TimeInterval? = nil, fileURL: URL? = nil, artwork: Image? = nil, originalTrack: AnyObject? = nil) {

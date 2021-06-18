@@ -15,21 +15,21 @@ jobs:
       - name: Build
         run: swift build
 
-  ios:
-    runs-on: macOS-latest
-    env:
-      CX_COMBINE_IMPLEMENTATION: CombineX
-      CX_CONTINUOUS_INTEGRATION: "YES"
-    steps:
-      - uses: actions/checkout@v1
-      - name: Xcode Version
-        run: xcodebuild -version
-      - name: Build and Test
-        run: |
-          set -o pipefail
-          xcodebuild build \
-            -scheme MusicPlayer \
-            -destination "platform=iOS Simulator,name=iPhone 12" | xcpretty
+  # ios:
+  #   runs-on: macOS-latest
+  #   env:
+  #     CX_COMBINE_IMPLEMENTATION: CombineX
+  #     CX_CONTINUOUS_INTEGRATION: "YES"
+  #   steps:
+  #     - uses: actions/checkout@v1
+  #     - name: Xcode Version
+  #       run: xcodebuild -version
+  #     - name: Build and Test
+  #       run: |
+  #         set -o pipefail
+  #         xcodebuild build \
+  #           -scheme MusicPlayer \
+  #           -destination "platform=iOS Simulator,name=iPhone 12" | xcpretty
 
   linux:
     runs-on: ubuntu-latest
@@ -40,7 +40,7 @@ jobs:
       - name: Swift Version
         run: swift --version
       - name: Build
-        run: swift build
+        run: swift build --product MusicPlayer
 
   combine:
     runs-on: macOS-latest
