@@ -40,7 +40,7 @@ jobs:
       - name: Swift Version
         run: swift --version
       - name: Build
-        run: swift build --product MusicPlayer
+        run: swift build --target MusicPlayer
 
   combine:
     runs-on: macOS-latest
