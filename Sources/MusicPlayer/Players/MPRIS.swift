@@ -161,8 +161,8 @@ extension MusicPlayers.MPRIS: MusicPlayerProtocol {
     }
     
     public func updatePlayerState() {
-        let state = state
-        let track = track
+        let state = self.state
+        let track = self.track
         if currentTrack?.id != track?.id {
             currentTrack = track
             playbackState = state
