@@ -28,6 +28,6 @@ public typealias Image = UIImage
 #else
 
 // TODO: image on linux?
-public typealias Image = Void
+public typealias Image = URL
 
 #endif

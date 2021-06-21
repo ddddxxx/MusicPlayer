@@ -36,6 +36,11 @@ let package = Package(
     ]
 )
 
+#if os(Linux)
+package.targets.append(.systemLibrary(name: "playerctl", pkgConfig: "playerctl"))
+package.targets.first { $0.name == "MusicPlayer" }?.dependencies.append("playerctl")
+#endif
+
 enum CombineImplementation {
     
     case combine

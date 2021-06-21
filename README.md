@@ -24,14 +24,18 @@ Unified API for music players.
 
 #### Linux
 
-- [ ] [MPRIS](https://specifications.freedesktop.org/mpris-spec/latest/)
+- [x] [MPRIS](https://specifications.freedesktop.org/mpris-spec/latest/) (test needed)
+
+##### dependencies
+
+- [playerctl](https://github.com/altdesktop/playerctl) (could be installed by package manager)
 
 #### Universal
 
 - SystemMedia: System-wide Now Playing
   - [x] macOS
   - [x] iOS (jailbroken device only) (test needed)
-  - [ ] Linux (is this possible?)
+  - [x] Linux (fake with MPRIS) (test needed)
 - [ ] Spotify (Web API)
 
 #### Helper:

@@ -1,0 +1,9 @@
+module playerctl [system] {
+
+    header "/usr/include/playerctl/playerctl.h"
+
+    link "playerctl"
+
+    export *
+
+}

@@ -164,4 +164,93 @@ private extension Notification.Name {
     static let mediaRemoteNowPlayingApplicationPlaybackStateDidChange = Notification.Name("kMRMediaRemoteNowPlayingApplicationPlaybackStateDidChangeNotification")
 }
 
+#elseif os(Linux)
+
+import playerctl
+
+extension MusicPlayers {
+    
+    public final class FakeSystemMedia: Agent {
+        
+        private let manager: UnsafeMutablePointer<PlayerctlPlayerManager>
+        
+        private var players: [MusicPlayers.MPRIS] = []
+        private var signals: [gulong] = []
+        
+        public init?(_: Void = ()) {
+            guard let manager = playerctl_player_manager_new(nil) else {
+                return nil
+            }
+            self.manager = manager
+            
+            super.init()
+            
+            GEventLoop.start()
+            
+            var playerNames: UnsafeMutablePointer<GList>? = playerctl_list_players(nil)
+            while (playerNames != nil) {
+                let playerName = playerNames!.pointee.data.assumingMemoryBound(to: PlayerctlPlayerName.self)
+                let player = playerctl_player_new_from_name(playerName, nil)
+                if player == nil {
+                    continue
+                }
+                playerctl_player_manager_manage_player(manager, player)
+                players.append(MusicPlayers.MPRIS(player: player!))
+                playerNames = playerNames!.pointee.next
+            }
+            
+            designatedPlayer = players.last { $0.playbackState.isPlaying } ?? players.last
+            
+            let onNameAppeared: @convention(c) (UnsafeMutablePointer<PlayerctlPlayerManager>?,
+                                                UnsafeMutablePointer<PlayerctlPlayerName>?,
+                                                UnsafeMutableRawPointer?) -> Void
+                = { manager, name, data in
+                    let self_: FakeSystemMedia = Unmanaged.fromOpaque(data!).takeUnretainedValue()
+                    if let player = playerctl_player_new_from_name(name, nil) {
+                        playerctl_player_manager_manage_player(self_.manager, player)
+                        let player = MusicPlayers.MPRIS(player: player)
+                        self_.players.append(player)
+                        if player.playbackState.isPlaying {
+                            self_.designatedPlayer = player
+                        }
+                    }
+                }
+            
+            let onPlayerVanished: @convention(c) (UnsafeMutablePointer<PlayerctlPlayerManager>?,
+                                                  UnsafeMutablePointer<PlayerctlPlayer>?,
+                                                  UnsafeMutableRawPointer?) -> Void
+                = { manager, player, data in
+                    if player == nil {
+                        return
+                    }
+                    let self_: FakeSystemMedia = Unmanaged.fromOpaque(data!).takeUnretainedValue()
+                    self_.players.removeAll { $0.player == player! }
+                    if (self_.designatedPlayer as! MusicPlayers.MPRIS).player == player! {
+                        self_.designatedPlayer = self_.players.last { $0.playbackState.isPlaying } ?? self_.players.last
+                    }
+                }
+            
+            let pself = Unmanaged.passUnretained(self).toOpaque()
+            signals.append(
+                g_signal_connect_data(manager, "name-appeared", unsafeBitCast(onNameAppeared, to: GCallback?.self), pself, nil, G_CONNECT_AFTER)
+            )
+            signals.append(
+                g_signal_connect_data(manager, "player-vanished", unsafeBitCast(onPlayerVanished, to: GCallback?.self), pself, nil, G_CONNECT_AFTER)
+            )
+        }
+        
+        deinit {
+            for var signal in signals {
+                g_clear_signal_handler(&signal, manager)
+            }
+            g_free(manager)
+        }
+    }
+}
+
+extension MusicPlayers {
+    
+    public typealias SystemMedia = FakeSystemMedia
+}
+
 #endif
