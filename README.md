@@ -24,7 +24,7 @@ Unified API for music players.
 
 #### Linux
 
-- [x] [MPRIS](https://specifications.freedesktop.org/mpris-spec/latest/) (test needed)
+- [x] [MPRIS](https://specifications.freedesktop.org/mpris-spec/latest/) (test needed) (Thanks to [@suransea](https://github.com/suransea))
 
 ##### dependencies
 
