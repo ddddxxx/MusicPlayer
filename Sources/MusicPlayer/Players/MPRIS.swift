@@ -13,6 +13,13 @@ import Foundation
 import CXShim
 import playerctl
 
+extension UnsafeMutableRawPointer {
+    
+    func unretainedCast<T: AnyObject>(to: T.Type) -> T {
+        Unmanaged.fromOpaque(self).takeUnretainedValue()
+    }
+}
+
 extension MusicPlayers {
     
     public final class MPRIS: ObservableObject {
@@ -32,53 +39,45 @@ extension MusicPlayers {
             }
         }
         
-        public init?(name: String) {
+        public convenience init?(name: String) {
             guard let player = playerctl_player_new(name, nil) else {
                 return nil
             }
-            self.player = player
+            self.init(player: player)
             self.playerName = name
-            initialize()
         }
         
-        public init?(name: UnsafeMutablePointer<PlayerctlPlayerName>?) {
+        public convenience init?(name: UnsafeMutablePointer<PlayerctlPlayerName>) {
             guard let player = playerctl_player_new_from_name(name, nil) else {
                 return nil
             }
-            self.player = player
-            initialize()
+            self.init(player: player)
         }
         
         init(player: UnsafeMutablePointer<PlayerctlPlayer>) {
             self.player = player
-            initialize()
-        }
-        
-        private func initialize() {
+            
             GEventLoop.start()
             
             let onPlayStatusChanged: @convention(c) (UnsafeMutablePointer<PlayerctlPlayer>?,
                                                      gint /* PlayerctlPlaybackStatus */,
                                                      UnsafeMutableRawPointer?) -> Void
                 = { player, status, data in
-                    let self_: MPRIS = Unmanaged.fromOpaque(data!).takeUnretainedValue()
-                    self_.updatePlayerState()
+                    data?.unretainedCast(to: MPRIS.self).updatePlayerState()
                 }
             
             let onSeeked: @convention(c) (UnsafeMutablePointer<PlayerctlPlayer>?,
                                           gint64,
                                           UnsafeMutableRawPointer?) -> Void
                 = { player, position, data in
-                    let self_: MPRIS = Unmanaged.fromOpaque(data!).takeUnretainedValue()
-                    self_.updatePlayerState()
+                    data?.unretainedCast(to: MPRIS.self).updatePlayerState()
                 }
             
             let onMetadataChanged: @convention(c) (UnsafeMutablePointer<PlayerctlPlayer>?,
                                                    OpaquePointer? /* GVariant* */,
                                                    UnsafeMutableRawPointer?) -> Void
                 = { player, metadata, data in
-                    let self_: MPRIS = Unmanaged.fromOpaque(data!).takeUnretainedValue()
-                    self_.updatePlayerState()
+                    data?.unretainedCast(to: MPRIS.self).updatePlayerState()
                 }
             
             let pself = Unmanaged.passUnretained(self).toOpaque()
@@ -133,7 +132,7 @@ extension MusicPlayers.MPRIS: MusicPlayerProtocol {
     
     public var playbackTime: TimeInterval {
         get {
-            Double(playerctl_player_get_position(player, nil)) / 1_000_000.0
+            Double(playerctl_player_get_position(player, nil)) / 1_000_000
         }
         set {
             playerctl_player_set_position(player, Int(newValue * 1_000_000), nil)

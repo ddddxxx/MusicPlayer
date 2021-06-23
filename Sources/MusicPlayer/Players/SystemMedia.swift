@@ -170,23 +170,20 @@ import playerctl
 
 extension MusicPlayers {
     
-    public final class FakeSystemMedia: Agent {
+    public final class FakeSystemMedia: NowPlaying {
         
         private let manager: UnsafeMutablePointer<PlayerctlPlayerManager>
-        
-        private var players: [MusicPlayers.MPRIS] = []
         private var signals: [gulong] = []
         
-        public init?(_: Void = ()) {
+        public init?() {
             guard let manager = playerctl_player_manager_new(nil) else {
                 return nil
             }
             self.manager = manager
             
-            super.init()
-            
             GEventLoop.start()
             
+            var players: [MusicPlayerProtocol] = []
             var playerNames: UnsafeMutablePointer<GList>? = playerctl_list_players(nil)
             while (playerNames != nil) {
                 let playerName = playerNames!.pointee.data.assumingMemoryBound(to: PlayerctlPlayerName.self)
@@ -195,24 +192,20 @@ extension MusicPlayers {
                     continue
                 }
                 playerctl_player_manager_manage_player(manager, player)
-                players.append(MusicPlayers.MPRIS(player: player!))
+                players.append(MPRIS(player: player!))
                 playerNames = playerNames!.pointee.next
             }
             
-            designatedPlayer = players.last { $0.playbackState.isPlaying } ?? players.last
+            super.init(players: players)
             
             let onNameAppeared: @convention(c) (UnsafeMutablePointer<PlayerctlPlayerManager>?,
                                                 UnsafeMutablePointer<PlayerctlPlayerName>?,
                                                 UnsafeMutableRawPointer?) -> Void
                 = { manager, name, data in
-                    let self_: FakeSystemMedia = Unmanaged.fromOpaque(data!).takeUnretainedValue()
+                    let `self`: FakeSystemMedia = Unmanaged.fromOpaque(data!).takeUnretainedValue()
                     if let player = playerctl_player_new_from_name(name, nil) {
-                        playerctl_player_manager_manage_player(self_.manager, player)
-                        let player = MusicPlayers.MPRIS(player: player)
-                        self_.players.append(player)
-                        if player.playbackState.isPlaying {
-                            self_.designatedPlayer = player
-                        }
+                        playerctl_player_manager_manage_player(`self`.manager, player)
+                        `self`.players.append(MPRIS(player: player))
                     }
                 }
             
@@ -223,11 +216,7 @@ extension MusicPlayers {
                     if player == nil {
                         return
                     }
-                    let self_: FakeSystemMedia = Unmanaged.fromOpaque(data!).takeUnretainedValue()
-                    self_.players.removeAll { $0.player == player! }
-                    if (self_.designatedPlayer as! MusicPlayers.MPRIS).player == player! {
-                        self_.designatedPlayer = self_.players.last { $0.playbackState.isPlaying } ?? self_.players.last
-                    }
+                    data?.unretainedCast(to: FakeSystemMedia.self).players.removeAll { ($0 as? MPRIS)?.player == player }
                 }
             
             let pself = Unmanaged.passUnretained(self).toOpaque()

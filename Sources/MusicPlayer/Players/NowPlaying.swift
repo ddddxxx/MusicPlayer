@@ -12,14 +12,18 @@ import CXShim
 
 extension MusicPlayers {
     
-    public final class NowPlaying: Agent {
+    public class NowPlaying: Agent {
         
         override public var designatedPlayer: MusicPlayerProtocol? {
             get { return super.designatedPlayer }
             set { preconditionFailure("setting currentPlayer for MusicPlayers.NowPlaying is forbidden") }
         }
         
-        public let players: [MusicPlayerProtocol]
+        public var players: [MusicPlayerProtocol] {
+            didSet {
+                selectNewPlayer()
+            }
+        }
         
         private var selectNewPlayerCanceller: AnyCancellable?
         
