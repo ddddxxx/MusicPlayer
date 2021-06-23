@@ -21,27 +21,34 @@ func gproperty<T, R>(_ ptr: UnsafeMutablePointer<T>, name: String, transform: (U
 }
 
 
-class GEventLoop {
+public class GEventLoop {
     
-    static private(set) var loop: OpaquePointer? /* GMainLoop* */ = nil
-    static private(set) var running = false
+    private static let queue = DispatchQueue(label: "GMainLoopManager")
     
-    static func start() {
-        if !running {
-            running = true
+    public static private(set) var loop: OpaquePointer? /* GMainLoop* */ = nil
+    public static private(set) var running = false
+    
+    public static func start() {
+        queue.async {
+            if Self.running {
+                return
+            }
+            Self.running = true
             Thread.detachNewThread {
                 Thread.current.name = "GMainLoop"
-                loop = g_main_loop_new(g_main_context_get_thread_default(), 0)
+                Self.loop = g_main_loop_new(g_main_context_get_thread_default(), 0)
                 g_main_loop_run(loop)
             }
         }
     }
     
-    static func quit() {
-        if let loop = Self.loop {
-            running = false
-            g_main_loop_quit(loop)
-            Self.loop = nil
+    public static func quit() {
+        queue.async {
+            if let loop = Self.loop {
+                Self.running = false
+                g_main_loop_quit(loop)
+                Self.loop = nil
+            }
         }
     }
 }
