@@ -24,6 +24,7 @@ let package = Package(
                 .target(name: "MediaRemotePrivate", condition: .when(platforms: [.macOS, .iOS])),
                 "CXExtensions",
                 .product(name: "CXShim", package: "CombineX"),
+                .target(name: "playerctl", condition: .when(platforms: [.linux]))
             ]),
         .target(
             name: "LXMusicPlayer",
@@ -33,13 +34,9 @@ let package = Package(
         ]),
         .target(
             name: "MediaRemotePrivate"),
+        .systemLibrary(name: "playerctl", pkgConfig: "playerctl"),
     ]
 )
-
-#if os(Linux)
-package.targets.append(.systemLibrary(name: "playerctl", pkgConfig: "playerctl"))
-package.targets.first { $0.name == "MusicPlayer" }?.dependencies.append("playerctl")
-#endif
 
 enum CombineImplementation {
     
