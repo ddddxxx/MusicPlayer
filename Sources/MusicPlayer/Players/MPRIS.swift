@@ -112,10 +112,6 @@ extension MusicPlayers.MPRIS {
         }
         return result
     }
-    
-    func metadata(_ key: String) -> String? {
-        playerctl_player_print_metadata_prop(player, key, nil).map { String(cString: $0) }
-    }
 }
 
 extension MusicPlayers.MPRIS: MusicPlayerProtocol {
@@ -184,17 +180,25 @@ extension MusicPlayers.MPRIS: MusicPlayerProtocol {
     }
     
     private var track: MusicTrack? {
+        guard let metadata = (gproperty(player, name: "metadata") { g_value_get_variant($0) }) else {
+            return nil
+        }
+        
+        let metadataString: (String) -> String? = { key in
+            g_variant_lookup_value(metadata, key, nil).map { g_variant_get_string($0, nil) }.map { String(cString: $0) }
+        }
+        
+        guard let id = metadataString("mpris:trackid") else {
+            return nil
+        }
         let title = playerctl_player_get_title(player, nil).map { String(cString: $0) }
-        let artist = playerctl_player_get_artist(player, nil).map { String(cString: $0) }
         let album = playerctl_player_get_album(player, nil).map { String(cString: $0) }
-        let duration = (metadata("mpris:length").flatMap { TimeInterval($0) } ?? 0) / 1_000_000
-        return MusicTrack(id: metadata("mpris:trackid") ?? "",
-                          title: title,
-                          album: album,
-                          artist: artist,
-                          duration: duration,
-                          fileURL: metadata("xesam:url").flatMap { URL(string: $0) },
-                          artwork: metadata("mpris:artUrl").flatMap { URL(string: $0) })
+        let artist = playerctl_player_get_artist(player, nil).map { String(cString: $0) }
+        let length = g_variant_lookup_value(metadata, "mpris:length", nil).map { g_variant_get_int64($0) } ?? 0
+        let duration = Double(length) / 1_000_000
+        return MusicTrack(id: id, title: title, album: album, artist: artist, duration: duration,
+                          fileURL: metadataString("xesam:url").flatMap { URL(string: $0) },
+                          artwork: metadataString("mpris:artUrl").flatMap { URL(string: $0) })
     }
 }
 
