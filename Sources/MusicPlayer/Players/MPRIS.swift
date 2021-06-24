@@ -57,8 +57,6 @@ extension MusicPlayers {
         init(player: UnsafeMutablePointer<PlayerctlPlayer>) {
             self.player = player
             
-            GEventLoop.start()
-            
             let onPlayStatusChanged: @convention(c) (UnsafeMutablePointer<PlayerctlPlayer>?,
                                                      gint /* PlayerctlPlaybackStatus */,
                                                      UnsafeMutableRawPointer?) -> Void

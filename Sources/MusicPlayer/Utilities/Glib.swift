@@ -20,36 +20,48 @@ func gproperty<T, R>(_ ptr: UnsafeMutablePointer<T>, name: String, transform: (U
     }
 }
 
-
-public class GEventLoop {
+public class GRunLoop {
     
-    private static let queue = DispatchQueue(label: "GMainLoopManager")
+    public static var main: GRunLoop = GRunLoop(context: g_main_context_default()!)
     
-    public static private(set) var loop: OpaquePointer? /* GMainLoop* */ = nil
-    public static private(set) var running = false
+    let loop: OpaquePointer /* GMainLoop* */
     
-    public static func start() {
-        queue.async {
-            if Self.running {
-                return
-            }
-            Self.running = true
-            Thread.detachNewThread {
-                Thread.current.name = "GMainLoop"
-                Self.loop = g_main_loop_new(g_main_context_get_thread_default(), 0)
-                g_main_loop_run(loop)
-            }
+    public convenience init?() {
+        guard let context = g_main_context_get_thread_default() else {
+            return nil
         }
+        self.init(context: context)
     }
     
-    public static func quit() {
-        queue.async {
-            if let loop = Self.loop {
-                Self.running = false
-                g_main_loop_quit(loop)
-                Self.loop = nil
-            }
-        }
+    public convenience init(context: OpaquePointer /* GMainContext* */ ) {
+        self.init(loop: g_main_loop_new(context, 0)!)
+    }
+    
+    init(loop: OpaquePointer) {
+        self.loop = loop
+    }
+}
+
+extension GRunLoop {
+    
+    public var running: Bool {
+        g_main_loop_is_running(loop) != 0
+    }
+    
+    public var context: OpaquePointer /* GMainContext* */ {
+        g_main_loop_get_context(loop)!
+    }
+    
+    public var getGMainLoop: OpaquePointer /* GMainLoop* */ {
+        loop
+    }
+    
+    public func run() {
+        g_main_loop_run(loop)
+    }
+    
+    public func quit() {
+        g_main_loop_quit(loop)
     }
 }
 

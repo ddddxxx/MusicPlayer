@@ -25,17 +25,29 @@ Unified API for music players.
 #### Linux
 
 - [x] [MPRIS](https://specifications.freedesktop.org/mpris-spec/latest/) (test needed) (Thanks to [@suransea](https://github.com/suransea))
+- [x] MPRIS Now Playing: Just like Now Playing, but automatically find available MPRIS players.
 
 ##### dependencies
 
 - [playerctl](https://github.com/altdesktop/playerctl) (could be installed by package manager)
+
+> A running `GMainLoop` is required to automatically update the player and playback status for MPRIS.
+> If not, you can run one by: 
+> ```swift
+> GRunLoop.main.run()
+> ```
+> or in other threads:
+> ```swift
+> Thread.detachNewThread { 
+>     GRunLoop()!.run() 
+> }
+> ```
 
 #### Universal
 
 - SystemMedia: System-wide Now Playing
   - [x] macOS
   - [x] iOS (jailbroken device only) (test needed)
-  - [x] Linux (fake with MPRIS) (test needed)
 - [ ] Spotify (Web API)
 
 #### Helper:
