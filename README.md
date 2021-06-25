@@ -39,7 +39,7 @@ Unified API for music players.
 > or in other threads:
 > ```swift
 > Thread.detachNewThread { 
->     GRunLoop()!.run() 
+>     GRunLoop.main.run() 
 > }
 > ```
 
