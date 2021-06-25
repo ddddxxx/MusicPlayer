@@ -40,6 +40,10 @@ public class GRunLoop {
     init(loop: OpaquePointer) {
         self.loop = loop
     }
+    
+    deinit {
+        g_main_loop_unref(loop)
+    }
 }
 
 extension GRunLoop {

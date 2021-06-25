@@ -25,17 +25,20 @@ extension MusicPlayers {
             self.manager = manager
             
             var players: [MusicPlayerProtocol] = []
-            var playerNames: UnsafeMutablePointer<GList>? = playerctl_list_players(nil)
-            while (playerNames != nil) {
-                let playerName = playerNames!.pointee.data.assumingMemoryBound(to: PlayerctlPlayerName.self)
+            let playerNames: UnsafeMutablePointer<GList>? = playerctl_list_players(nil)
+            var cur = playerNames
+            while (cur != nil) {
+                let playerName = cur!.pointee.data.assumingMemoryBound(to: PlayerctlPlayerName.self)
                 let player = playerctl_player_new_from_name(playerName, nil)
+                playerctl_player_name_free(playerName)
                 if player == nil {
                     continue
                 }
                 playerctl_player_manager_manage_player(manager, player)
                 players.append(MPRIS(player: player!))
-                playerNames = playerNames!.pointee.next
+                cur = cur!.pointee.next
             }
+            g_list_free(playerNames)
             
             super.init(players: players)
             
@@ -73,7 +76,7 @@ extension MusicPlayers {
             for var signal in signals {
                 g_clear_signal_handler(&signal, manager)
             }
-            g_free(manager)
+            g_object_unref(manager)
         }
     }
 }

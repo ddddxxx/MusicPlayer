@@ -96,7 +96,7 @@ extension MusicPlayers {
             for var signal in signals {
                 g_clear_signal_handler(&signal, player)
             }
-            g_free(player)
+            g_object_unref(player)
         }
     }
 }
@@ -104,12 +104,14 @@ extension MusicPlayers {
 extension MusicPlayers.MPRIS {
     
     public class var names: [UnsafeMutablePointer<PlayerctlPlayerName>] {
-        var list = playerctl_list_players(nil)
+        let playerNames = playerctl_list_players(nil)
         var result: [UnsafeMutablePointer<PlayerctlPlayerName>] = []
-        while list != nil {
-            result.append(list!.pointee.data.assumingMemoryBound(to: PlayerctlPlayerName.self))
-            list = list!.pointee.next
+        var cur = playerNames
+        while cur != nil {
+            result.append(cur!.pointee.data.assumingMemoryBound(to: PlayerctlPlayerName.self))
+            cur = cur!.pointee.next
         }
+        g_list_free(playerNames)
         return result
     }
 }
