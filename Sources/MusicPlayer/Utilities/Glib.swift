@@ -44,7 +44,7 @@ public class GRunLoop {
 
 extension GRunLoop {
     
-    public var running: Bool {
+    public var isRunning: Bool {
         g_main_loop_is_running(loop) != 0
     }
     
@@ -52,7 +52,7 @@ extension GRunLoop {
         g_main_loop_get_context(loop)!
     }
     
-    public var getGMainLoop: OpaquePointer /* GMainLoop* */ {
+    public func getGMainLoop() -> OpaquePointer /* GMainLoop* */ {
         loop
     }
     
