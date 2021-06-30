@@ -29,13 +29,14 @@ extension MusicPlayers {
             var cur = playerNames
             while (cur != nil) {
                 let playerName = cur!.pointee.data.assumingMemoryBound(to: PlayerctlPlayerName.self)
+                let name = String(cString: playerName.pointee.name)
                 let player = playerctl_player_new_from_name(playerName, nil)
                 playerctl_player_name_free(playerName)
                 if player == nil {
                     continue
                 }
                 playerctl_player_manager_manage_player(manager, player)
-                players.append(MPRIS(player: player!))
+                players.append(MPRIS(player: player!, name: name))
                 cur = cur!.pointee.next
             }
             g_list_free(playerNames)
@@ -49,7 +50,7 @@ extension MusicPlayers {
                     let `self`: MPRISNowPlaying = Unmanaged.fromOpaque(data!).takeUnretainedValue()
                     if let player = playerctl_player_new_from_name(name, nil) {
                         playerctl_player_manager_manage_player(`self`.manager, player)
-                        `self`.players.append(MPRIS(player: player))
+                        `self`.players.append(MPRIS(player: player, name: String(cString: name!.pointee.name)))
                     }
                 }
             
