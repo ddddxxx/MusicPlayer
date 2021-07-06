@@ -13,27 +13,26 @@ let package = Package(
         .library(name: "LXMusicPlayer", targets: ["LXMusicPlayer"]),
     ],
     dependencies: [
-        .package(url: "https://github.com/cx-org/CombineX", .upToNextMinor(from: "0.3.0")),
-        .package(url: "https://github.com/cx-org/CXExtensions", .upToNextMinor(from: "0.3.0")),
+        .package(url: "https://github.com/cx-org/CXShim", .upToNextMinor(from: "0.4.0")),
+        .package(url: "https://github.com/cx-org/CXExtensions", .upToNextMinor(from: "0.4.0")),
     ],
     targets: [
         .target(
             name: "MusicPlayer",
             dependencies: [
+                "CXShim",
+                "CXExtensions",
                 .target(name: "LXMusicPlayer", condition: .when(platforms: [.macOS])),
                 .target(name: "MediaRemotePrivate", condition: .when(platforms: [.macOS, .iOS])),
-                "CXExtensions",
-                .product(name: "CXShim", package: "CombineX"),
-                .target(name: "playerctl", condition: .when(platforms: [.linux]))
+                .target(name: "playerctl", condition: .when(platforms: [.linux])),
             ]),
         .target(
             name: "LXMusicPlayer",
             cSettings: [
                 .headerSearchPath("private"),
                 .headerSearchPath("BridgingHeader"),
-        ]),
-        .target(
-            name: "MediaRemotePrivate"),
+            ]),
+        .target(name: "MediaRemotePrivate"),
         .systemLibrary(name: "playerctl", pkgConfig: "playerctl"),
     ]
 )
@@ -79,7 +78,7 @@ import Foundation
 let info = ProcessInfo.processInfo
 
 if info.combineImplementation == .combine {
-    package.platforms = [.macOS("10.15"), .iOS("13.0")]
+    package.platforms = [.macOS(.v10_15), .iOS(.v13)]
 }
 
 // This breaks macOS build
