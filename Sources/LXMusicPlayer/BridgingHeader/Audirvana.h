@@ -2,6 +2,8 @@
  * Audirvana.h
  */
 
+#if TARGET_OS_MAC && !TARGET_OS_IPHONE
+
 #import <AppKit/AppKit.h>
 #import <ScriptingBridge/ScriptingBridge.h>
 
@@ -71,3 +73,5 @@ typedef NS_ENUM(AEKeyword, AudirvanaTrackType) {
 - (void) setNextTrackType:(AudirvanaTrackType)type URL:(NSString *)URL trackID:(NSInteger)trackID;  // set/change track to be played after current one (in slave mode). trackID is optional and needed only for Qobuz tracks
 
 @end
+
+#endif

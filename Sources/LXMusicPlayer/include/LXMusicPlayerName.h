@@ -7,6 +7,8 @@
 //  file, You can obtain one at https://mozilla.org/MPL/2.0/.
 //
 
+#if TARGET_OS_MAC && !TARGET_OS_IPHONE
+
 #import <Foundation/Foundation.h>
 
 NS_ASSUME_NONNULL_BEGIN
@@ -22,3 +24,5 @@ extern const LXMusicPlayerName LXMusicPlayerNameSwinsian;
 NSArray<NSString *> *LXMusicPlayerNameGetCandidateBundleID(LXMusicPlayerName name) NS_SWIFT_NAME(LXMusicPlayerName.candidateBundleID(self:));
 
 NS_ASSUME_NONNULL_END
+
+#endif

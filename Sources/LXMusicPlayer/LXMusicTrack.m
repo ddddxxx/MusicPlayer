@@ -7,6 +7,8 @@
 //  file, You can obtain one at https://mozilla.org/MPL/2.0/.
 //
 
+#if TARGET_OS_MAC && !TARGET_OS_IPHONE
+
 #import "LXMusicTrack+Private.h"
 
 @implementation LXMusicTrack
@@ -158,3 +160,5 @@ GenerateRefValueGetter(fileURL)
 GenerateRefValueGetter(artwork)
 
 @end
+
+#endif
