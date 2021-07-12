@@ -47,6 +47,7 @@ Unified API for music players.
 - SystemMedia: System-wide Now Playing
   - [x] macOS
   - [x] iOS (jailbroken device only) (test needed)
+  - [ ] Windows (via [SMTC](https://docs.microsoft.com/en-us/uwp/api/windows.media.systemmediatransportcontrols))
 - [ ] Spotify (Web API)
 
 #### Helper:
