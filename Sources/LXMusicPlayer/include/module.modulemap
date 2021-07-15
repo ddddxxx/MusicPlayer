@@ -1,0 +1,4 @@
+module LXMusicPlayer {
+    header "LXScriptingMusicPlayer.h"
+    export *
+}

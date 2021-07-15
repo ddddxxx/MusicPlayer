@@ -7,6 +7,8 @@
 //  file, You can obtain one at https://mozilla.org/MPL/2.0/.
 //
 
+#if TARGET_OS_MAC && !TARGET_OS_IPHONE
+
 #import "LXMusicPlayerName.h"
 
 const LXMusicPlayerName LXMusicPlayerNameAppleMusic = @"Music";
@@ -30,3 +32,5 @@ NSArray<NSString *> *LXMusicPlayerNameGetCandidateBundleID(LXMusicPlayerName nam
         return @[];
     }
 }
+
+#endif

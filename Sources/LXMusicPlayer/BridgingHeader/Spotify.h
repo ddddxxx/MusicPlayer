@@ -2,6 +2,8 @@
  * Spotify.h
  */
 
+#if TARGET_OS_MAC && !TARGET_OS_IPHONE
+
 #import <AppKit/AppKit.h>
 #import <ScriptingBridge/ScriptingBridge.h>
 
@@ -76,3 +78,5 @@ typedef NS_ENUM(AEKeyword, SpotifyEPlS) {
 @property (copy, readonly) NSString *version;  // The version of the application.
 
 @end
+
+#endif
