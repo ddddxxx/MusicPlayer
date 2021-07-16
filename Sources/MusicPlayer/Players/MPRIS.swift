@@ -26,6 +26,8 @@ extension MusicPlayers {
         
         let player: UnsafeMutablePointer<PlayerctlPlayer>
         
+        public let playerName: String
+        
         public var name: MusicPlayerName? = MusicPlayerName.mpris
         
         @Published public private(set) var currentTrack: MusicTrack?
@@ -33,29 +35,16 @@ extension MusicPlayers {
         
         private var signals: [gulong] = []
         
-        public private(set) lazy var playerName: String? = gproperty(player, name: "player-name") { val in
-            g_value_get_pointer(val).map { name in
-                String(cString: name.assumingMemoryBound(to: CChar.self))
-            }
-        }
-        
         public convenience init?(name: String) {
             guard let player = playerctl_player_new(name, nil) else {
                 return nil
             }
-            self.init(player: player)
-            self.playerName = name
+            self.init(player: player, name: name)
         }
         
-        public convenience init?(name: UnsafeMutablePointer<PlayerctlPlayerName>) {
-            guard let player = playerctl_player_new_from_name(name, nil) else {
-                return nil
-            }
-            self.init(player: player)
-        }
-        
-        init(player: UnsafeMutablePointer<PlayerctlPlayer>) {
+        init(player: UnsafeMutablePointer<PlayerctlPlayer>, name: String) {
             self.player = player
+            self.playerName = name
             
             let onPlayStatusChanged: @convention(c) (UnsafeMutablePointer<PlayerctlPlayer>?,
                                                      gint /* PlayerctlPlaybackStatus */,
@@ -103,12 +92,14 @@ extension MusicPlayers {
 
 extension MusicPlayers.MPRIS {
     
-    public class var names: [UnsafeMutablePointer<PlayerctlPlayerName>] {
+    public class var names: [String] {
         let playerNames = playerctl_list_players(nil)
-        var result: [UnsafeMutablePointer<PlayerctlPlayerName>] = []
+        var result: [String] = []
         var cur = playerNames
         while cur != nil {
-            result.append(cur!.pointee.data.assumingMemoryBound(to: PlayerctlPlayerName.self))
+            let playerName = cur!.pointee.data.assumingMemoryBound(to: PlayerctlPlayerName.self)
+            result.append(String(cString: playerName.pointee.name))
+            playerctl_player_name_free(playerName)
             cur = cur!.pointee.next
         }
         g_list_free(playerNames)
