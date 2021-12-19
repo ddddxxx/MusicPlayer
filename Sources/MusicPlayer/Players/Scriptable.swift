@@ -33,17 +33,17 @@ extension MusicPlayers {
                 return nil
             }
             self.player = player
-            self.currentTrack = player.currentTrack as MusicTrack?
-            self.playbackState = player.playerState as PlaybackState
+            self.currentTrack = player.currentTrack.map(MusicTrack.init)
+            self.playbackState = PlaybackState(lxState: player.playerState)
             player.cx
                 .publisher(for: \.currentTrack)
-                .map { $0 as MusicTrack? }
+                .map { $0.map(MusicTrack.init) }
                 .receive(on: DispatchQueue.playerUpdate.cx)
                 .assign(to: \.currentTrack, weaklyOn: self)
                 .store(in: &cancellers)
             player.cx
                 .publisher(for: \.playerState)
-                .map { $0 as PlaybackState }
+                .map(PlaybackState.init)
                 .receive(on: DispatchQueue.playerUpdate.cx)
                 .assign(to: \.playbackState, weaklyOn: self)
                 .store(in: &cancellers)

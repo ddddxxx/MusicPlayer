@@ -14,11 +14,20 @@ import LXMusicPlayer
 
 // MARK: - MusicTrack
 
-extension MusicTrack: ReferenceConvertible {
+extension MusicTrack {
     
-    public typealias ReferenceType = LXMusicTrack
+    init(lxTrack t: LXMusicTrack) {
+        self.init(id: t.persistentID,
+                  title: t.title,
+                  album: t.album,
+                  artist: t.artist,
+                  duration: t.duration?.doubleValue,
+                  fileURL: t.fileURL,
+                  artwork: t.artwork,
+                  originalTrack: t.originalTrack)
+    }
     
-    public func _bridgeToObjectiveC() -> LXMusicTrack {
+    var lxTrack: LXMusicTrack {
         let t = LXMusicTrack(persistentID: id)
         t.title = title
         t.album = album
@@ -28,64 +37,31 @@ extension MusicTrack: ReferenceConvertible {
         t.artwork = artwork
         return t
     }
-    
-    public static func _forceBridgeFromObjectiveC(_ source: LXMusicTrack, result: inout MusicTrack?) {
-        result = _unconditionallyBridgeFromObjectiveC(source)
-    }
-    
-    public static func _conditionallyBridgeFromObjectiveC(_ source: LXMusicTrack, result: inout MusicTrack?) -> Bool {
-        result = _unconditionallyBridgeFromObjectiveC(source)
-        return true
-    }
-    
-    public static func _unconditionallyBridgeFromObjectiveC(_ source: LXMusicTrack?) -> MusicTrack {
-        guard let t = source else { fatalError() }
-        return MusicTrack(id: t.persistentID,
-                          title: t.title,
-                          album: t.album,
-                          artist: t.artist,
-                          duration: t.duration?.doubleValue,
-                          fileURL: t.fileURL,
-                          artwork: t.artwork,
-                          originalTrack: t.originalTrack)
-    }
 }
 
 // MARK: - PlaybackState
 
-extension PlaybackState: ReferenceConvertible {
+extension PlaybackState {
     
-    public typealias ReferenceType = LXPlayerState
+    init(lxState s: LXPlayerState) {
+        switch s.state() {
+        case .stopped: self = .stopped
+        case .playing: self = .playing(start: s.startTime()!)
+        case .paused: self = .paused(time: s.playbackTime())
+        case .fastForwarding: self = .fastForwarding(time: s.playbackTime())
+        case .rewinding: self = .rewinding(time: s.playbackTime())
+        @unknown default:
+            fatalError()
+        }
+    }
     
-    public func _bridgeToObjectiveC() -> LXPlayerState {
+    var lxState: LXPlayerState {
         switch self {
         case .stopped: return .stopped()
         case .playing(let start): return .playing(withStartTime: start)
         case .paused(let time): return .init(.paused, playbackTime: time)
         case .fastForwarding(let time): return .init(.fastForwarding, playbackTime: time)
         case .rewinding(let time): return .init(.rewinding, playbackTime: time)
-        }
-    }
-    
-    public static func _forceBridgeFromObjectiveC(_ source: LXPlayerState, result: inout PlaybackState?) {
-        result = _unconditionallyBridgeFromObjectiveC(source)
-    }
-    
-    public static func _conditionallyBridgeFromObjectiveC(_ source: LXPlayerState, result: inout PlaybackState?) -> Bool {
-        result = _unconditionallyBridgeFromObjectiveC(source)
-        return true
-    }
-    
-    public static func _unconditionallyBridgeFromObjectiveC(_ source: LXPlayerState?) -> PlaybackState {
-        guard let source = source else { fatalError() }
-        switch source.state() {
-        case .stopped: return .stopped
-        case .playing: return .playing(start: source.startTime()!)
-        case .paused: return .paused(time: source.playbackTime())
-        case .fastForwarding: return .fastForwarding(time: source.playbackTime())
-        case .rewinding: return .rewinding(time: source.playbackTime())
-        @unknown default:
-            fatalError()
         }
     }
 }
