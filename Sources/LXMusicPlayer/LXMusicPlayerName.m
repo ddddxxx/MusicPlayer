@@ -25,7 +25,7 @@ NSArray<NSString *> *LXMusicPlayerNameGetCandidateBundleID(LXMusicPlayerName nam
     } else if ([name isEqualToString:LXMusicPlayerNameVox]) {
         return @[@"com.coppertino.Vox"];
     } else if ([name isEqualToString:LXMusicPlayerNameAudirvana]) {
-        return @[@"com.audirvana.Audirvana-Studio", @"com.audirvana.Audirvana", @"com.audirvana.Audirvana-Plus"];
+        return @[@"com.audirvana.Audirvana-Studio", @"com.audirvana.Audirvana-Origin", @"com.audirvana.Audirvana", @"com.audirvana.Audirvana-Plus"];
     } else if ([name isEqualToString:LXMusicPlayerNameSwinsian]) {
         return @[@"com.swinsian.Swinsian"];
     } else {
