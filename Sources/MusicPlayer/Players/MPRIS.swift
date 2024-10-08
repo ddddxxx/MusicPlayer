@@ -7,145 +7,110 @@
 //  file, You can obtain one at https://mozilla.org/MPL/2.0/.
 //
 
-#if os(Linux)
-
-import Foundation
 import CXShim
-import playerctl
-
-extension UnsafeMutableRawPointer {
-    
-    func unretainedCast<T: AnyObject>(to: T.Type) -> T {
-        Unmanaged.fromOpaque(self).takeUnretainedValue()
-    }
-}
+import DBus
+import Foundation
+import MPRIS
 
 extension MusicPlayers {
-    
+    /// Represents a [MPRIS](https://specifications.freedesktop.org/mpris-spec/latest/) music player.
     public final class MPRIS: ObservableObject {
-        
-        let player: UnsafeMutablePointer<PlayerctlPlayer>
-        
-        public let playerName: String
-        
-        public var name: MusicPlayerName? = MusicPlayerName.mpris
-        
+        private let player: MediaPlayer2
+        private var disposables: [() throws -> Void] = []
         @Published public private(set) var currentTrack: MusicTrack?
         @Published public private(set) var playbackState: PlaybackState = .stopped
-        
-        private var signals: [gulong] = []
-        
-        public convenience init?(name: String) {
-            guard let player = playerctl_player_new(name, nil) else {
-                return nil
-            }
-            self.init(player: player, name: name)
-        }
-        
-        init(player: UnsafeMutablePointer<PlayerctlPlayer>, name: String) {
+
+        init(player: MediaPlayer2) throws {
             self.player = player
-            self.playerName = name
-            
-            let onPlayStatusChanged: @convention(c) (UnsafeMutablePointer<PlayerctlPlayer>?,
-                                                     gint /* PlayerctlPlaybackStatus */,
-                                                     UnsafeMutableRawPointer?) -> Void
-                = { player, status, data in
-                    data?.unretainedCast(to: MPRIS.self).updatePlayerState()
-                }
-            
-            let onSeeked: @convention(c) (UnsafeMutablePointer<PlayerctlPlayer>?,
-                                          gint64,
-                                          UnsafeMutableRawPointer?) -> Void
-                = { player, position, data in
-                    data?.unretainedCast(to: MPRIS.self).updatePlayerState()
-                }
-            
-            let onMetadataChanged: @convention(c) (UnsafeMutablePointer<PlayerctlPlayer>?,
-                                                   OpaquePointer? /* GVariant* */,
-                                                   UnsafeMutableRawPointer?) -> Void
-                = { player, metadata, data in
-                    data?.unretainedCast(to: MPRIS.self).updatePlayerState()
-                }
-            
-            let pself = Unmanaged.passUnretained(self).toOpaque()
-            signals.append(
-                g_signal_connect_data(player, "playback-status",
-                                      unsafeBitCast(onPlayStatusChanged, to: GCallback?.self), pself, nil, G_CONNECT_AFTER)
-            )
-            signals.append(
-                g_signal_connect_data(player, "seeked", unsafeBitCast(onSeeked, to: GCallback?.self), pself, nil, G_CONNECT_AFTER)
-            )
-            signals.append(
-                g_signal_connect_data(player, "metadata", unsafeBitCast(onMetadataChanged, to: GCallback?.self), pself, nil, G_CONNECT_AFTER)
-            )
+            let updatePlayerState: () -> Void = { [weak self] in self?.updatePlayerState() }
+            disposables.append(try player.player.playbackStatus.observe(updatePlayerState))
+            disposables.append(try player.player.metadata.observe(updatePlayerState))
+            disposables.append(try player.player.seeked { _ in updatePlayerState() })
             updatePlayerState()
         }
-        
+
         deinit {
-            for var signal in signals {
-                g_clear_signal_handler(&signal, player)
-            }
-            g_object_unref(player)
+            disposables.forEach { try? $0() }
         }
     }
 }
 
 extension MusicPlayers.MPRIS {
-    
-    public class var names: [String] {
-        let playerNames = playerctl_list_players(nil)
-        var result: [String] = []
-        var cur = playerNames
-        while cur != nil {
-            let playerName = cur!.pointee.data.assumingMemoryBound(to: PlayerctlPlayerName.self)
-            result.append(String(cString: playerName.pointee.name))
-            playerctl_player_name_free(playerName)
-            cur = cur!.pointee.next
-        }
-        g_list_free(playerNames)
-        return result
+    /// Initializes a new MPRIS music player.
+    ///
+    /// - Parameters:
+    ///   - name: The name of the media player.
+    ///   - instance: The instance name of the media player, if any.
+    ///   - queue: The dispatch queue for the D-Bus method calls.
+    public convenience init(
+        name: String, instance: String? = nil, queue: DispatchQueue? = nil
+    ) throws {
+        let connection = try Connection(type: .session, private: true)
+        try connection.setupDispatch(with: queue ?? .playerUpdate)
+        try self.init(name: name, instance: instance, connection: connection)
+    }
+
+    /// Initializes a new MPRIS music player.
+    ///
+    /// - Parameters:
+    ///   - name: The name of the media player.
+    ///   - instance: The instance name of the media player, if any.
+    ///   - connection: The connection to the D-Bus.
+    ///   - timeout: The timeout interval for the D-Bus method calls.
+    public convenience init(
+        name: String, instance: String? = nil,
+        connection: Connection, timeout: TimeoutInterval = .useDefault
+    ) throws {
+        let player = MediaPlayer2(
+            connection: connection, name: name, instance: instance, timeout: timeout)
+        try self.init(player: player)
     }
 }
 
 extension MusicPlayers.MPRIS: MusicPlayerProtocol {
-    
+    public var name: MusicPlayerName? { nil }
+
     public var currentTrackWillChange: AnyPublisher<MusicTrack?, Never> {
         $currentTrack.eraseToAnyPublisher()
     }
-    
+
     public var playbackStateWillChange: AnyPublisher<PlaybackState, Never> {
         $playbackState.eraseToAnyPublisher()
     }
-    
+
     public var playbackTime: TimeInterval {
         get {
-            Double(playerctl_player_get_position(player, nil)) / 1_000_000
+            (try? player.player.position.get()).map { Double($0) / 1_000_000 } ?? 0
         }
         set {
-            playerctl_player_set_position(player, Int(newValue * 1_000_000), nil)
+            if let trackId = self.track?.id {
+                let trackId = TrackId(rawValue: trackId)
+                let newValue = Int64(newValue * 1_000_000)
+                try? player.player.setPosition(trackId: trackId, position: newValue)
+            }
         }
     }
-    
+
     public func resume() {
-        playerctl_player_play(player, nil)
+        try? player.player.play()
     }
-    
+
     public func pause() {
-        playerctl_player_pause(player, nil)
+        try? player.player.pause()
     }
-    
+
     public func playPause() {
-        playerctl_player_play_pause(player, nil)
+        try? player.player.playPause()
     }
-    
+
     public func skipToNextItem() {
-        playerctl_player_next(player, nil)
+        try? player.player.next()
     }
-    
+
     public func skipToPreviousItem() {
-        playerctl_player_previous(player, nil)
+        try? player.player.previous()
     }
-    
+
     public func updatePlayerState() {
         let state = self.state
         let track = self.track
@@ -156,43 +121,32 @@ extension MusicPlayers.MPRIS: MusicPlayerProtocol {
             playbackState = state
         }
     }
-    
+
     private var state: PlaybackState {
-        gproperty(player, name: "playback-status") { val in
-            switch PlayerctlPlaybackStatus(UInt32(g_value_get_enum(val))) {
-            case PLAYERCTL_PLAYBACK_STATUS_PLAYING:
-                return .playing(time: playbackTime)
-            case PLAYERCTL_PLAYBACK_STATUS_PAUSED:
-                return .paused(time: playbackTime)
-            case PLAYERCTL_PLAYBACK_STATUS_STOPPED:
-                return .stopped
-            default:
-                return .stopped
-            }
+        let playbackStatus = try? player.player.playbackStatus.get()
+        switch playbackStatus {
+        case .playing:
+            return .playing(time: playbackTime)
+        case .paused:
+            return .paused(time: playbackTime)
+        case .stopped:
+            return .stopped
+        default:
+            return .stopped
         }
     }
-    
+
     private var track: MusicTrack? {
-        guard let metadata = (gproperty(player, name: "metadata") { g_value_get_variant($0) }) else {
+        guard let metadata = try? player.player.metadata.get() else {
             return nil
         }
-        
-        let metadataString: (String) -> String? = { key in
-            g_variant_lookup_value(metadata, key, nil).map { g_variant_get_string($0, nil) }.map { String(cString: $0) }
-        }
-        
-        guard let id = metadataString("mpris:trackid") else {
-            return nil
-        }
-        let title = playerctl_player_get_title(player, nil).map { String(cString: $0) }
-        let album = playerctl_player_get_album(player, nil).map { String(cString: $0) }
-        let artist = playerctl_player_get_artist(player, nil).map { String(cString: $0) }
-        let length = g_variant_lookup_value(metadata, "mpris:length", nil).map { g_variant_get_int64($0) } ?? 0
-        let duration = Double(length) / 1_000_000
-        return MusicTrack(id: id, title: title, album: album, artist: artist, duration: duration,
-                          fileURL: metadataString("xesam:url").flatMap { URL(string: $0) },
-                          artwork: metadataString("mpris:artUrl").flatMap { URL(string: $0) })
+        return MusicTrack(
+            id: metadata.trackId.rawValue,
+            title: metadata.title,
+            album: metadata.album,
+            artist: metadata.artist?.first,
+            duration: metadata.length.map { Double($0) / 1_000_000 },
+            fileURL: metadata.url.flatMap { URL(string: $0) },
+            originalTrack: metadata as AnyObject)
     }
 }
-
-#endif

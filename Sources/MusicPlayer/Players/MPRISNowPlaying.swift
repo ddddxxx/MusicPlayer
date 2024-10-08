@@ -7,79 +7,54 @@
 //  file, You can obtain one at https://mozilla.org/MPL/2.0/.
 //
 
-#if os(Linux)
-
-import playerctl
+import DBus
+import Foundation
+import MPRIS
 
 extension MusicPlayers {
-    
-    public final class MPRISNowPlaying: NowPlaying {
-        
-        private let manager: UnsafeMutablePointer<PlayerctlPlayerManager>
-        private var signals: [gulong] = []
-        
-        public init?() {
-            guard let manager = playerctl_player_manager_new(nil) else {
-                return nil
+    /// Just like `NowPlaying`, but automatically find available MPRIS players.
+    public final class MPRISNowPlaying: Agent {
+        private let sessionManager: MediaPlayer2.SessionManager
+        private var disposables: [() -> Void] = []
+
+        init(sessionManager: MediaPlayer2.SessionManager) throws {
+            self.sessionManager = sessionManager
+            super.init()
+            if let player = sessionManager.activePlayer {
+                designatedPlayer = try MPRIS(player: player)
             }
-            self.manager = manager
-            
-            var players: [MusicPlayerProtocol] = []
-            let playerNames: UnsafeMutablePointer<GList>? = playerctl_list_players(nil)
-            var cur = playerNames
-            while (cur != nil) {
-                let playerName = cur!.pointee.data.assumingMemoryBound(to: PlayerctlPlayerName.self)
-                let name = String(cString: playerName.pointee.name)
-                let player = playerctl_player_new_from_name(playerName, nil)
-                playerctl_player_name_free(playerName)
-                if player == nil {
-                    continue
-                }
-                playerctl_player_manager_manage_player(manager, player)
-                players.append(MPRIS(player: player!, name: name))
-                cur = cur!.pointee.next
+            let stopObserve = sessionManager.observeActivePlayer { [weak self] player in
+                guard let self = self else { return }
+                self.designatedPlayer = player.flatMap { try? MPRIS(player: $0) }
             }
-            g_list_free(playerNames)
-            
-            super.init(players: players)
-            
-            let onNameAppeared: @convention(c) (UnsafeMutablePointer<PlayerctlPlayerManager>?,
-                                                UnsafeMutablePointer<PlayerctlPlayerName>?,
-                                                UnsafeMutableRawPointer?) -> Void
-                = { manager, name, data in
-                    let `self`: MPRISNowPlaying = Unmanaged.fromOpaque(data!).takeUnretainedValue()
-                    if let player = playerctl_player_new_from_name(name, nil) {
-                        playerctl_player_manager_manage_player(`self`.manager, player)
-                        `self`.players.append(MPRIS(player: player, name: String(cString: name!.pointee.name)))
-                    }
-                }
-            
-            let onPlayerVanished: @convention(c) (UnsafeMutablePointer<PlayerctlPlayerManager>?,
-                                                  UnsafeMutablePointer<PlayerctlPlayer>?,
-                                                  UnsafeMutableRawPointer?) -> Void
-                = { manager, player, data in
-                    if player == nil {
-                        return
-                    }
-                    data?.unretainedCast(to: MPRISNowPlaying.self).players.removeAll { ($0 as? MPRIS)?.player == player }
-                }
-            
-            let pself = Unmanaged.passUnretained(self).toOpaque()
-            signals.append(
-                g_signal_connect_data(manager, "name-appeared", unsafeBitCast(onNameAppeared, to: GCallback?.self), pself, nil, G_CONNECT_AFTER)
-            )
-            signals.append(
-                g_signal_connect_data(manager, "player-vanished", unsafeBitCast(onPlayerVanished, to: GCallback?.self), pself, nil, G_CONNECT_AFTER)
-            )
+            disposables.append(stopObserve)
         }
-        
+
         deinit {
-            for var signal in signals {
-                g_clear_signal_handler(&signal, manager)
-            }
-            g_object_unref(manager)
+            disposables.forEach { $0() }
         }
     }
 }
 
-#endif
+extension MusicPlayers.MPRISNowPlaying {
+    /// Initializes a new MPRIS now playing player.
+    ///
+    /// - Parameters:
+    ///   - queue: The dispatch queue for the D-Bus method calls.
+    public convenience init(queue: DispatchQueue? = nil) throws {
+        let connection = try Connection(type: .session, private: true)
+        try connection.setupDispatch(with: queue ?? .playerUpdate)
+        try self.init(connection: connection)
+    }
+
+    /// Initializes a new MPRIS now playing player.
+    ///
+    /// - Parameters:
+    ///   - connection: The connection to the D-Bus.
+    ///   - timeout: The timeout interval for the D-Bus method calls.
+    public convenience init(connection: Connection, timeout: TimeoutInterval = .useDefault) throws {
+        let sessionManager = try MediaPlayer2.SessionManager(
+            connection: connection, timeout: timeout)
+        try self.init(sessionManager: sessionManager)
+    }
+}

@@ -15,6 +15,7 @@ let package = Package(
     dependencies: [
         .package(url: "https://github.com/cx-org/CXShim", .upToNextMinor(from: "0.4.0")),
         .package(url: "https://github.com/cx-org/CXExtensions", .upToNextMinor(from: "0.4.0")),
+        .package(url: "https://github.com/suransea/mpris-swift", .upToNextMinor(from: "0.0.3")),
     ],
     targets: [
         .target(
@@ -22,9 +23,9 @@ let package = Package(
             dependencies: [
                 "CXShim",
                 "CXExtensions",
+                .product(name: "MPRIS", package: "mpris-swift"),
                 .target(name: "LXMusicPlayer", condition: .when(platforms: [.macOS])),
                 .target(name: "MediaRemotePrivate", condition: .when(platforms: [.macOS, .iOS])),
-                .target(name: "playerctl", condition: .when(platforms: [.linux])),
             ], cSettings: [
                 .define("TARGET_OS_MAC", to: "1", .when(platforms: [.macOS, .iOS])),
                 .define("TARGET_OS_IPHONE", to: "1", .when(platforms: [.iOS])),
@@ -43,7 +44,6 @@ let package = Package(
                 .define("TARGET_OS_MAC", to: "1", .when(platforms: [.macOS, .iOS])),
                 .define("TARGET_OS_IPHONE", to: "1", .when(platforms: [.iOS])),
             ]),
-        .systemLibrary(name: "playerctl", pkgConfig: "playerctl"),
     ]
 )
 
