@@ -26,26 +26,6 @@ Unified API for music players.
 
 - [x] [MPRIS](https://specifications.freedesktop.org/mpris-spec/latest/) (test needed) (Thanks to [@suransea](https://github.com/suransea))
 
-<details><summary>Read me before using MPRIS</summary>
-
-##### dependencies
-
-- [playerctl](https://github.com/altdesktop/playerctl) (could be installed by package manager)
-
-> A running `GMainLoop` is required to automatically update the player and playback status for MPRIS.
-> If not, you can run one by: 
-> ```swift
-> GRunLoop.main.run()
-> ```
-> or in other threads:
-> ```swift
-> Thread.detachNewThread { 
->     GRunLoop.main.run() 
-> }
-> ```
-
-</details>
-
 #### Universal
 
 - SystemMedia: System-wide Now Playing

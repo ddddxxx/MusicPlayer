@@ -27,6 +27,24 @@
           "revision": "929ce7cbd3005bc9356ae826bb65ee2611379b17",
           "version": "0.4.0"
         }
+      },
+      {
+        "package": "DBus",
+        "repositoryURL": "https://github.com/suransea/dbus-swift",
+        "state": {
+          "branch": null,
+          "revision": "9b17cce66bd67a75a88e5f609bd227dc5069cbb1",
+          "version": "0.0.5"
+        }
+      },
+      {
+        "package": "MPRIS",
+        "repositoryURL": "https://github.com/suransea/mpris-swift",
+        "state": {
+          "branch": null,
+          "revision": "b2600f9cd728ea575dcd3246479ab61472c41e60",
+          "version": "0.0.3"
+        }
       }
     ]
   },
